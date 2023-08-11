@@ -12,6 +12,14 @@ module.exports = withMT({
       laptop: "1024px",
       desktop: "1280px",
     },
+    fontFamily: {
+      sans: ['"Roboto"']
+    },
+    colors: {
+      'light-grey-75': '#757575',
+      'heavy-grey-21': '#212121',
+      'icon-4489FE': '#4489FE'
+      },
   },
   plugins: [],
 });

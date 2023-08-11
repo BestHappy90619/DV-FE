@@ -7,7 +7,6 @@ const MainLyt = () => {
     <>
       <NavBar />
       <SideBar />
-      {/* <p>ManLyt</p> */}
 
       <Outlet />
     </>
