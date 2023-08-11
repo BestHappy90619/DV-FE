@@ -8,20 +8,10 @@ const TMenuItem = ({ href = "", label, selected }) => {
       className={`${
         selected
           ? "text-blue-500 border-b-blue-500"
-          : ""
-      } p-1 font-normal`}
+          : "text-light-grey-75"
+      } p-1`}
     >
-      <span className="text-base font-normal">{label}</span>
-      {/* <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
-        <a href="#" className="flex items-center">
-          Pages
-        </a>
-      </Typography> */}
+      <span className="text-base">{label}</span>
     </Link>
   );
 };
