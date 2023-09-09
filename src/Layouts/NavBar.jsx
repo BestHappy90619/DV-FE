@@ -66,7 +66,7 @@ export default function NavBar({open}) {
   ]
 
   return (
-      <Navbar className="top-0 z-50 max-w-full rounded-none fixed">
+      <Navbar className="top-0 z-50 max-w-full rounded-none fixed bg-white bg-opacity-100 border-white border-opacity-100 backdrop-saturate-0 backdrop-blur-none">
         <div className="flex justify-between">
           <div className="flex items-center">
             <Typography
