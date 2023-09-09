@@ -5,21 +5,25 @@ module.exports = withMT({
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {},
-    screens: {
+    screens: {                // customize screen pixel for responsive design
       miniPhone: "360px",
       mobile: "400px",
       tablet: "640px",
       laptop: "1024px",
       desktop: "1280px",
     },
-    fontFamily: {
-      sans: ['"Roboto"']
+    fontFamily: {             // define font family
+      sans: ['"Roboto"']      /// default font family
     },
-    colors: {
-      'light-grey-75': '#757575',
-      'heavy-grey-21': '#212121',
-      'icon-4489FE': '#4489FE'
-      },
+    colors: {                 // define colors
+      'custom-white': '#FFFBFB',
+      'custom-light-gray': '#DCDCDC',
+      'custom-medium-gray': '#C4C4C4',
+      'custom-gray': '#757575',
+      'custom-black': '#212121',
+      'custom-sky': '#4489FE',
+      'custom-sky-gray': '#F8FAFF'
+    },
   },
   plugins: [],
 });

@@ -1,137 +1,177 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
+// material
 import {
   Navbar,
-  Collapse,
   Typography,
-  Button,
-  IconButton,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
+  Avatar,
 } from "@material-tailwind/react";
-import TMenuItem from "@/Components/TMenuItem";
-import { AiOutlineMenu, AiOutlineMore, AiOutlineClose } from "react-icons/ai";
-import { BiBrain } from "react-icons/bi";
-import { IoArrowRedoOutline } from "react-icons/io5";
-import { MdSystemUpdateAlt, MdOutlineSdStorage } from "react-icons/md";
-import { LuMailOpen } from "react-icons/lu";
-import { FiSettings } from "react-icons/fi";
  
-export default function NavBar() {
-  const [openNav, setOpenNav] = React.useState(false);
-  const currentUrl = location.pathname;
- 
-  React.useEffect(() => {
-    window.addEventListener(
-      "resize",
-      () => window.innerWidth >= 960 && setOpenNav(false)
-    );
-  }, []);
- 
-  const menuLists = [
-    { label: "Home", href: "/", key: ["/"] },
+export default function NavBar({open}) {
+  const navigate = useNavigate()
+
+  const currentUrl = useLocation().pathname;
+
+  const menus = [
     {
-      label: "Format",
-      href: "/format",
-      key: ["/format"],
+      title: "Media",
+      path: "/media",
+      key: ["/media", "/media/mines", "/media/upload"],
+      children: [
+        {
+          title: "My Files",
+          path: "/mines"
+        },
+        {
+          title: "Upload File",
+          path: "/upload"
+        },
+      ]
     },
     {
-      label: "Jeffersonian",
-      href: "/jeffersonian",
-      key: ["/jeffersonian"],
+      title: "Transcripts",
+      path: "/transcripts",
+      key: ["/transcripts", "/transcripts/tasklist", "/transcripts/editor"],
+      children: [
+        {
+          title: "List of Tasks",
+          path: "/tasklist"
+        },
+        {
+          title: "Editor",
+          path: "/editor"
+        },
+      ]
     },
     {
-      label: "Indexing",
-      href: "/indexing",
-      key: ["/indexing"],
-    },
-    {
-      label: "Translation",
-      href: "/translation",
-      key: ["/translation"],
-    },
-    {
-      label: "Subtitles",
-      href: "/subtitles",
-      key: ["/subtitles"],
-    },
-    {
-      label: "Memory",
-      href: "/memory",
-      key: ["/memory"],
-    },
-  ];
+      title: "Users",
+      path: "/users",
+      key: ["/user", "/users/clients", "/users/myteam"],
+      children: [
+        {
+          title: "Clients",
+          path: "/clients"
+        },
+        {
+          title: "My Team",
+          path: "/myteam"
+        },
+      ]
+    }
+  ]
 
   return (
-      <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none py-2 px-4 xl:px-8 xl:py-4">
+      <Navbar className="top-0 z-50 max-w-full rounded-none fixed">
         <div className="flex justify-between">
-        <div className="flex items-center">
-            <AiOutlineMenu className="text-black text-2xl mr-4 cursor-pointer" />
+          <div className="flex items-center">
             <Typography
-              as="a"
-              href="/"
-              className="flex cursor-pointer py-1.5 mr-16 font-bold text-heavy-grey-21"
+              className="flex cursor-pointer mr-16 font-bold text-custom-black text-xl items-center"
+              onClick={() => navigate("/")}
             >
-              <img src="image/favicon.png" alt="Transcribatron.png" className=" mr-2 object-cover w-6 h-6"/>
+              <img src="/image/favicon.png" alt="Transcribatron.png" className=" mr-2 w-[26px] h-[30px]"/>
               Transcribatron
             </Typography>
-            <div className="mr-4 hidden xl:block">
-              <ul className="mb-4 mt-2 flex flex-col gap-2 xl:mb-0 xl:mt-0 xl:flex-row xl:items-center xl:gap-6">
-                {menuLists.map((item, index) => {
-                  const { label, href, key } = item;
-                  return (
-                    <TMenuItem
-                      key={index}
-                      label={label}
-                      selected={key.includes(currentUrl)}
-                      href={href}
-                    />
-                  );
-                })}
-              </ul>
-            </div>
+            <ul className="flex flex-row gap-6">
+              {
+                menus.map(menu => {
+                  return <li key={menu.path} className={`cursor-pointer ${menu.key.includes(currentUrl) ? "text-custom-sky" : "text-custom-black"}`}>
+                          <Menu allowHover>
+                            {
+                              menu.hasOwnProperty("children") ? <>
+                                <MenuHandler><span onClick={() => menu.children.length > 0 ? navigate("#") : navigate(menu.path)} className={`cursor-pointer ${menu.key.includes(currentUrl) ? "text-custom-sky" : "text-custom-black"}`}>{menu.title}</span></MenuHandler>
+                                <MenuList>
+                                  {
+                                    menu.children.map((child) => {
+                                      return <MenuItem key={child.path}><span className={(menu.path + child.path) == currentUrl ? "text-custom-sky" : "text-custom-black" } onClick={() => navigate(menu.path + child.path)}>{child.title}</span></MenuItem>
+                                    })
+                                  }
+                                </MenuList>
+                              </> : <>
+                                  <span className={`cursor-pointer ${menu.key.includes(currentUrl) ? "text-custom-sky" : "text-custom-black"}`} onClick={() => navigate(menu.path)}>{ menu.title }</span>
+                              </>
+                            }
+                          </Menu>
+                        </li>
+                })
+              }
+            </ul>
           </div>
-          <div className="flex items-center gap-4">
-            <BiBrain variant="gradient" className="hidden xl:inline-block text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <IoArrowRedoOutline variant="gradient" className="hidden xl:inline-block text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <MdSystemUpdateAlt variant="gradient" className="hidden xl:inline-block text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <MdOutlineSdStorage variant="gradient" className="hidden xl:inline-block text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <LuMailOpen variant="gradient" className="hidden xl:inline-block text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <FiSettings variant="gradient" className="hidden xl:inline-block text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <IconButton
-              variant="text"
-              className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent xl:hidden"
-              ripple={false}
-              onClick={() => setOpenNav(!openNav)}
-            >
-              {openNav ? (
-                <AiOutlineClose className="text-heavy-grey-21 text-2xl mr-4" />
-              ) : (
-                <AiOutlineMore className="text-heavy-grey-21 text-2xl mr-4" />
-              )}
-            </IconButton>
-          </div>
+          <Menu>
+            <MenuHandler>
+              <Avatar
+                variant="circular"
+                alt="tania andrew"
+                className="cursor-pointer"
+                src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+              />
+            </MenuHandler>
+            <MenuList>
+              <div className="flex outline-0 cursor-pointer">
+                <hr className="my-2 border-blue-gray-50 w-1/3" />
+                <p className=" w-1/3 text-center text-custom">Account</p>
+                <hr className="my-2  w-1/3 border-blue-gray-50" />
+              </div>
+              <MenuItem className="flex gap-2">
+                <Typography variant="small" className="font-normal">
+                  Profile
+                </Typography>
+              </MenuItem>
+              <MenuItem className="flex gap-2">
+                <Typography variant="small" className="font-normal">
+                  Password
+                </Typography>
+              </MenuItem>
+              <MenuItem className="flex gap-2">
+                <Typography variant="small" className="font-normal">
+                  Settings
+                </Typography>
+              </MenuItem>
+              <div className="flex outline-0 cursor-pointer">
+                <hr className="my-2 border-blue-gray-50 w-1/3" />
+                <p className=" w-1/3 text-center">Billing</p>
+                <hr className="my-2  w-1/3 border-blue-gray-50" />
+              </div>
+              <MenuItem className="flex gap-2">
+                <Typography variant="small" className="font-normal">
+                  Payment Methods
+                </Typography>
+              </MenuItem>
+              <MenuItem className="flex gap-2">
+                <Typography variant="small" className="font-normal">
+                  Transaction History
+                </Typography>
+              </MenuItem>
+              <div className="flex outline-0 cursor-pointer">
+                <hr className="my-2 border-blue-gray-50 w-1/3" />
+                <p className=" w-1/3 text-center">Support</p>
+                <hr className="my-2  w-1/3 border-blue-gray-50" />
+              </div>
+              <MenuItem className="flex gap-2">
+                <Typography variant="small" className="font-normal">
+                  Knowledge Base
+                </Typography>
+              </MenuItem>
+              <MenuItem className="flex gap-2">
+                <Typography variant="small" className="font-normal">
+                  Contact Support
+                </Typography>
+              </MenuItem>
+              <div className="flex outline-0 cursor-pointer">
+                <hr className="my-2 border-blue-gray-50 w-full" />
+              </div>
+              <MenuItem className="flex gap-2 ">
+                <Typography variant="small" className="font-normal">
+                  Sign Out
+                </Typography>
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </div>
-        <Collapse open={openNav}>
-          <ul className="mb-4 mt-2 flex flex-col gap-2 xl:mb-0 xl:mt-0 xl:flex-row xl:items-center xl:gap-6">
-            {menuLists.map((item, index) => {
-                const { label, href, key } = item;
-                return (
-                  <TMenuItem
-                    key={index}
-                    label={label}
-                    selected={key.includes(currentUrl)}
-                    href={href}
-                  />
-                );
-            })}
-          </ul>
-          <div className="flex gap-16 justify-center">
-            <BiBrain variant="gradient" className="mb-2 text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <IoArrowRedoOutline variant="gradient" className="mb-2 text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <MdSystemUpdateAlt variant="gradient" className="mb-2 text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <MdOutlineSdStorage variant="gradient" className="mb-2 text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <LuMailOpen variant="gradient" className="mb-2 text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-            <FiSettings variant="gradient" className="mb-2 text-icon-4489FE text-2xl cursor-pointer rounded-lg w-8 h-8 p-1.5 bg-icon-4489FE bg-opacity-20" />
-          </div>
-        </Collapse>
       </Navbar>
   );
 }
