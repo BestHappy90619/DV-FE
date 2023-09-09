@@ -73,7 +73,7 @@ const TEditor = () => {
             <div className={`px-10 justify-items-end self-center grid w-full ${!openFunctionBar ? "" : "hidden"} h-8`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
                 <MdKeyboardArrowDown onClick={() => setOpenFunctionBar(!openFunctionBar)} className={`self-center transition-transform w-[30px] h-[30px] text-custom-gray cursor-pointer`} />
             </div>
-            <div className={`${openFunctionBar ? "" : "hidden"} fixed z-30 bg-white/80 backdrop-blur-2xl backdrop-saturate-200 flex pb-5 pt-8 px-10`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
+            <div className={`${openFunctionBar ? "" : "hidden"} fixed z-30 bg-white flex pb-5 pt-8 px-10`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
                 <div className={`flex gap-2 `}>
                     <div className="flex gap-4 self-center">
                         <LuUndo2 className="text-custom-medium-gray" />
@@ -233,10 +233,9 @@ const TEditor = () => {
                 </div>
             </div>
             <div className={`${showMedia ? "pl-10" : ""}`}>
-                <hr style={{ "width": showMedia ? ((functionBarWidth - 40) + "px") : functionBarWidth == 0 ? "100%" : functionBarWidth+"px" }} className={`fixed z-30 mt-24 bg-white/80 backdrop-blur-2xl backdrop-saturate-200 w-full pb-8 border-blue-gray-50 ${openFunctionBar ? "" : "hidden"}`} />
+                <hr style={{ "width": showMedia ? ((functionBarWidth - 40) + "px") : functionBarWidth == 0 ? "100%" : functionBarWidth+"px" }} className={`fixed z-30 mt-24 bg-white w-full pb-8 border-blue-gray-50 ${openFunctionBar ? "" : "hidden"}`} />
             </div>
             <div className={`grid gap-8 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
-            {/* <div className={`grid gap-8 scrollbar ${openFunctionBar ? "max-h-[calc(100vh-301px)]" : "max-h-[calc(100vh-205px)]"}`}> */}
                 <TSection sectionTitle="Section A" />
                 <TSection sectionTitle="Section B" />
                 <TSection sectionTitle="" />
