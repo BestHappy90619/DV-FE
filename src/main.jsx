@@ -14,6 +14,17 @@ const customTheme = {
         }
       }
     }
+  },
+  navbar: {
+    styles: {
+      base: {
+        navbar: {
+          initial: {
+            maxWidth: "w-[100vw]",
+          }
+        }
+      }
+    }
   }
 }
 
