@@ -21,11 +21,9 @@ import { EventBus } from "@/utils/function";
 const MainLyt = () => {
   const dispatch = useDispatch();
 
-  const { playlistOrder, noteOrder, searchOrder, leftSidebarWidth, rightSidebarWidth } = useSelector((state) => state.sidebar);
+  const { minWidth, maxWidth, defaultWidth, playlistOrder, noteOrder, searchOrder, leftSidebarWidth, rightSidebarWidth } = useSelector((state) => state.sidebar);
   const isNowLeftResizing = useRef(false);
   const isNowRightResizing = useRef(false);
-
-  const [minWidth, maxWidth, defaultWidth] = [250, 400, 250];
   
   useEffect(() => {
     window.addEventListener('keydown', function (e) {
@@ -70,18 +68,6 @@ const MainLyt = () => {
   const getRightSidebar = () => {
     return playlistOrder < noteOrder ? playlistOrder < searchOrder ? PLAYLIST_SIDEBAR : SEARCH_SIDEBAR : noteOrder < searchOrder ? NOTE_SIDEBAR : SEARCH_SIDEBAR;
   }
-
-  useEffect(() => {
-    let isLeftSideBarOpen = false, isRightSideBarOpen = false;
-    if (playlistOrder > 1) isLeftSideBarOpen = true;
-    else if (playlistOrder < -1) isRightSideBarOpen = true;
-    if (noteOrder > 1) isLeftSideBarOpen = true;
-    else if (noteOrder < -1) isRightSideBarOpen = true;
-    if (searchOrder > 1) isLeftSideBarOpen = true;
-    else if (searchOrder < -1) isRightSideBarOpen = true;
-    if (isLeftSideBarOpen) dispatch(setLeftSidebarWidth(defaultWidth)); else dispatch(setLeftSidebarWidth(0));
-    if (isRightSideBarOpen) dispatch(setRightSidebarWidth(defaultWidth)); else dispatch(setRightSidebarWidth(0));    
-  }, [playlistOrder, noteOrder, searchOrder])
 
   useEffect(() => {
     EventBus.dispatch(RESIZED_SIDEBAR, RESIZED_SIDEBAR);

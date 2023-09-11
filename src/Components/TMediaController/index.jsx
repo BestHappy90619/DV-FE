@@ -35,7 +35,7 @@ const TMediaController = () => {
   }
 
   return (
-    <div className="h-[90px] w-[100vw] fixed bottom-0 z-50 bg-custom-white">
+    <div className="h-[90px] w-[100%] fixed bottom-0 z-50 bg-custom-white">
       {/* <Slider defaultValue={(currentTimeline / duration) * 100} className="h-1 w-full text-custom-sky" thumbClassName={`[&::-webkit-slider-thumb]:bg-custom-sky [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 ${"w-[" + (currentTimeline / duration) * 100 + "vw]"}`} /> */}
       <Slider defaultValue={50} className="h-1 w-full text-custom-sky" thumbClassName={`[&::-webkit-slider-thumb]:bg-custom-sky [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 ${"w-[" + (currentTimeline / duration) * 100 + "vw]"}`} />
       <div className="flex gap-6 h-full w-full justify-between px-10">
