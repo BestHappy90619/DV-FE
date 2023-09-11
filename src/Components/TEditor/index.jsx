@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -34,6 +34,7 @@ import { RESIZED_FUNCTION_BAR } from "@/utils/constant";
 
 const TEditor = () => {
     const dispatch = useDispatch();
+    const zoomTranscriptInputRef = useRef();
 
     const { playlistOrder, noteOrder, searchOrder } = useSelector((state) => state.sidebar); //true: left, false: right
     const { mediaSide, showMedia } = useSelector((state) => state.media); //true: left, false: right
@@ -57,6 +58,16 @@ const TEditor = () => {
         } else {
             setZoomTranscript(zoomTranscriptNum + "%");
         }
+    }
+
+    const onFocusZoomTranscriptMenu = () => {
+        setTimeout(() => {
+            zoomTranscriptInputRef.current.focus();
+        }, 100)
+    }
+
+    const onBlurZoomTranscriptMenu = () => {
+        zoomTranscriptInputRef.current.blur();
     }
 
     useEffect(() => {
@@ -89,14 +100,14 @@ const TEditor = () => {
                         <TbSettingsCode className="text-custom-medium-gray" />
                     </div>
                     <RxDividerVertical className="text-custom-medium-gray self-center" />
-                    <div className="flex gap-4 self-center">
+                    <div className="flex gap-4 self-center" onFocus={onFocusZoomTranscriptMenu} onBlur={() => onBlurZoomTranscriptMenu()}>
                         <Menu open={openZoomMenu} handler={setOpenZoomMenu}>
                             <MenuHandler>
                                 <Button
                                     variant="text"
                                     className="flex items-center text-sm outline-none capitalize tracking-normal hover:bg-white text-custom-black font-light px-2 gap-1"
                                 >
-                                    <input onKeyDown={onKeyDownZoomTranscriptInput} className="w-10 outline-none" value={zoomTranscript} onChange={(e) => setZoomTranscript(e.target.value)} />
+                                    <input ref={zoomTranscriptInputRef} onKeyDown={onKeyDownZoomTranscriptInput} className="w-10 outline-none" value={zoomTranscript} onChange={(e) => setZoomTranscript(e.target.value)} />
                                     <BiChevronDown className={`transition-transform ${openZoomMenu ? "rotate-180" : ""}`}/>
                                 </Button>
                             </MenuHandler>
@@ -235,7 +246,7 @@ const TEditor = () => {
             <div className={`${showMedia ? "pl-10" : ""}`}>
                 <hr style={{ "width": showMedia ? ((functionBarWidth - 40) + "px") : functionBarWidth == 0 ? "100%" : functionBarWidth+"px" }} className={`fixed z-30 mt-24 bg-white w-full pb-8 border-blue-gray-50 ${openFunctionBar ? "" : "hidden"}`} />
             </div>
-            <div className={`grid gap-8 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
+            <div className={`grid gap-6 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
                 <TSection sectionTitle="Section A" />
                 <TSection sectionTitle="Section B" />
                 <TSection sectionTitle="" />
