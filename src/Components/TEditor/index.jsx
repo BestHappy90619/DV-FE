@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from "react";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { setZoomTranscriptNum } from "../../../redux-toolkit/reducers/Editor";
-import { toggleNote, toggleSearch, setPlaylistSidebarPosition, setNoteSidebarPosition, setSearchSidebarPosition } from "../../../redux-toolkit/reducers/Sidebar";
-import { toggleMediaSide } from "../../../redux-toolkit/reducers/Media";
-import { toggleSpeaker } from "../../../redux-toolkit/reducers/Speaker";
+import { setZoomTranscriptNum, toggleSpeaker } from "@/redux-toolkit/reducers/Editor";
+import { toggleNote, toggleSearch, setPlaylistSidebarPosition, setNoteSidebarPosition, setSearchSidebarPosition } from "@/redux-toolkit/reducers/Sidebar";
+import { toggleMediaSide } from "@/redux-toolkit/reducers/Media";
 
 // components
 import TSection from "./TSection";
@@ -21,11 +20,11 @@ import {
 
 // icons
 import { AiOutlineHighlight, AiOutlineBold, AiOutlineItalic, AiOutlineUnderline, AiOutlineFontColors} from "react-icons/ai";
-import { RxDividerVertical } from "react-icons/rx"
-import { MdKeyboardArrowUp, MdKeyboardArrowDown, MdPadding } from "react-icons/md"
+import { RxDividerVertical } from "react-icons/rx";
+import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import { AiOutlineCheck } from "react-icons/ai";
 import { LuUndo2, LuRedo2 } from "react-icons/lu";
-import { TbSettingsCode } from "react-icons/tb";
+import { TbSettingsCode, TbSubscript, TbSuperscript } from "react-icons/tb";
 import { BiChevronDown } from "react-icons/bi";
 
 // constant
@@ -38,8 +37,7 @@ const TEditor = () => {
 
     const { playlistOrder, noteOrder, searchOrder } = useSelector((state) => state.sidebar); //true: left, false: right
     const { mediaSide, showMedia } = useSelector((state) => state.media); //true: left, false: right
-    const { speakerMethod } = useSelector((state) => state.speaker); //true: left, false: right
-    const { zoomTranscriptNum } = useSelector((state) => state.editor); //true: left, false: right
+    const { zoomTranscriptNum, speakerMethod } = useSelector((state) => state.editor); //true: left, false: right
     const [openZoomMenu, setOpenZoomMenu] = useState(false);
     const [openEditMenu, setOpenEditMenu] = useState(false);
     const [openInsertMenu, setOpenInsertMenu] = useState(false);
@@ -75,7 +73,7 @@ const TEditor = () => {
             setFunctionBarWidth(width)
         });
         return () => {
-            EventBus.remove("resizedFunctionBar");
+            EventBus.remove(RESIZED_FUNCTION_BAR);
         };
     }, [])
 
@@ -95,6 +93,8 @@ const TEditor = () => {
                         <AiOutlineBold className="text-custom-medium-gray" />
                         <AiOutlineItalic className="text-custom-medium-gray" />
                         <AiOutlineUnderline className="text-custom-medium-gray" />
+                        {/* <TbSubscript className="text-custom-medium-gray" /> */}
+                        {/* <TbSuperscript className="text-custom-medium-gray" /> */}
                         <AiOutlineFontColors className="text-custom-medium-gray" />
                         <AiOutlineHighlight className="text-custom-medium-gray" />
                         <TbSettingsCode className="text-custom-medium-gray" />
@@ -246,11 +246,9 @@ const TEditor = () => {
             <div className={`${showMedia ? "pl-10" : ""}`}>
                 <hr style={{ "width": showMedia ? ((functionBarWidth - 40) + "px") : functionBarWidth == 0 ? "100%" : functionBarWidth+"px" }} className={`fixed z-30 mt-24 bg-white w-full pb-8 border-blue-gray-50 ${openFunctionBar ? "" : "hidden"}`} />
             </div>
-            <div className={`grid gap-6 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
-                <TSection sectionTitle="Section A" />
-                <TSection sectionTitle="Section B" />
-                <TSection sectionTitle="" />
-                <TSection sectionTitle="" />
+            
+            <div className={`grid gap-8 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
+                <TSection />
             </div>
         </>
     )
