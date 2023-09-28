@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { togglePlaylist, toggleNote, toggleSearch, setLeftSidebarWidth, setRightSidebarWidth } from "../../redux-toolkit/reducers/Sidebar";
+import { togglePlaylist, toggleNote, toggleSearch, setLeftSidebarWidth, setRightSidebarWidth } from "@/redux-toolkit/reducers/Sidebar";
 
 // layouts
 import NavBar from "./NavBar";

@@ -1,10 +1,4 @@
-
 import React from "react";
-
-//material
-import {
-  Typography,
-} from "@material-tailwind/react";
 
 // components
 import TAlert from "@/Components/TAlert";

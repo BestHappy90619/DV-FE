@@ -1,13 +1,16 @@
 
 // ms to time, "00:00:00"
-export const msToTime = (milliseconds) => {
-  var seconds = Math.floor((milliseconds / 1000) % 60);
-  var minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
-  var hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
+export const msToTime = (milliseconds, isShowMMSS = false) => {
+  var seconds = Math.floor((milliseconds) % 60);
+  var minutes = "";
+  if(isShowMMSS)
+    minutes = Math.floor(milliseconds / 60);
+  else
+    minutes = Math.floor((milliseconds / 60) % 60);
+  var hours = Math.floor((milliseconds / (60 * 60)) % 24);
 
   return (
-    ("0" + hours).slice(-2) +
-    ":" +
+    (isShowMMSS ? "" : ("0" + hours).slice(-2) + ":") +
     ("0" + minutes).slice(-2) +
     ":" +
     ("0" + seconds).slice(-2)
@@ -35,3 +38,46 @@ export const EventBus = {
     document.removeEventListener(event, callback);
   },
 };
+
+// Generate random string for id
+// export const makeId = (length = 8) => {
+//     let result = '';
+//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*?';
+//     const charactersLength = characters.length;
+//     let counter = 0;
+//     while (counter < length) {
+//       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+//       counter += 1;
+//     }
+//     return result;
+// }
+
+// get item by property from array
+export const getItemFromArr = (array, property, threshold) => {
+  if (property.length) {
+    var res = array.find(item => item[property] == threshold)
+    return res == undefined ? {} : res;
+  } else {
+    var res = array.find(item => item == threshold)
+    return res == undefined ? "" : res;
+  }
+}
+
+// get index by property from array
+export const getIndexFromArr = (array, property, threshold) => {
+  if(property.length)
+    return array.findIndex(item => item[property] == threshold);
+  else
+    return array.findIndex(item => item == threshold);
+}
+
+// get active word by time from words array 
+export const getActiveWord = (words, time) => {
+  var word = words.find(item => time >= item.startTime && time < item.endTime)
+  return word == undefined ? {} : word;
+}
+
+// check if object is empty
+export const isEmpty = (obj) => {
+  return Object.keys(obj).length === 0;
+}

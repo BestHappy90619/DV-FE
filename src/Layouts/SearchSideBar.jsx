@@ -2,9 +2,7 @@
 import { useState } from "react";
 
 //material
-import {
-  Typography, Input
-} from "@material-tailwind/react";
+import { Input } from "@material-tailwind/react";
 
 // icons
 import { AiOutlineClose } from "react-icons/ai";

@@ -1,75 +1,129 @@
 import { useEffect, useRef, useState } from "react";
+
+// redux
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentTimeline, setDuration } from "../../../redux-toolkit/reducers/Media";
+import { setCurrentTime, setIsPlaying, setMedias, setSelectedMediaId } from "@/redux-toolkit/reducers/Media";
 
 // components
 import TEditor from "@/Components/TEditor";
 
-import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_SIDEBAR, RESIZED_FUNCTION_BAR } from "@/utils/constant";
-import { EventBus } from "@/utils/function";
+// utils
+import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_SIDEBAR, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, TIME_MEDIA_UPDATE, TIME_SYNC_TRANSCRIPTION, DEBUG_MODE } from "@/utils/constant";
+import { EventBus, getItemFromArr } from "@/utils/function";
+
+// services
+import MediaService from "@/services/media";
 
 const Home = () => {
   const dispatch = useDispatch();
   const videoRef = useRef();
-  const homeRef = useRef();
-  var video = videoRef.current;
+  const audioRef = useRef();
+  const editorRef = useRef();
+  const isFromClicked = useRef(false);
 
-  const { selectedMedia, showMedia, mediaSide, currentTimeline, duration } = useSelector((state) => state.media);
+  const { selectedMediaId, showMedia, mediaSide, medias, isPlaying, frameSpeed, volume } = useSelector((state) => state.media);
 
   const [videoWidth, setVideoWidth] = useState(0);
 
-  // handle video/audio tag event
-  useEffect(() => {
-
-    function handleTimeUpdate() {
-      dispatch(setCurrentTimeline(video.currentTime)) 
-      dispatch(setDuration(video.duration)) 
-        // timeline.value = video.currentTime;
-    }
-
-    if(video) {
-        video.addEventListener("timeupdate", handleTimeUpdate);
-    }
-
-    return () => {
-        if(video) {
-            video.removeEventListener("timeupdate", handleTimeUpdate);
-        }
-    };
-  }, []);
-
   const handleResize = () => {
     var videoTagWidth = videoRef.current?.clientWidth == undefined ? 0 : videoRef.current.clientWidth;
-    var homeWidth = homeRef.current?.clientWidth == undefined ? 0 : homeRef.current.clientWidth;
+    var editorWidth = editorRef.current?.clientWidth == undefined ? 0 : editorRef.current.clientWidth;
     setVideoWidth(videoTagWidth);
-    EventBus.dispatch(RESIZED_FUNCTION_BAR, homeWidth - videoTagWidth);
+    EventBus.dispatch(RESIZED_FUNCTION_BAR, editorWidth == 80 ? 0 : editorWidth);
   }
 
-  // handle home resize event
   useEffect(() => {
+    MediaService.getAllMedias()
+      .then((res) => {
+        if (res.status == 200) {
+          dispatch(setSelectedMediaId(res.data.data[7].fileId));
+          dispatch(setMedias(res.data.data))
+        } else {
+          console.warn("While getting all media files, an error occurred on the server side::: ", res);
+        }
+      })
+      .catch((err) => {
+        console.warn("While getting all media files, an error occurred on the client's side::: ", err);
+      });
+  }, [])
 
+  // handle event
+  useEffect(() => {
     // Listener to trigger sidebar resize event
     EventBus.on(RESIZED_SIDEBAR, handleResize);
 
     // Attach the event listener to the window object
     window.addEventListener(RESIZED_WINDOW, handleResize);
 
+    // handle video/audio timeupdate event
+    videoRef.current.addEventListener(TIME_MEDIA_UPDATE, () => {
+      var time = videoRef.current.currentTime == 0 ? 0.000001 : videoRef.current.currentTime
+      if (time == videoRef.current.duration) {
+        dispatch(setCurrentTime(0.000001))
+        dispatch(setIsPlaying(false));
+        return;
+      }
+      EventBus.dispatch(TIME_SYNC_TRANSCRIPTION, { time, isFromClicked: isFromClicked.current });
+      isFromClicked.current = false;
+      dispatch(setCurrentTime(time));
+    });
+
+    audioRef.current.addEventListener(TIME_MEDIA_UPDATE, () => {
+      var time = audioRef.current.currentTime == 0 ? 0.000001 : audioRef.current.currentTime
+      if (time == audioRef.current.duration) {
+        dispatch(setCurrentTime(0.000001))
+        dispatch(setIsPlaying(false));
+        return;
+      }
+      EventBus.dispatch(TIME_SYNC_TRANSCRIPTION, { time, isFromClicked: isFromClicked.current });
+      isFromClicked.current = false;
+      dispatch(setCurrentTime(time));
+    });
+
+    EventBus.on(TIME_UPDATE_OUTSIDE, (data) => {
+      var { time, mediaId } = data;
+      isFromClicked.current = data?.isFromClicked || false;
+      if (mediaId == "") return;
+      getItemFromArr(medias, "fileId", mediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.currentTime = time : audioRef.current.currentTime = time;
+      dispatch(setCurrentTime(time));
+      var duration = getItemFromArr(medias, "fileId", mediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.duration : audioRef.current.duration
+      if (time == duration) dispatch(setIsPlaying(false));
+    })
+
     // Remove the event listeners when the component unmounts
     return () => {
       window.removeEventListener(RESIZED_WINDOW, handleResize);
       EventBus.remove(RESIZED_SIDEBAR, handleResize);
+      videoRef?.current?.removeEventListener(TIME_MEDIA_UPDATE, () => { });
+      audioRef?.current?.removeEventListener(TIME_MEDIA_UPDATE, () => { });
+      EventBus.remove(TIME_UPDATE_OUTSIDE, () => { });
     };
   }, []);
 
   useEffect(() => {
     handleResize();
-  },[showMedia])
+  }, [showMedia]);
+
+  useEffect(() => { 
+    if (selectedMediaId == "") return;
+    isPlaying ? medias[selectedMediaId]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.play() : audioRef.current.play() : getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.pause() : audioRef.current.pause();
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (selectedMediaId == "") return;
+    getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.playbackRate = frameSpeed : audioRef.current.playbackRate = frameSpeed;
+  }, [frameSpeed]);
+
+  useEffect(() => {
+    if (selectedMediaId == "") return;
+    getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.volume = volume / 100 : audioRef.current.volume = volume / 100;
+  }, [volume]);
 
   return (
-    <div ref={homeRef} className={`flex ${mediaSide ? "" : "flex-row-reverse"}`}>
-      <video ref={videoRef} src={selectedMedia.type == MEDIA_TYPE_VIDEO && showMedia? selectedMedia.path : ""} className={`fixed ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} w-96 h-72 ${selectedMedia.type == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}/>
-      <audio src={selectedMedia.type == MEDIA_TYPE_AUDIO ? selectedMedia.path : ""} className={`hidden`} />
-      <div style={{padding: showMedia ? mediaSide ? "0 0 0 " + videoWidth + "px" : "0 " + videoWidth + "px 0 0" : ""}}>
+    <div className={`flex ${mediaSide ? "" : "flex-row-reverse"}`}>
+      <video ref={videoRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`fixed ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} w-96 h-72 ${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}/>
+      <audio ref={audioRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_AUDIO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`hidden`} />
+      <div ref={editorRef} style={{padding: showMedia ? mediaSide ? "0 0 0 " + videoWidth + "px" : "0 " + videoWidth + "px 0 0" : ""}}>
         <TEditor />
       </div>
     </div>
