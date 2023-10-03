@@ -1,13 +1,13 @@
 
 // ms to time, "00:00:00"
 export const msToTime = (milliseconds, isShowMMSS = false) => {
-  var seconds = Math.floor((milliseconds) % 60);
-  var minutes = "";
+  let seconds = Math.floor((milliseconds) % 60);
+  let minutes = "";
   if(isShowMMSS)
     minutes = Math.floor(milliseconds / 60);
   else
     minutes = Math.floor((milliseconds / 60) % 60);
-  var hours = Math.floor((milliseconds / (60 * 60)) % 24);
+  let hours = Math.floor((milliseconds / (60 * 60)) % 24);
 
   return (
     (isShowMMSS ? "" : ("0" + hours).slice(-2) + ":") +
@@ -55,10 +55,10 @@ export const EventBus = {
 // get item by property from array
 export const getItemFromArr = (array, property, threshold) => {
   if (property.length) {
-    var res = array.find(item => item[property] == threshold)
+    let res = array.find(item => item[property] == threshold)
     return res == undefined ? {} : res;
   } else {
-    var res = array.find(item => item == threshold)
+    let res = array.find(item => item == threshold)
     return res == undefined ? "" : res;
   }
 }
@@ -73,11 +73,30 @@ export const getIndexFromArr = (array, property, threshold) => {
 
 // get active word by time from words array 
 export const getActiveWord = (words, time) => {
-  var word = words.find(item => time >= item.startTime && time < item.endTime)
+  let word = words.find(item => time >= item.startTime && time < item.endTime)
   return word == undefined ? {} : word;
 }
 
 // check if object is empty
 export const isEmpty = (obj) => {
   return Object.keys(obj).length === 0;
+}
+
+export const hexToRGB = (hex) => {
+    let r = 0, g = 0, b = 0;
+
+    // 3 digits
+    if (hex.length == 4) {
+      r = "0x" + hex[1] + hex[1];
+      g = "0x" + hex[2] + hex[2];
+      b = "0x" + hex[3] + hex[3];
+
+    // 6 digits
+    } else if (hex.length == 7) {
+      r = "0x" + hex[1] + hex[2];
+      g = "0x" + hex[3] + hex[4];
+      b = "0x" + hex[5] + hex[6];
+    }
+   
+    return "rgb("+ +r + ", " + +g + ", " + +b + ")";
 }
