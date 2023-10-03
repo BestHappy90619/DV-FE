@@ -13,7 +13,7 @@ module.exports = withMT({
       desktop: "1280px",
     },
     fontFamily: {             // define font family
-      sans: ['"Roboto"']      /// default font family
+      sans: ['"Roboto"']      // default font family
     },
     colors: {                 // define colors
       'custom-white': '#FFFBFB',

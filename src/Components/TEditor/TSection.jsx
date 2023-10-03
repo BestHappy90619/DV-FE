@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 // redux
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentTime, setIsPlaying } from "@/redux-toolkit/reducers/Media";
+import { setIsPlaying } from "@/redux-toolkit/reducers/Media";
 
 // Components
 import TFadeInOut from "../TFadeInOut";
@@ -20,13 +20,14 @@ import { AiFillCaretDown } from "react-icons/ai";
 import { BiPlay, BiPencil, BiPause } from "react-icons/bi";
 
 // utils
-import { EventBus, getActiveWord, getIndexFromArr, getItemFromArr, isEmpty, msToTime } from "@/utils/function";
-import { TIME_UPDATE_OUTSIDE, TIME_SYNC_TRANSCRIPTION, SET_LOADING } from "@/utils/constant";
+import { EventBus, getActiveWord, getIndexFromArr, getItemFromArr, hexToRGB, isEmpty, msToTime } from "@/utils/function";
+import { TIME_UPDATE_OUTSIDE, SET_LOADING, BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, GRAY, ACTIVE_WORD_COLOR } from "@/utils/constant";
 import MediaService from "@/services/media";
 
-const TSection = () => {
+const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, changeHighlightClr}) => {
     const dispatch = useDispatch();
     const activeWordId = useRef("");
+    const isFromClicked = useRef(false);
 
     const { zoomTranscriptNum, speakerMethod } = useSelector((state) => state.editor); //true: left, false: right
     const { selectedMediaId, medias, isPlaying, currentTime } = useSelector((state) => state.media);
@@ -43,22 +44,22 @@ const TSection = () => {
         setShowFade(false);
         MediaService.getTranscriptionByFileId(getItemFromArr(medias, "fileId", selectedMediaId).fileId) // get transcription data
             .then((res) => {
-                var data = res.data;
+                let data = res.data;
                 if (!("speakers" in data)) {    // in case of first loading
-                    var speakers = []; //speaker array
-                    var speakerTags = [];  //speakerTag array
-                    var sectionTags = [];   //sectionTag array
-                    var changeTracks = { tracks: [], curIndex: -1};    //changes array for tracking
-                    var prevWorditemSpeakerTag = -1, newSpeakerTagRangeStartId = "", newSpeakerTagitemSpeakerId = "", prevSpeakerTagId = "";
+                    let speakers = []; //speaker array
+                    let speakerTags = [];  //speakerTag array
+                    let sectionTags = [];   //sectionTag array
+                    let changeTracks = { tracks: [], curIndex: -1};    //changes array for tracking
+                    let prevWorditemSpeakerTag = -1, newSpeakerTagRangeStartId = "", newSpeakerTagitemSpeakerId = "", prevSpeakerTagId = "";
                     // make useful structure
                     let wordCurrentId = data.words[0].id;
                     while(true) {
-                        var word = getItemFromArr(data.words, "id", wordCurrentId);
+                        let word = getItemFromArr(data.words, "id", wordCurrentId);
                         word.style = {};
                         if (prevWorditemSpeakerTag != word.speakerTag) { // check if the current speakerTag is not equal to the previous item's one
                             // add speakerTag
                             if (newSpeakerTagRangeStartId != "") {
-                                var curSpeakerTagId = uuidv4();
+                                let curSpeakerTagId = uuidv4();
                                 speakerTags.push({
                                     id: curSpeakerTagId,
                                     prevId: prevSpeakerTagId,
@@ -110,9 +111,9 @@ const TSection = () => {
     useEffect(() => {
         if (isPlaying) return;
         if (transcription.speakerTags == undefined) return;
-        var speakerTagPlayBtns = document.getElementsByClassName('allSpeakerTagPlayBtn');
+        let speakerTagPlayBtns = document.getElementsByClassName('allSpeakerTagPlayBtn');
         for (let i = 0; i < speakerTagPlayBtns.length; i++) speakerTagPlayBtns[i].style.display = "flex";
-        var speakerTagPauseBtns = document.getElementsByClassName('allSpeakerTagPauseBtn');
+        let speakerTagPauseBtns = document.getElementsByClassName('allSpeakerTagPauseBtn');
         for (let i = 0; i < speakerTagPauseBtns.length; i++) speakerTagPauseBtns[i].style.display = "none";
     }, [isPlaying])
 
@@ -120,26 +121,55 @@ const TSection = () => {
         EventBus.dispatch(SET_LOADING, false);
         setShowFade(true);
         if (isEmpty(transcription)) return;
+        highlighActiveWord(currentTime);
+    }, [transcription, currentTime])
+
+    useEffect(() => {
+        if (actionStyle == undefined || startEle == undefined || endEle == undefined) return;
+        if (actionStyle == FONT_COLOR && changeFontClr == undefined) return;
+        if (actionStyle == HIGHLIGHT_BG && changeHighlightClr == undefined) return;
+        let wordCurrentId = startEle.id;
+        while (true) {
+            let word = getItemFromArr(transcription.words, "id", wordCurrentId);
+            var wordCurEle = document.getElementById(wordCurrentId);
+            switch (actionStyle) {
+                case BOLD:
+                    console.log(wordCurEle.style.textShadow)
+                    wordCurEle.style.fontWeight = wordCurEle.style.fontWeight == "700" ? "400" : "700";
+                    break;
+                case ITALIC:
+                    wordCurEle.style.fontStyle = wordCurEle.style.fontStyle == "italic" ? "normal" : "italic";
+                    break;
+                case UNDERLINE:
+                    wordCurEle.style.textDecorationLine = wordCurEle.style.textDecorationLine == "underline" ? "none" : "underline";
+                    break;
+                case FONT_COLOR:
+                    wordCurEle.style.color = wordCurEle.style.color == hexToRGB(changeFontClr) ? wordCurEle.classList.contains("activeWord") ? ACTIVE_WORD_COLOR : GRAY : changeFontClr;
+                    break;
+                case HIGHLIGHT_BG:
+                    wordCurEle.style.backgroundColor = wordCurEle.style.backgroundColor == hexToRGB(changeHighlightClr) ? "#FFF" : changeHighlightClr;
+                    break;
+            }
+            if (word.id == endEle.id || word.nextId == "") break;
+            wordCurrentId = word.nextId;
+        }
+    },[changeStyle])
+
+    const highlighActiveWord = (time) => {
         document.getElementById(activeWordId.current)?.classList.add("activeWord");
-
-        EventBus.on(TIME_SYNC_TRANSCRIPTION, ({ time, isFromClicked }) => {
-            var activeWord = getItemFromArr(transcription.words, "id", activeWordId.current);
-            // remove highlight from previous active word
-            if(!(time >= activeWord?.startTime && time < activeWord?.endTime))
-                document.getElementById(activeWordId.current)?.classList.remove("activeWord");
-            // apply highlight to current active word
-            var newActiveWord = getActiveWord(transcription.words, time)
-            if (isEmpty(newActiveWord)) return;
-            var activeElement = document.getElementById(newActiveWord.id);
-            activeElement?.classList.add("activeWord");
-            if(!isFromClicked) window.scrollTo({ behavior: 'smooth', top: activeElement?.offsetTop - 216 - (window.innerHeight - 314) / 4 })
-            activeWordId.current = newActiveWord.id;
-        });
-
-        return () => {
-            EventBus.remove(TIME_SYNC_TRANSCRIPTION);
-        };
-    }, [transcription])
+        let activeWord = getItemFromArr(transcription.words, "id", activeWordId.current);
+        // remove highlight from previous active word
+        if(!(time >= activeWord?.startTime && time < activeWord?.endTime))
+            document.getElementById(activeWordId.current)?.classList.remove("activeWord");
+        // apply highlight to current active word
+        let newActiveWord = getActiveWord(transcription.words, time)
+        if (isEmpty(newActiveWord)) return;
+        let activeElement = document.getElementById(newActiveWord.id);
+        activeElement?.classList.add("activeWord");
+        if (!isFromClicked.current) window.scrollTo({ behavior: 'smooth', top: activeElement?.offsetTop - 216 - (window.innerHeight - 314) / 4 })
+        isFromClicked.current = false;
+        activeWordId.current = newActiveWord.id;
+    }
 
     const onClickAddSpeaker = (id) => {
         setShowAddSpeaker(true);
@@ -160,8 +190,8 @@ const TSection = () => {
     const addNewSpeaker = () => {
         setShowAddSpeaker(false);
         if (newSpeaker.length) {
-            var updatedTranscription = { ...transcription };
-            var updatedSpeakers = updatedTranscription.speakers;
+            let updatedTranscription = { ...transcription };
+            let updatedSpeakers = updatedTranscription.speakers;
             updatedSpeakers.push({ id: uuidv4(), label: newSpeaker });
             updatedTranscription.speakers = updatedSpeakers;
             setTranscription(updatedTranscription);
@@ -169,9 +199,9 @@ const TSection = () => {
     }
 
     const editSpeakerById = () => {
-        var updatedTranscription = { ...transcription };
-        var updatedSpeakers = updatedTranscription.speakers;
-        var updatedIndex = getIndexFromArr(updatedSpeakers, "id", selectedEditSpeakerId);
+        let updatedTranscription = { ...transcription };
+        let updatedSpeakers = updatedTranscription.speakers;
+        let updatedIndex = getIndexFromArr(updatedSpeakers, "id", selectedEditSpeakerId);
         if (updatedSpeaker.length) updatedSpeakers[updatedIndex].label = updatedSpeaker;
         else updatedSpeakers.splice(updatedIndex, 1);
         updatedTranscription.speakers = updatedSpeakers;
@@ -190,10 +220,10 @@ const TSection = () => {
     }
 
     const changeSpeakerId = (speakerTagId, newSpeakerId) => {
-        var updatedTranscription = { ...transcription };
-        var updatedSpeakerTags = updatedTranscription.speakerTags;
-        var updatedIndex = getIndexFromArr(updatedSpeakerTags, "id", speakerTagId)
-        var updatedSpeakerTag = updatedSpeakerTags[updatedIndex];
+        let updatedTranscription = { ...transcription };
+        let updatedSpeakerTags = updatedTranscription.speakerTags;
+        let updatedIndex = getIndexFromArr(updatedSpeakerTags, "id", speakerTagId)
+        let updatedSpeakerTag = updatedSpeakerTags[updatedIndex];
         updatedSpeakerTag.speakerId = newSpeakerId;
         updatedSpeakerTags[updatedIndex] = updatedSpeakerTag;
         updatedTranscription.speakerTags = updatedSpeakerTags;
@@ -209,13 +239,13 @@ const TSection = () => {
             document.getElementById(activeWordId.current).classList.remove("activeWord");
             document.getElementById(firstWordId).classList.add("activeWord");
             activeWordId.current = firstWordId;
-            dispatch(setCurrentTime(speakerTagStartTime));
             dispatch(setIsPlaying(true))
-            EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time: speakerTagStartTime == 0 ? 0.000001 : speakerTagStartTime, mediaId: selectedMediaId });
+            let time = speakerTagStartTime == 0 ? 0.000001 : speakerTagStartTime;
+            EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time, mediaId: selectedMediaId });
             // make other speakerTag paused
-            var speakerTagPlayBtns = document.getElementsByClassName('allSpeakerTagPlayBtn');
+            let speakerTagPlayBtns = document.getElementsByClassName('allSpeakerTagPlayBtn');
             for (let i = 0; i < speakerTagPlayBtns.length; i++) speakerTagPlayBtns[i].style.display = "flex";
-            var speakerTagPauseBtns = document.getElementsByClassName('allSpeakerTagPauseBtn');
+            let speakerTagPauseBtns = document.getElementsByClassName('allSpeakerTagPauseBtn');
             for (let i = 0; i < speakerTagPauseBtns.length; i++) speakerTagPauseBtns[i].style.display = "none"
             // make clicked speakerTag play
             document.getElementById(playBtnId).style.display = "none";
@@ -224,16 +254,17 @@ const TSection = () => {
     }
 
     const onClickWord = (e) => {
-        dispatch(setCurrentTime(e.target.dataset.start))
-        EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time: e.target.dataset.start == 0 ? 0.000001 : e.target.dataset.start, mediaId: selectedMediaId, isFromClicked: true });
+        let time = e.target.dataset.start == 0 ? 0.000001 : e.target.dataset.start;
+        isFromClicked.current = true;
+        EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time, mediaId: selectedMediaId });
     }
 
     const getWords = (startId, endId) => {
         if (transcription.words == undefined) return;
-        var element = [];
-        var wordCurrentId = startId;
+        let element = [];
+        let wordCurrentId = startId;
         while (true) {
-            var word = getItemFromArr(transcription.words, "id", wordCurrentId);
+            let word = getItemFromArr(transcription.words, "id", wordCurrentId);
             element.push(
                 <span
                     key={word.id}
@@ -253,17 +284,17 @@ const TSection = () => {
 
     const getSpeakerTags = (startId, endId) => {
         if (transcription.speakerTags == undefined || transcription.speakers == undefined) return;
-        var element = [];
-        var speakerTagCurrentId = startId;
+        let element = [];
+        let speakerTagCurrentId = startId;
         while (true) {
-            var speakerTag = getItemFromArr(transcription.speakerTags, "id", speakerTagCurrentId);
-            var curSpeaker = getItemFromArr(transcription.speakers, "id", speakerTag.speakerId);
+            let speakerTag = getItemFromArr(transcription.speakerTags, "id", speakerTagCurrentId);
+            let curSpeaker = getItemFromArr(transcription.speakers, "id", speakerTag.speakerId);
             let speakerTagAddSpeakerInputId = speakerTag.id + "-addInputId";
-            var speakerTagPlayBtnId = speakerTag.id + "-playBtnId";
-            var speakerTagPauseBtnId = speakerTag.id + "-pauseBtnId";
+            let speakerTagPlayBtnId = speakerTag.id + "-playBtnId";
+            let speakerTagPauseBtnId = speakerTag.id + "-pauseBtnId";
             element.push(
                 <div key={speakerTag.id} className={`${speakerMethod ? "flex" : ""} gap-2`}>
-                    <div className={`text-custom-sky text-sm ${speakerMethod ? "w-40" : "flex gap-2"}`}>
+                    <div contentEditable={false} className={`select-none text-custom-sky text-sm ${speakerMethod ? "w-40" : "flex gap-2"}`}>
                         <Popover placement="bottom">
                             <PopoverHandler onClick={() => { setSelectedEditSpeakerId(-1);  setShowAddSpeaker(false)}}>
                                 <div className="flex items-center gap-2 cursor-pointer">
@@ -321,7 +352,7 @@ const TSection = () => {
                             </div>
                         </div>
                     </div>
-                    <p contentEditable suppressContentEditableWarning className="outline-none text-custom-gray w-full h-auto">
+                    <p className="text-custom-gray w-full h-auto text-justify">
                         {getWords(speakerTag.range[0], speakerTag.range[1])}
                     </p>
                 </div>
@@ -334,17 +365,17 @@ const TSection = () => {
 
     const getSectionTags = (startId, endId) => {
         if (transcription.sectionTags == undefined) return;
-        var element = [];
-        var sectionTagCurrentId = startId;
+        let element = [];
+        let sectionTagCurrentId = startId;
         while (true) {
-            var sectionTag = getItemFromArr(transcription.sectionTags, "id", sectionTagCurrentId);
+            let sectionTag = getItemFromArr(transcription.sectionTags, "id", sectionTagCurrentId);
             element.push(
                 <div key={sectionTag.id}>
-                    <input className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base mb-2 ${sectionTag.label.length == 0 ? "hidden" : ""}`} value={sectionTag.label} onChange={(e) => setSectionHeading(e.target.value)}/>
+                    <input contentEditable={false} className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base mb-2 ${sectionTag.label.length == 0 ? "hidden" : ""}`} value={sectionTag.label} onChange={(e) => setSectionHeading(e.target.value)}/>
                         <div className="grid gap-4">
                             {getSpeakerTags(sectionTag.range[0], sectionTag.range[1])}
                         </div>
-                    <p className={` text-custom-black text-xs mt-2 ${sectionTag.label.length == 0 ? "hidden" : ""}`} >- End of {sectionTag.label} -</p>
+                    <p contentEditable={false} className={` text-custom-black text-xs mt-2 ${sectionTag.label.length == 0 ? "hidden" : ""}`} >- End of {sectionTag.label} -</p>
                 </div>
             )
             if (sectionTag.id == endId || sectionTag.nextId == "") break;
@@ -354,7 +385,7 @@ const TSection = () => {
     }
 
     return (
-        <TFadeInOut show={showFade} duration={300} >
+        <TFadeInOut show={showFade} duration={300} className="outline-none">
             {transcription.sectionTags != undefined && getSectionTags(transcription.sectionTags[0].id, transcription.sectionTags[transcription.sectionTags.length - 1].id)}
         </TFadeInOut>
     )

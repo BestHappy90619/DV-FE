@@ -28,7 +28,23 @@ export const TIME_MEDIA_UPDATE = "timeupdate";
 
 export const TIME_UPDATE_OUTSIDE = "timeUpdatedOutside";
 
-export const TIME_SYNC_TRANSCRIPTION = "timeSyncTranscription";
-
 // Loading Event
 export const SET_LOADING = "setLoading";
+
+// Edit Action
+export const BOLD = "bold";
+
+export const ITALIC = "italic";
+
+export const UNDERLINE = "underline";
+
+export const FONT_COLOR = "fontColor";
+
+export const HIGHLIGHT_BG = "highlightBg";
+
+// Color
+export const MEDIUM_GRAY = "#C4C4C4";
+
+export const GRAY = "#757575";
+
+export const ACTIVE_WORD_COLOR = "#4489FE";

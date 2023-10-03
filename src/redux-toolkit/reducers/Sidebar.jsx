@@ -41,15 +41,15 @@ const sidebarSlice = createSlice({
       return { ...state, rightSidebarWidth: action.payload};
     },
     togglePlaylist: (state, action) => {
-      var newOrder = 1;
-      var newLeftSidebarWidth = state.leftSidebarWidth;
-      var newRightSidebarWidth = state.rightSidebarWidth;
-      var newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
-      var newPrevRightSidebarWidth = state.prevRightSidebarWidth;
+      let newOrder = 1;
+      let newLeftSidebarWidth = state.leftSidebarWidth;
+      let newRightSidebarWidth = state.rightSidebarWidth;
+      let newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
+      let newPrevRightSidebarWidth = state.prevRightSidebarWidth;
       // change order
-      var oldOrder = state.playlistOrder;
-      var minOrder = getMinOrder(oldOrder, state.noteOrder, state.searchOrder);
-      var maxOrder = getMaxOrder(oldOrder, state.noteOrder, state.searchOrder);
+      let oldOrder = state.playlistOrder;
+      let minOrder = getMinOrder(oldOrder, state.noteOrder, state.searchOrder);
+      let maxOrder = getMaxOrder(oldOrder, state.noteOrder, state.searchOrder);
       if (oldOrder < -1) oldOrder > minOrder ? newOrder = minOrder - 1 : newOrder = -1
       else if (oldOrder > 1) oldOrder < maxOrder ? newOrder = maxOrder + 1 : newOrder = 1
       else if (oldOrder == -1) newOrder = minOrder - 1;
@@ -69,15 +69,15 @@ const sidebarSlice = createSlice({
       return { ...state, playlistOrder: newOrder, leftSidebarWidth: newLeftSidebarWidth, rightSidebarWidth: newRightSidebarWidth, prevLeftSidebarWidth: newPrevLeftSidebarWidth, prevRightSidebarWidth: newPrevRightSidebarWidth};
     },
     toggleNote: (state, action) => {
-      var newOrder = 1;
-      var newLeftSidebarWidth = state.leftSidebarWidth;
-      var newRightSidebarWidth = state.rightSidebarWidth;
-      var newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
-      var newPrevRightSidebarWidth = state.prevRightSidebarWidth;
+      let newOrder = 1;
+      let newLeftSidebarWidth = state.leftSidebarWidth;
+      let newRightSidebarWidth = state.rightSidebarWidth;
+      let newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
+      let newPrevRightSidebarWidth = state.prevRightSidebarWidth;
       // change order
-      var oldOrder = state.noteOrder;
-      var minOrder = getMinOrder(state.playlistOrder, oldOrder, state.searchOrder);
-      var maxOrder = getMaxOrder(state.playlistOrder, oldOrder, state.searchOrder);
+      let oldOrder = state.noteOrder;
+      let minOrder = getMinOrder(state.playlistOrder, oldOrder, state.searchOrder);
+      let maxOrder = getMaxOrder(state.playlistOrder, oldOrder, state.searchOrder);
       if (oldOrder < -1) oldOrder > minOrder ? newOrder = minOrder - 1 : newOrder = -1
       else if (oldOrder > 1) oldOrder < maxOrder ? newOrder = maxOrder + 1 : newOrder = 1
       else if (oldOrder == -1) newOrder = minOrder - 1;
@@ -97,15 +97,15 @@ const sidebarSlice = createSlice({
       return { ...state, noteOrder: newOrder, leftSidebarWidth: newLeftSidebarWidth, rightSidebarWidth: newRightSidebarWidth, prevLeftSidebarWidth: newPrevLeftSidebarWidth, prevRightSidebarWidth: newPrevRightSidebarWidth};
     },
     toggleSearch: (state, action) => {
-      var newOrder = 1;
-      var newLeftSidebarWidth = state.leftSidebarWidth;
-      var newRightSidebarWidth = state.rightSidebarWidth;
-      var newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
-      var newPrevRightSidebarWidth = state.prevRightSidebarWidth;
+      let newOrder = 1;
+      let newLeftSidebarWidth = state.leftSidebarWidth;
+      let newRightSidebarWidth = state.rightSidebarWidth;
+      let newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
+      let newPrevRightSidebarWidth = state.prevRightSidebarWidth;
       // change order
-      var oldOrder = state.searchOrder;      
-      var minOrder = getMinOrder(state.playlistOrder, state.noteOrder, oldOrder);
-      var maxOrder = getMaxOrder(state.playlistOrder, state.noteOrder, oldOrder);
+      let oldOrder = state.searchOrder;      
+      let minOrder = getMinOrder(state.playlistOrder, state.noteOrder, oldOrder);
+      let maxOrder = getMaxOrder(state.playlistOrder, state.noteOrder, oldOrder);
       if (oldOrder < -1) oldOrder > minOrder ? newOrder = minOrder - 1 : newOrder = -1
       else if (oldOrder > 1) oldOrder < maxOrder ? newOrder = maxOrder + 1 : newOrder = 1
       else if (oldOrder == -1) newOrder = minOrder - 1;
@@ -125,12 +125,12 @@ const sidebarSlice = createSlice({
       return { ...state, searchOrder: newOrder, leftSidebarWidth: newLeftSidebarWidth, rightSidebarWidth: newRightSidebarWidth, prevLeftSidebarWidth: newPrevLeftSidebarWidth, prevRightSidebarWidth: newPrevRightSidebarWidth};
     },
     setPlaylistSidebarPosition: (state, action) => {
-      var newOrder = 1;
-      var oldOrder = state.playlistOrder;
-      var newLeftSidebarWidth = state.leftSidebarWidth;
-      var newRightSidebarWidth = state.rightSidebarWidth;
-      var newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
-      var newPrevRightSidebarWidth = state.prevRightSidebarWidth;
+      let newOrder = 1;
+      let oldOrder = state.playlistOrder;
+      let newLeftSidebarWidth = state.leftSidebarWidth;
+      let newRightSidebarWidth = state.rightSidebarWidth;
+      let newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
+      let newPrevRightSidebarWidth = state.prevRightSidebarWidth;
       if (Math.abs(oldOrder) == 1) newOrder = oldOrder * -1;
       else if (oldOrder < -1) {
         newOrder = getMaxOrder(oldOrder * -1, state.noteOrder, state.searchOrder) + 1;
@@ -152,12 +152,12 @@ const sidebarSlice = createSlice({
       return { ...state, playlistOrder: newOrder, leftSidebarWidth: newLeftSidebarWidth, rightSidebarWidth: newRightSidebarWidth, prevLeftSidebarWidth: newPrevLeftSidebarWidth, prevRightSidebarWidth: newPrevRightSidebarWidth };
     },
     setNoteSidebarPosition: (state, action) => {
-      var newOrder = 1;
-      var oldOrder = state.noteOrder;
-      var newLeftSidebarWidth = state.leftSidebarWidth;
-      var newRightSidebarWidth = state.rightSidebarWidth;
-      var newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
-      var newPrevRightSidebarWidth = state.prevRightSidebarWidth;
+      let newOrder = 1;
+      let oldOrder = state.noteOrder;
+      let newLeftSidebarWidth = state.leftSidebarWidth;
+      let newRightSidebarWidth = state.rightSidebarWidth;
+      let newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
+      let newPrevRightSidebarWidth = state.prevRightSidebarWidth;
       if (Math.abs(oldOrder) == 1) newOrder = oldOrder * -1;
       else if (oldOrder < -1) {
         newOrder = getMaxOrder(state.playlistOrder, oldOrder * -1, state.searchOrder) + 1;
@@ -179,12 +179,12 @@ const sidebarSlice = createSlice({
       return { ...state, noteOrder: newOrder, leftSidebarWidth: newLeftSidebarWidth, rightSidebarWidth: newRightSidebarWidth, prevLeftSidebarWidth: newPrevLeftSidebarWidth, prevRightSidebarWidth: newPrevRightSidebarWidth };
     },
     setSearchSidebarPosition: (state, action) => {
-      var newOrder = 1;
-      var oldOrder = state.searchOrder;
-      var newLeftSidebarWidth = state.leftSidebarWidth;
-      var newRightSidebarWidth = state.rightSidebarWidth;
-      var newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
-      var newPrevRightSidebarWidth = state.prevRightSidebarWidth;
+      let newOrder = 1;
+      let oldOrder = state.searchOrder;
+      let newLeftSidebarWidth = state.leftSidebarWidth;
+      let newRightSidebarWidth = state.rightSidebarWidth;
+      let newPrevLeftSidebarWidth = state.prevLeftSidebarWidth;
+      let newPrevRightSidebarWidth = state.prevRightSidebarWidth;
       if (Math.abs(oldOrder) == 1) newOrder = oldOrder * -1;
       else if (oldOrder < -1) {
         newOrder = getMaxOrder(state.playlistOrder, state.noteOrder, oldOrder * -1) + 1;
