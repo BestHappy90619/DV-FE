@@ -11,12 +11,17 @@ import TSection from "./TSection";
 
 // material
 import {
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Button,
+    Menu,
+    MenuHandler,
+    MenuList,
+    MenuItem,
+    Button,
+    Popover,
+    PopoverHandler,
+    PopoverContent,
 } from "@material-tailwind/react";
+
+import { Github } from '@uiw/react-color';
 
 // icons
 import { AiOutlineHighlight, AiOutlineBold, AiOutlineItalic, AiOutlineUnderline, AiOutlineFontColors} from "react-icons/ai";
@@ -24,12 +29,12 @@ import { RxDividerVertical } from "react-icons/rx";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import { AiOutlineCheck } from "react-icons/ai";
 import { LuUndo2, LuRedo2 } from "react-icons/lu";
-import { TbSettingsCode, TbSubscript, TbSuperscript } from "react-icons/tb";
+import { TbSettingsCode } from "react-icons/tb";
 import { BiChevronDown } from "react-icons/bi";
 
 // constant
 import { EventBus } from "@/utils/function";
-import { RESIZED_FUNCTION_BAR } from "@/utils/constant";
+import { BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, RESIZED_FUNCTION_BAR, MEDIUM_GRAY, GRAY } from "@/utils/constant";
 
 const TEditor = () => {
     const dispatch = useDispatch();
@@ -38,6 +43,8 @@ const TEditor = () => {
     const { playlistOrder, noteOrder, searchOrder } = useSelector((state) => state.sidebar); //true: left, false: right
     const { mediaSide, showMedia } = useSelector((state) => state.media); //true: left, false: right
     const { zoomTranscriptNum, speakerMethod } = useSelector((state) => state.editor); //true: left, false: right
+    const [openFontColorPicker, setOpenFontColorPicker] = useState(false);
+    const [openHighlightPicker, setOpenHighlightPicker] = useState(false);
     const [openZoomMenu, setOpenZoomMenu] = useState(false);
     const [openEditMenu, setOpenEditMenu] = useState(false);
     const [openInsertMenu, setOpenInsertMenu] = useState(false);
@@ -45,11 +52,19 @@ const TEditor = () => {
     const [openFunctionBar, setOpenFunctionBar] = useState(true);
     const [zoomTranscript, setZoomTranscript] = useState("100%");
     const [functionBarWidth, setFunctionBarWidth] = useState(0);
+    const [actionStyle, setActionStyle] = useState();
+    const [startEle, setStartEle] = useState();
+    const [endEle, setEndEle] = useState();
+    const [changeFontClr, setChangeFontClr] = useState();
+    const [changeHighlightClr, setChangeHighlightClr] = useState();
+    const [changeStyle, setChangeStyle] = useState(false);
+    const [fontColor, setFontColor] = useState(MEDIUM_GRAY);
+    const [highlightBg, setHighlightBg] = useState(MEDIUM_GRAY);
 
     const onKeyDownZoomTranscriptInput = (e) => {
         if (e.key !== 'Enter') return;
         if (/\d/.test(zoomTranscript)) {
-            var num = zoomTranscript.match(/\d+/)[0] * 1;
+            let num = zoomTranscript.match(/\d+/)[0] * 1;
             num = num < 50 ? 50 : num > 200 ? 200 : num;
             dispatch(setZoomTranscriptNum(num));
             setZoomTranscript(num + "%");
@@ -77,6 +92,38 @@ const TEditor = () => {
         };
     }, [])
 
+    const onClickEditStyle = (actionStyle) => {
+        let { anchorNode, focusNode } = document.getSelection();
+        if (anchorNode?.parentElement?.dataset?.start == undefined || focusNode?.parentElement?.dataset?.start == undefined) return;
+        setActionStyle(actionStyle);
+        if (anchorNode.parentElement.dataset.start * 1 < focusNode.parentElement.dataset.start * 1) {
+            setStartEle(anchorNode.parentElement)
+            setEndEle(focusNode.parentElement)
+        } else {
+            setStartEle(focusNode.parentElement)
+            setEndEle(anchorNode.parentElement)
+        }
+        if (actionStyle == FONT_COLOR && fontColor != MEDIUM_GRAY)
+            setChangeFontClr(fontColor);
+        if (actionStyle == HIGHLIGHT_BG && highlightBg != MEDIUM_GRAY)
+            setChangeHighlightClr(highlightBg);
+        setChangeStyle(!changeStyle);
+    }
+
+    const onChangeFontClr = (clr) => {
+        setFontColor(clr.hex);
+        setActionStyle(FONT_COLOR);
+        setChangeFontClr(clr.hex);
+        setChangeStyle(!changeStyle);
+    }
+
+    const onChangeHighlightBg = (clr) => {
+        setHighlightBg(clr.hex);
+        setActionStyle(HIGHLIGHT_BG);
+        setChangeHighlightClr(clr.hex);
+        setChangeStyle(!changeStyle);
+    }
+
     return (
         <>
             <div className={`px-10 justify-items-end self-center grid w-full ${!openFunctionBar ? "" : "hidden"} h-8`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
@@ -84,20 +131,40 @@ const TEditor = () => {
             </div>
             <div className={`${openFunctionBar ? "" : "hidden"} fixed z-30 bg-white flex pb-5 pt-8 px-10`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
                 <div className={`flex gap-2 `}>
-                    <div className="flex gap-4 self-center">
+                    <div className="flex gap-4 self-center select-none">
                         <LuUndo2 className="text-custom-medium-gray" />
                         <LuRedo2 className="text-custom-medium-gray" />
                     </div>
                     <RxDividerVertical className="text-custom-medium-gray self-center" />
-                    <div className="flex gap-4 self-center">
-                        <AiOutlineBold className="text-custom-medium-gray" />
-                        <AiOutlineItalic className="text-custom-medium-gray" />
-                        <AiOutlineUnderline className="text-custom-medium-gray" />
+                    <div className="flex gap-4 self-center select-none">
+                        <AiOutlineBold className="text-custom-medium-gray self-center" onClick={() => onClickEditStyle(BOLD)} />
+                        <AiOutlineItalic className="text-custom-medium-gray self-center" onClick={() => onClickEditStyle(ITALIC)} />
+                        <AiOutlineUnderline className="text-custom-medium-gray self-center" onClick={() => onClickEditStyle(UNDERLINE)} />
                         {/* <TbSubscript className="text-custom-medium-gray" /> */}
                         {/* <TbSuperscript className="text-custom-medium-gray" /> */}
-                        <AiOutlineFontColors className="text-custom-medium-gray" />
-                        <AiOutlineHighlight className="text-custom-medium-gray" />
-                        <TbSettingsCode className="text-custom-medium-gray" />
+                        <div className="flex">
+                            <AiOutlineFontColors onClick={() => onClickEditStyle(FONT_COLOR)} className="cursor-pointer text-custom-medium-gray" style={{color: fontColor}}/>
+                            <Popover placement="bottom-end" open={openFontColorPicker} handler={setOpenFontColorPicker}>
+                                <PopoverHandler>
+                                    <button className="flex outline-none text-custom-medium-gray">
+                                        <BiChevronDown className={`transition-transform ${openFontColorPicker ? "rotate-180" : ""}`} />
+                                    </button>
+                                </PopoverHandler>
+                                <PopoverContent className="z-50 bg-opacity-0 border-opacity-0 shadow-none p-0 pt-2"><Github color={fontColor} onChange={onChangeFontClr} /></PopoverContent>
+                            </Popover>
+                        </div>
+                        <div className="flex">
+                            <AiOutlineHighlight onClick={() => onClickEditStyle(HIGHLIGHT_BG)} className="cursor-pointer text-custom-medium-gray" style={{color: highlightBg}} />
+                            <Popover placement="bottom-end" open={openHighlightPicker} handler={setOpenHighlightPicker}>
+                                <PopoverHandler>
+                                    <button className="flex outline-none text-custom-medium-gray">
+                                        <BiChevronDown className={`transition-transform ${openHighlightPicker ? "rotate-180" : ""}`} />
+                                    </button>
+                                </PopoverHandler>
+                                <PopoverContent className="z-50 bg-opacity-0 border-opacity-0 shadow-none p-0 pt-2"><Github color={highlightBg} onChange={onChangeHighlightBg}/></PopoverContent>
+                            </Popover>
+                        </div>
+                        <TbSettingsCode className="text-custom-medium-gray self-center" />
                     </div>
                     <RxDividerVertical className="text-custom-medium-gray self-center" />
                     <div className="flex gap-4 self-center" onFocus={onFocusZoomTranscriptMenu} onBlur={() => onBlurZoomTranscriptMenu()}>
@@ -248,7 +315,7 @@ const TEditor = () => {
             </div>
             
             <div className={`grid gap-8 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
-                <TSection />
+                <TSection actionStyle={actionStyle} startEle={startEle} endEle={endEle} changeStyle={changeStyle} changeFontClr={changeFontClr} changeHighlightClr={changeHighlightClr} />
             </div>
         </>
     )

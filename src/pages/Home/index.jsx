@@ -8,7 +8,7 @@ import { setCurrentTime, setIsPlaying, setMedias, setSelectedMediaId } from "@/r
 import TEditor from "@/Components/TEditor";
 
 // utils
-import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_SIDEBAR, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, TIME_MEDIA_UPDATE, TIME_SYNC_TRANSCRIPTION, DEBUG_MODE } from "@/utils/constant";
+import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_SIDEBAR, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, TIME_MEDIA_UPDATE, SET_LOADING } from "@/utils/constant";
 import { EventBus, getItemFromArr } from "@/utils/function";
 
 // services
@@ -19,20 +19,21 @@ const Home = () => {
   const videoRef = useRef();
   const audioRef = useRef();
   const editorRef = useRef();
-  const isFromClicked = useRef(false);
+  const isUpdatedFromOutside = useRef(false);
 
   const { selectedMediaId, showMedia, mediaSide, medias, isPlaying, frameSpeed, volume } = useSelector((state) => state.media);
 
   const [videoWidth, setVideoWidth] = useState(0);
 
   const handleResize = () => {
-    var videoTagWidth = videoRef.current?.clientWidth == undefined ? 0 : videoRef.current.clientWidth;
-    var editorWidth = editorRef.current?.clientWidth == undefined ? 0 : editorRef.current.clientWidth;
+    let videoTagWidth = videoRef.current?.clientWidth == undefined ? 0 : videoRef.current.clientWidth;
+    let editorWidth = editorRef.current?.clientWidth == undefined ? 0 : editorRef.current.clientWidth;
     setVideoWidth(videoTagWidth);
     EventBus.dispatch(RESIZED_FUNCTION_BAR, editorWidth == 80 ? 0 : editorWidth);
   }
 
   useEffect(() => {
+    EventBus.dispatch(SET_LOADING, true);
     MediaService.getAllMedias()
       .then((res) => {
         if (res.status == 200) {
@@ -41,9 +42,11 @@ const Home = () => {
         } else {
           console.warn("While getting all media files, an error occurred on the server side::: ", res);
         }
+        EventBus.dispatch(SET_LOADING, false);
       })
       .catch((err) => {
         console.warn("While getting all media files, an error occurred on the client's side::: ", err);
+        EventBus.dispatch(SET_LOADING, false);
       });
   }, [])
 
@@ -57,37 +60,41 @@ const Home = () => {
 
     // handle video/audio timeupdate event
     videoRef.current.addEventListener(TIME_MEDIA_UPDATE, () => {
-      var time = videoRef.current.currentTime == 0 ? 0.000001 : videoRef.current.currentTime
-      if (time == videoRef.current.duration) {
-        dispatch(setCurrentTime(0.000001))
-        dispatch(setIsPlaying(false));
-        return;
+      if (!isUpdatedFromOutside.current) {
+        let time = videoRef.current.currentTime == 0 ? 0.000001 : videoRef.current.currentTime
+        if (time == videoRef.current.duration) {
+          dispatch(setCurrentTime(0.000001))
+          dispatch(setIsPlaying(false));
+          return;
+        }
+        dispatch(setCurrentTime(time));
+      } else {
+        isUpdatedFromOutside.current = false;
       }
-      EventBus.dispatch(TIME_SYNC_TRANSCRIPTION, { time, isFromClicked: isFromClicked.current });
-      isFromClicked.current = false;
-      dispatch(setCurrentTime(time));
     });
 
     audioRef.current.addEventListener(TIME_MEDIA_UPDATE, () => {
-      var time = audioRef.current.currentTime == 0 ? 0.000001 : audioRef.current.currentTime
-      if (time == audioRef.current.duration) {
-        dispatch(setCurrentTime(0.000001))
-        dispatch(setIsPlaying(false));
-        return;
+      if (!isUpdatedFromOutside.current) {
+        let time = audioRef.current.currentTime == 0 ? 0.000001 : audioRef.current.currentTime
+        if (time == audioRef.current.duration) {
+          dispatch(setCurrentTime(0.000001))
+          dispatch(setIsPlaying(false));
+          return;
+        }
+        dispatch(setCurrentTime(time));
+      } else {
+        isUpdatedFromOutside.current = false;
       }
-      EventBus.dispatch(TIME_SYNC_TRANSCRIPTION, { time, isFromClicked: isFromClicked.current });
-      isFromClicked.current = false;
-      dispatch(setCurrentTime(time));
     });
 
     EventBus.on(TIME_UPDATE_OUTSIDE, (data) => {
-      var { time, mediaId } = data;
-      isFromClicked.current = data?.isFromClicked || false;
+      let { time, mediaId } = data;
       if (mediaId == "") return;
-      getItemFromArr(medias, "fileId", mediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.currentTime = time : audioRef.current.currentTime = time;
+      let mediaRef = getItemFromArr(medias, "fileId", mediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef : audioRef;
+      isUpdatedFromOutside.current = true;
+      mediaRef.current.currentTime = time;
       dispatch(setCurrentTime(time));
-      var duration = getItemFromArr(medias, "fileId", mediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.duration : audioRef.current.duration
-      if (time == duration) dispatch(setIsPlaying(false));
+      if (time == mediaRef.current.duration) dispatch(setIsPlaying(false));
     })
 
     // Remove the event listeners when the component unmounts

@@ -29,7 +29,7 @@ const PlaylistSideBar = ({ close }) => {
       <hr className="border-blue-gray-50 mb-6" /> 
       <div className="h-[calc(100%-124px)] overflow-auto scrollbar scrollPaddingRight ml-5 mr-[10px]">
         {medias.map((media, index) => {
-          var selected = selectedMediaId === media.fileId;
+          let selected = selectedMediaId === media.fileId;
           return (
             <div key={media.fileId} className={`flex justify-between cursor-pointer ${index == 0 ? "" : "mt-3"}`} onClick={() => onClickMedia(media.fileId)}>
               <div className="flex gap-3 overflow-hidden">
