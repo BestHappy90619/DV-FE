@@ -24,34 +24,34 @@ const TMediaController = () => {
   const [currentTimePercent, setCurrentTimePercent] = useState(0.000001); // timeslide's percent, 0 ~ 100
   
   const onClickMinusFrameSpeed = () => {
-    var frameSpeedNum = frameSpeed * 1;
+    let frameSpeedNum = frameSpeed * 1;
     frameSpeedNum -= 0.2;
     if (frameSpeedNum < 0.4) frameSpeedNum = 0.4;
     dispatch(setFrameSpeed(setMinimumFractionFormat(frameSpeedNum)));
   }
 
   const onClickPlusFrameSpeed = () => {
-    var frameSpeedNum = frameSpeed * 1;
+    let frameSpeedNum = frameSpeed * 1;
     frameSpeedNum += 0.2;
     if (frameSpeedNum > 4) frameSpeedNum = 4;
     dispatch(setFrameSpeed(setMinimumFractionFormat(frameSpeedNum)));
   }
 
   const onClickPrevMedia = () => {
-    var selMIndex = getIndexFromArr(medias, "fileId", selectedMediaId);
+    let selMIndex = getIndexFromArr(medias, "fileId", selectedMediaId);
     if (selMIndex < 1) return;
     dispatch(setSelectedMediaId(medias[selMIndex - 1].fileId));
   }
 
   const onClickNextMedia = () => {
-    var selMIndex = getIndexFromArr(medias, "fileId", selectedMediaId);
+    let selMIndex = getIndexFromArr(medias, "fileId", selectedMediaId);
     if (selMIndex == medias.length - 1 || selMIndex == -1) return;
     dispatch(setSelectedMediaId(medias[selMIndex + 1].fileId));
   }
 
   const onChangeCurrentTimePercent = (e) => {
     if (selectedMediaId == "") return;
-    var percent = e.target.value == 0 ? 0.000001 : e.target.value;
+    let percent = e.target.value == 0 ? 0.000001 : e.target.value;
     setCurrentTimePercent(percent);
     EventBus.dispatch(TIME_UPDATE_OUTSIDE, {time : percent / 100 * getItemFromArr(medias, "fileId", selectedMediaId)?.duration, mediaId: selectedMediaId});
   }
