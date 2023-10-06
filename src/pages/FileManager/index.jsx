@@ -1,8 +1,9 @@
 import NavBar from "@/Layouts/NavBar";
 import FMResizablePanel from "@/Components/FMResizablePanel";
-import FMTreeView from "@/Components/FMTreeView";
 import { useEffect, useState } from "react";
 import SearchBox from "../../Components/FMSearchBox";
+import FMTreeSideBar from "../../Layouts/FMTreeSideBar";
+import FMMiddlePanel from "../../Layouts/FMMiddlePanel";
 
 const FileManager = () => {
   const [middlePanelWidth, setMiddlePanelWidth] = useState(300);
@@ -36,7 +37,7 @@ const FileManager = () => {
   return (
     <div className="">
       <NavBar />
-      <div className=" mx-9 w-full flex flex-col md:flex-row justify-start mt-28 overflow-y-hidden ">
+      <div className=" mx-9 w-full flex flex-col md:flex-row justify-start items-center mt-28 overflow-y-hidden ">
         <div className="flex items-start">
           <img
             src="/image/favicon.png"
@@ -62,8 +63,7 @@ const FileManager = () => {
             width={leftPanelWidth}
             onResize={hadleResizeLeftPanel}
           >
-            Resizable Panel2
-            <FMTreeView />
+            <FMTreeSideBar />
           </FMResizablePanel>
         </div>
 
@@ -72,7 +72,7 @@ const FileManager = () => {
             width={middlePanelWidth}
             onResize={handleResizwMiddlePanel}
           >
-            Resizable Panel
+            <FMMiddlePanel />
           </FMResizablePanel>
         </div>
       </div>

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import JqxTree, { ITreeProps } from 'jqwidgets-scripts/jqwidgets-react-tsx/jqxtree';
+import "./jqx.base.css";
+import "./jqx.fluent.css";
+
 
 class TreeView extends React.PureComponent<{}, ITreeProps>{
   private treeA = React.createRef<JqxTree>();
-  private treeB = React.createRef<JqxTree>();
-  private logStart = React.createRef<HTMLDivElement>();
-  private logEnd = React.createRef<HTMLDivElement>();
   private textarea = React.createRef<HTMLTextAreaElement>();
   
   constructor(props: {}) {
@@ -33,27 +33,22 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
             dragStart={this.dragStart}
             >
             <ul >
-              <li className="px-5 py-2">Home</li>
-              <li className="px-5 py-2">
+              <li className="">Home</li>
+              <li className="">
                 Solutions
-                <ul className="px-5 py-2">
-                  <li className="px-5 py-2">Education</li>
+                <ul className="">
+                  <li className="">Education</li>
                 </ul>
               </li>
-              <li className="px-5 py-2">Financial services</li>
-              <li className="px-5 py-2">Community</li>
+              <li className="">Financial services</li>
+              <li className="">Community</li>
             </ul>
           </JqxTree>
-
+          <div style={{ width: '200px', height: '200px', float: 'left', marginLeft: '20px' }}>
+            <textarea ref={this.textarea} rows={5} className='w-0 h-0'/>
+          </div>
         
         </div>
-
-        <div style={{ fontSize: '13px', fontFamily: 'Verdana', paddingTop: '20px', clear: 'both' }}>
-    
-          <div ref={this.logStart} />
-          <div ref={this.logEnd} />
-          <br />
-        </div>        
       </div>
     );
   }
@@ -77,12 +72,10 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
 
   // Event handling
   private onDragStart(event: any): void {
-    this.logStart.current!.innerText = 'Drag Start: ' + event.args.label;
-    this.logEnd.current!.innerText = '';
+
   };
 
   private onDragEnd(event: any): void {
-    this.logEnd.current!.innerText = 'Drag End';
     const args = event.args;
     if (!!args.label) {
       const ev = event.args.originalEvent;
@@ -93,10 +86,9 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
         x = touch.pageX;
         y = touch.pageY;
       }
-
-      const rect = this.textarea.current!.getBoundingClientRect();
-      const width = this.textarea.current!.clientWidth;
-      const height = this.textarea.current!.clientHeight;
+      const rect = this.textarea.current.getBoundingClientRect();
+      const width = this.textarea.current.clientWidth;
+      const height = this.textarea.current.clientHeight;
       const right = rect.left + width;
       const bottom = rect.top + height;
       if (x >= rect.left && x <= right) {
