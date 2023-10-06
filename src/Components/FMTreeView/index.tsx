@@ -44,7 +44,6 @@ class TreeView extends React.PureComponent<{}, ITreeProps> {
             }}
             onDragStart={this.dragStartTreeA}
             onDragEnd={this.dragEndTreeA}
-            width={220}
             dragStart={this.dragStart}
           >
             <ul>
