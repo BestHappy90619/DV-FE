@@ -23,8 +23,15 @@ class TreeView extends React.PureComponent<{}, ITreeProps> {
 
   public render() {
     return (
-      <div>
-        <div style={{ float: "left", marginTop: "10px", marginBottom: "10px" }}>
+      <div className="w-full">
+        <div
+          style={{
+            float: "left",
+            marginTop: "10px",
+            marginBottom: "10px",
+            width: "100%",
+          }}
+        >
           <JqxTree
             theme={"material-purple"}
             ref={this.treeA}

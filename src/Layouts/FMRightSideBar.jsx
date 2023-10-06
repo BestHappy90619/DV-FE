@@ -33,7 +33,7 @@ const FMRightSideBar = () => {
   ];
 
   return (
-    <div className="flex flex-col ml-4 w-full">
+    <div className="flex flex-col  w-full px-4">
       <div className="flex justify-start items-center">
         <img
           src="/public/image/FMBigNewfolderIcon.svg"
@@ -73,7 +73,35 @@ const FMRightSideBar = () => {
                   className="w-full"
                   alt="music spectrum"
                 />
-                <div className="text-[#212121] text-lg my-4">File Details</div>
+                <div className="text-[#212121] text-lg mt-8 mb-4">
+                  File Details
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div className="w-full flex justify-between">
+                    <div className="text-[#757575]">Uploaded by:</div>
+                    <div className="text-[#212121]">Serhii Movchan</div>
+                  </div>
+
+                  <div className="w-full flex justify-between">
+                    <div className="text-[#757575]">Uploaded Date:</div>
+                    <div className="text-[#212121]">08/24/2019 05:45 PM</div>
+                  </div>
+
+                  <div className="w-full flex justify-between">
+                    <div className="text-[#757575]">Last Activity</div>
+                    <div className="text-[#212121]">Today 04:15 PM</div>
+                  </div>
+
+                  <div className="w-full flex justify-between">
+                    <div className="text-[#757575]">File Size</div>
+                    <div className="text-[#212121]">3MB</div>
+                  </div>
+
+                  <div className="w-full flex justify-between">
+                    <div className="text-[#757575]">File Type</div>
+                    <div className="text-[#212121]">MP3</div>
+                  </div>
+                </div>
                 <div className="text-[#212121] text-lg my-4">
                   Folder Details
                 </div>
