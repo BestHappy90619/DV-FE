@@ -82,7 +82,7 @@ export default function NavBar() {
               alt="Transcribatron.png"
               className=" mr-2 w-[26px] h-[30px]"
             />
-            Transcribatron
+            {/* Transcribatron */}
           </Typography>
           <ul className="flex flex-row gap-6">
             {menus.map((menu) => {
