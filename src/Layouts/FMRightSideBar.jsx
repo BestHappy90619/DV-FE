@@ -36,7 +36,7 @@ const FMRightSideBar = () => {
     <div className="flex flex-col  w-full px-4">
       <div className="flex justify-start items-center">
         <img
-          src="/public/image/FMBigNewfolderIcon.svg"
+          src="/image/FMBigNewfolderIcon.svg"
           className="w-[36px] h-[36px]"
           alt="new  folder"
         />
@@ -69,7 +69,7 @@ const FMRightSideBar = () => {
               <div className="flex flex-col">
                 <div className="text-[#212121] text-lg mb-4">Preview</div>
                 <img
-                  src="/public/image/Timelinemusicspectrum.svg"
+                  src="/image/Timelinemusicspectrum.svg"
                   className="w-full"
                   alt="music spectrum"
                 />
@@ -146,7 +146,7 @@ const FMRightSideBar = () => {
               </div>
               <div className="flex w-full justify-between relative mt-12">
                 <img
-                  src="/public/image/avatar4.png"
+                  src="/image/avatar4.png"
                   alt=""
                   className="w-[31px] h-[31px] rounded-full"
                 ></img>
@@ -170,7 +170,7 @@ const FMRightSideBar = () => {
               </div>
               <div className="flex w-full justify-between relative mt-14">
                 <img
-                  src="/public/image/avatar4.png"
+                  src="/image/avatar4.png"
                   alt=""
                   className="w-[31px] h-[31px] rounded-full"
                 ></img>
@@ -191,7 +191,7 @@ const FMRightSideBar = () => {
               <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
                 <div className="flex justify-start items-center ">
                   <img
-                    src="/public/image/avatar4.png"
+                    src="/image/avatar4.png"
                     className="w-[40px] h-[40px] rounded-full"
                     alt="avatar"
                   />
@@ -204,7 +204,7 @@ const FMRightSideBar = () => {
                 </div>
                 <div className="flex justify-end items-center">
                   <img
-                    src="/public/image/FMDotsIcon.svg"
+                    src="/image/FMDotsIcon.svg"
                     className="w-[24px] h-[24px]"
                     alt="dots"
                   />
@@ -213,7 +213,7 @@ const FMRightSideBar = () => {
               <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
                 <div className="flex justify-start items-center ">
                   <img
-                    src="/public/image/avatar4.png"
+                    src="/image/avatar4.png"
                     className="w-[40px] h-[40px] rounded-full"
                     alt="avatar"
                   />
@@ -226,7 +226,7 @@ const FMRightSideBar = () => {
                 </div>
                 <div className="flex justify-end items-center">
                   <img
-                    src="/public/image/FMDotsIcon.svg"
+                    src="/image/FMDotsIcon.svg"
                     className="w-[24px] h-[24px]"
                     alt="dots"
                   />
@@ -235,7 +235,7 @@ const FMRightSideBar = () => {
               <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
                 <div className="flex justify-start items-center ">
                   <img
-                    src="/public/image/avatar4.png"
+                    src="/image/avatar4.png"
                     className="w-[40px] h-[40px] rounded-full"
                     alt="avatar"
                   />
@@ -248,7 +248,7 @@ const FMRightSideBar = () => {
                 </div>
                 <div className="flex justify-end items-center">
                   <img
-                    src="/public/image/FMDotsIcon.svg"
+                    src="/image/FMDotsIcon.svg"
                     className="w-[24px] h-[24px]"
                     alt="dots"
                   />
@@ -257,7 +257,7 @@ const FMRightSideBar = () => {
               <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
                 <div className="flex justify-start items-center ">
                   <img
-                    src="/public/image/avatar4.png"
+                    src="/image/avatar4.png"
                     className="w-[40px] h-[40px] rounded-full"
                     alt="avatar"
                   />
@@ -270,7 +270,7 @@ const FMRightSideBar = () => {
                 </div>
                 <div className="flex justify-end items-center">
                   <img
-                    src="/public/image/FMDotsIcon.svg"
+                    src="/image/FMDotsIcon.svg"
                     className="w-[24px] h-[24px]"
                     alt="dots"
                   />
@@ -279,7 +279,7 @@ const FMRightSideBar = () => {
               <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
                 <div className="flex justify-start items-center ">
                   <img
-                    src="/public/image/avatar4.png"
+                    src="/image/avatar4.png"
                     className="w-[40px] h-[40px] rounded-full"
                     alt="avatar"
                   />
@@ -292,7 +292,7 @@ const FMRightSideBar = () => {
                 </div>
                 <div className="flex justify-end items-center">
                   <img
-                    src="/public/image/FMDotsIcon.svg"
+                    src="/image/FMDotsIcon.svg"
                     className="w-[24px] h-[24px]"
                     alt="dots"
                   />
@@ -301,7 +301,7 @@ const FMRightSideBar = () => {
               <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
                 <div className="flex justify-start items-center ">
                   <img
-                    src="/public/image/avatar4.png"
+                    src="/image/avatar4.png"
                     className="w-[40px] h-[40px] rounded-full"
                     alt="avatar"
                   />
@@ -314,7 +314,7 @@ const FMRightSideBar = () => {
                 </div>
                 <div className="flex justify-end items-center">
                   <img
-                    src="/public/image/FMDotsIcon.svg"
+                    src="/image/FMDotsIcon.svg"
                     className="w-[24px] h-[24px]"
                     alt="dots"
                   />
@@ -328,7 +328,7 @@ const FMRightSideBar = () => {
               </div>
               <div className="w-full mt-2 border-[1px] border-[#DEE0E4] py-2 px-4 flex items-center">
                 <img
-                  src="/public/image/FMShareIcon.svg"
+                  src="/image/FMShareIcon.svg"
                   className="w-[20px] h-[20px] mr-4"
                   alt="share icon"
                 />
