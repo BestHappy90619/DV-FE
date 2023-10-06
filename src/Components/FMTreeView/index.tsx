@@ -1,13 +1,14 @@
-import * as React from 'react';
-import JqxTree, { ITreeProps } from 'jqwidgets-scripts/jqwidgets-react-tsx/jqxtree';
+import * as React from "react";
+import JqxTree, {
+  ITreeProps,
+} from "jqwidgets-scripts/jqwidgets-react-tsx/jqxtree";
 import "./jqx.base.css";
 import "./jqx.fluent.css";
 
-
-class TreeView extends React.PureComponent<{}, ITreeProps>{
+class TreeView extends React.PureComponent<{}, ITreeProps> {
   private treeA = React.createRef<JqxTree>();
   private textarea = React.createRef<HTMLTextAreaElement>();
-  
+
   constructor(props: {}) {
     super(props);
 
@@ -23,31 +24,97 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
   public render() {
     return (
       <div>
-        <div style={{ float: 'left' }}>
-          <JqxTree theme={'material-purple'}
+        <div style={{ float: "left", marginTop: "10px", marginBottom: "10px" }}>
+          <JqxTree
+            theme={"material-purple"}
             ref={this.treeA}
-            style={{ float: 'left', marginLeft: '0px' }}
+            style={{
+              float: "left",
+              marginLeft: "0px",
+              border: "none",
+              outline: "none",
+              overflowX: "hidden",
+            }}
             onDragStart={this.dragStartTreeA}
             onDragEnd={this.dragEndTreeA}
-            width={220} height={330}
+            width={220}
             dragStart={this.dragStart}
-            >
-            <ul >
-              <li className="">Home</li>
+          >
+            <ul>
+              <li>
+                <div className="  flex">
+                  <img
+                    src="/public/image/FMFolderIcon.svg"
+                    className="w-[18px] h-[18px]"
+                    alt="folder icon"
+                  />
+                  <div className="ml-2 max-w-[120px] overflow-hidden truncate">
+                    AAaaaaaaaaajjjajfffffkjjkjaaaa
+                  </div>
+                </div>
+              </li>
               <li className="">
-                Solutions
+                <div className="flex  ">
+                  <img
+                    src="/public/image/FMFolderIcon.svg"
+                    className="w-[18px] h-[18px]"
+                    alt="folder icon"
+                  />
+                  <div className="ml-2 max-w-[120px] overflow-hidden truncate">
+                    BBbbbbbbbbbbbbbbbbbb
+                  </div>
+                </div>
                 <ul className="">
-                  <li className="">Education</li>
+                  <li className="">
+                    <div className="flex  ">
+                      <img
+                        src="/public/image/FMFolderIcon.svg"
+                        className="w-[18px] h-[18px]"
+                        alt="folder icon"
+                      />
+                      <div className="ml-2 max-w-[120px] overflow-hidden truncate">
+                        cccccccccccccccccccccccccccccc
+                      </div>
+                    </div>
+                  </li>
                 </ul>
               </li>
-              <li className="">Financial services</li>
-              <li className="">Community</li>
+              <li className="">
+                <div className="flex  ">
+                  <img
+                    src="/public/image/FMFolderIcon.svg"
+                    className="w-[18px] h-[18px]"
+                    alt="folder icon"
+                  />
+                  <div className="ml-2 max-w-[120px] overflow-hidden truncate">
+                    dddddddddddddddddddddddddddddd
+                  </div>
+                </div>
+              </li>
+              <li className="">
+                <div className="flex  ">
+                  <img
+                    src="/public/image/FMFolderIcon.svg"
+                    className="w-[18px] h-[18px]"
+                    alt="folder icon"
+                  />
+                  <div className="ml-2 max-w-[120px] overflow-hidden truncate">
+                    fffffffffffffffffffffffffffffffffffff
+                  </div>
+                </div>
+              </li>
             </ul>
           </JqxTree>
-          <div style={{ width: '200px', height: '200px', float: 'left', marginLeft: '20px' }}>
-            <textarea ref={this.textarea} rows={5} className='w-0 h-0'/>
+          <div
+            style={{
+              width: "0px",
+              height: "0px",
+              float: "left",
+              marginLeft: "20px",
+            }}
+          >
+            <textarea ref={this.textarea} rows={5} className="w-0 h-0" />
           </div>
-        
         </div>
       </div>
     );
@@ -60,7 +127,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
     }
 
     return true;
-  };
+  }
 
   private dragEnd(item: any): boolean {
     if (item.label === "Forum") {
@@ -71,9 +138,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
   }
 
   // Event handling
-  private onDragStart(event: any): void {
-
-  };
+  private onDragStart(event: any): void {}
 
   private onDragEnd(event: any): void {
     const args = event.args;
@@ -81,7 +146,11 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
       const ev = event.args.originalEvent;
       let x = ev.pageX;
       let y = ev.pageY;
-      if (event.args.originalEvent && event.args.originalEvent.originalEvent && event.args.originalEvent.originalEvent.touches) {
+      if (
+        event.args.originalEvent &&
+        event.args.originalEvent.originalEvent &&
+        event.args.originalEvent.originalEvent.touches
+      ) {
         const touch = event.args.originalEvent.originalEvent.changedTouches[0];
         x = touch.pageX;
         y = touch.pageY;
@@ -97,8 +166,8 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
         }
       }
     }
-  };
-  
+  }
+
   private dragStartTreeA(event: Event): void {
     this.onDragStart(event);
   }
@@ -108,7 +177,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps>{
   }
 
   private dragStartTreeB(event: Event): void {
-    this.onDragStart(event);    
+    this.onDragStart(event);
   }
 
   private dragEndTreeB(event: Event): void {
