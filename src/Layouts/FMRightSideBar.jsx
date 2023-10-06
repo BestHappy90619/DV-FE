@@ -162,18 +162,8 @@ const FMRightSideBar = () => {
                 </div>
                 <div className="text-[12px] text-[#A4AAB3]">18:52</div>
               </div>
-              <div className=" relative w-full flex justify-end mt-6">
-                <img
-                  src="/public/image/Rectangle 3myblob.svg"
-                  className="w-8/12 "
-                  alt="blob"
-                />
-                <img
-                  src="/public/image/Rectangle 3myblobtail.png"
-                  className="w-[12.3px] h-[17.72px] absolute z-3 bottom-[2px] -right-[4px]"
-                  alt="blob"
-                />
-                <div className="absolute z-5 top-4 text-white text-[13px] w-8/12 px-2 text-left">
+              <div className="  w-full flex justify-end mt-6">
+                <div className="bubble right text-white text-[13px] w-8/12 px-2 text-left">
                   Yeah man! I need to change 895 BTC. Do you have it in your
                   pocket?
                   <div className="text-white text-[12px] text-right">18:49</div>
