@@ -64,7 +64,7 @@ const FileManager = () => {
           </FMResizablePanel>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-10 ">
           <FMResizablePanel
             width={middlePanelWidth}
             onResize={handleResizwMiddlePanel}
