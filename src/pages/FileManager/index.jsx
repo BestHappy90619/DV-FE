@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SearchBox from "../../Components/FMSearchBox";
 import FMTreeSideBar from "../../Layouts/FMTreeSideBar";
 import FMMiddlePanel from "../../Layouts/FMMiddlePanel";
+import FMRightSideBar from "../../Layouts/FMRightSideBar";
 
 const FileManager = () => {
   const [middlePanelWidth, setMiddlePanelWidth] = useState(300);
@@ -57,8 +58,8 @@ const FileManager = () => {
           />
         </div>
       </div>
-      <div className="w-full flex relative mt-10">
-        <div className="">
+      <div className="w-full flex relative ">
+        <div className="mt-5">
           <FMResizablePanel
             width={leftPanelWidth}
             onResize={hadleResizeLeftPanel}
@@ -67,13 +68,17 @@ const FileManager = () => {
           </FMResizablePanel>
         </div>
 
-        <div className="">
+        <div className="mt-10">
           <FMResizablePanel
             width={middlePanelWidth}
             onResize={handleResizwMiddlePanel}
           >
             <FMMiddlePanel />
           </FMResizablePanel>
+        </div>
+
+        <div className="mt-10">
+          <FMRightSideBar />
         </div>
       </div>
     </div>
