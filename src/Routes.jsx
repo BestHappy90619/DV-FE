@@ -3,6 +3,7 @@ import MainLyt from "./Layouts";
 
 // pages
 import Error404 from "./pages/Error/404";
+import FileManager from "./pages/FileManager";
 import Home from "./pages/Home";
 
 // define routes
@@ -16,6 +17,10 @@ const Routes = [
         element: <Home />,
       },
     ],
+  },
+  {
+    path: "/filemanage",
+    element: <FileManager />
   },
   {
     path: "*",
