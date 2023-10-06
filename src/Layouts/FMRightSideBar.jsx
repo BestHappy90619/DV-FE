@@ -42,10 +42,10 @@ const FMRightSideBar = () => {
         />
         <div className="ml-3 text-[26px] text-[#212121]">New Folder</div>
       </div>
-      <div className="flex justify-center mt-4 w-full">
+      <div className="flex justify-center mt-3 w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader
-            className="rounded-none border-b border-blue-gray-50 bg-transparent p-0 h-[54px] "
+            className="rounded-none border-b border-[#C4C4C4] bg-transparent p-0 h-[54px] "
             indicatorProps={{
               className:
                 "bg-transparent border-b-[3px] border-[#4489FE] shadow-none rounded-none",
@@ -76,7 +76,7 @@ const FMRightSideBar = () => {
                 <div className="text-[#212121] text-lg mt-8 mb-4">
                   File Details
                 </div>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 text-[14px]">
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">Uploaded by:</div>
                     <div className="text-[#212121]">Serhii Movchan</div>
@@ -94,7 +94,7 @@ const FMRightSideBar = () => {
 
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">File Size</div>
-                    <div className="text-[#212121]">3MB</div>
+                    <div className="text-[#212121]">3 MB</div>
                   </div>
 
                   <div className="w-full flex justify-between">
@@ -105,8 +105,7 @@ const FMRightSideBar = () => {
                 <div className="text-[#212121] text-lg my-4">
                   Folder Details
                 </div>
-
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4  text-[14px]">
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">Owner:</div>
                     <div className="text-[#212121]">Serhii Movchan</div>
@@ -188,8 +187,153 @@ const FMRightSideBar = () => {
               </div>
             </TabPanel>
 
-            <TabPanel key={"members"} value={"members"}>
-              {""}
+            <TabPanel key={"members"} value={"members"} className="py-4 px-0">
+              <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
+                <div className="flex justify-start items-center ">
+                  <img
+                    src="/public/image/avatar4.png"
+                    className="w-[40px] h-[40px] rounded-full"
+                    alt="avatar"
+                  />
+                  <div className="flex flex-col ml-2">
+                    <div className="text-[#212121] text-[14px]">
+                      Serhii Movchan
+                    </div>
+                    <div className="text-[#bdbdbd] text-[14px]">Manager</div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <img
+                    src="/public/image/FMDotsIcon.svg"
+                    className="w-[24px] h-[24px]"
+                    alt="dots"
+                  />
+                </div>
+              </div>
+              <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
+                <div className="flex justify-start items-center ">
+                  <img
+                    src="/public/image/avatar4.png"
+                    className="w-[40px] h-[40px] rounded-full"
+                    alt="avatar"
+                  />
+                  <div className="flex flex-col ml-2">
+                    <div className="text-[#212121] text-[14px]">
+                      Serhii Movchan
+                    </div>
+                    <div className="text-[#bdbdbd] text-[14px]">Manager</div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <img
+                    src="/public/image/FMDotsIcon.svg"
+                    className="w-[24px] h-[24px]"
+                    alt="dots"
+                  />
+                </div>
+              </div>
+              <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
+                <div className="flex justify-start items-center ">
+                  <img
+                    src="/public/image/avatar4.png"
+                    className="w-[40px] h-[40px] rounded-full"
+                    alt="avatar"
+                  />
+                  <div className="flex flex-col ml-2">
+                    <div className="text-[#212121] text-[14px]">
+                      Serhii Movchan
+                    </div>
+                    <div className="text-[#bdbdbd] text-[14px]">Manager</div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <img
+                    src="/public/image/FMDotsIcon.svg"
+                    className="w-[24px] h-[24px]"
+                    alt="dots"
+                  />
+                </div>
+              </div>
+              <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
+                <div className="flex justify-start items-center ">
+                  <img
+                    src="/public/image/avatar4.png"
+                    className="w-[40px] h-[40px] rounded-full"
+                    alt="avatar"
+                  />
+                  <div className="flex flex-col ml-2">
+                    <div className="text-[#212121] text-[14px]">
+                      Serhii Movchan
+                    </div>
+                    <div className="text-[#bdbdbd] text-[14px]">Manager</div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <img
+                    src="/public/image/FMDotsIcon.svg"
+                    className="w-[24px] h-[24px]"
+                    alt="dots"
+                  />
+                </div>
+              </div>
+              <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
+                <div className="flex justify-start items-center ">
+                  <img
+                    src="/public/image/avatar4.png"
+                    className="w-[40px] h-[40px] rounded-full"
+                    alt="avatar"
+                  />
+                  <div className="flex flex-col ml-2">
+                    <div className="text-[#212121] text-[14px]">
+                      Serhii Movchan
+                    </div>
+                    <div className="text-[#bdbdbd] text-[14px]">Manager</div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <img
+                    src="/public/image/FMDotsIcon.svg"
+                    className="w-[24px] h-[24px]"
+                    alt="dots"
+                  />
+                </div>
+              </div>
+              <div className="flex w-full justify-between border-b-[#C4C4C4] border-b-[1px] h-[54px] ">
+                <div className="flex justify-start items-center ">
+                  <img
+                    src="/public/image/avatar4.png"
+                    className="w-[40px] h-[40px] rounded-full"
+                    alt="avatar"
+                  />
+                  <div className="flex flex-col ml-2">
+                    <div className="text-[#212121] text-[14px]">
+                      Serhii Movchan
+                    </div>
+                    <div className="text-[#bdbdbd] text-[14px]">Manager</div>
+                  </div>
+                </div>
+                <div className="flex justify-end items-center">
+                  <img
+                    src="/public/image/FMDotsIcon.svg"
+                    className="w-[24px] h-[24px]"
+                    alt="dots"
+                  />
+                </div>
+              </div>
+              <div className="mt-8 text-[#4489FE] underline font-medium">
+                Show All
+              </div>
+              <div className="mt-6 text-[#212121] text-[12px] font-medium">
+                Folder Link
+              </div>
+              <div className="w-full mt-2 border-[1px] border-[#DEE0E4] py-2 px-4 flex items-center">
+                <img
+                  src="/public/image/FMShareIcon.svg"
+                  className="w-[20px] h-[20px] mr-4"
+                  alt="share icon"
+                />
+                https://www.dv.com/packs/file-folder
+              </div>
             </TabPanel>
           </TabsBody>
         </Tabs>
