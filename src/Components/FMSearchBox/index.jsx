@@ -3,7 +3,7 @@ const SearchBox = ({ className }) => {
     <div className={`${className} flex items-center justify-between`}>
       <div className="flex justify-start items-center">
         <img
-          src="/public/image/SearchIcon.svg"
+          src="/image/SearchIcon.svg"
           className="w-[18px] h-[18px]"
           alt="search icon"
         ></img>
@@ -18,7 +18,7 @@ const SearchBox = ({ className }) => {
         <div className="text-sm text-[#757575]">All</div>
         <img
           className="ml-3 w-[10px] h-[6px]"
-          src="/public/image/SmallDownArrow.svg"
+          src="/image/SmallDownArrow.svg"
           alt="down arrow"
         ></img>
       </div>

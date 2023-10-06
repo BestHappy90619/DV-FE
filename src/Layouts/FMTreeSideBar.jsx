@@ -9,7 +9,7 @@ const FMTreeSideBar = () => {
       "
       >
         <img
-          src="/public/image/PlusFMCreateButton.svg"
+          src="/image/PlusFMCreateButton.svg"
           className="w-[20px] h-[20px]"
           alt="plus icon"
         />
@@ -19,7 +19,7 @@ const FMTreeSideBar = () => {
       </button>
       <div className="flex">
         <img
-          src="/public/image/FMHomeIcon.svg"
+          src="/image/FMHomeIcon.svg"
           className="w-[18px] h-[18px]"
           alt="home icon"
         />
@@ -29,7 +29,7 @@ const FMTreeSideBar = () => {
 
       <div className="flex">
         <img
-          src="/public/image/FMUsersIcon.png"
+          src="/image/FMUsersIcon.png"
           className="w-[20px] h-[20px]"
           alt="home icon"
         />
@@ -38,7 +38,7 @@ const FMTreeSideBar = () => {
 
       <div className="flex ">
         <img
-          src="/public/image/FMStarIcon.svg"
+          src="/image/FMStarIcon.svg"
           className="w-[20px] h-[20px]"
           alt="home icon"
         />
