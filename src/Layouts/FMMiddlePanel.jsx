@@ -1,7 +1,7 @@
 const FMMiddlePanel = () => {
   return (
     <div className="w-full flex flex-col">
-      <div className="w-full flex justify-between ">
+      <div className="w-full flex justify-between px-4">
         <div className="flex">
           <div className="text-[#757575]">DeskVantage/</div>
           <div className="text-[#212121]">New Folder</div>
