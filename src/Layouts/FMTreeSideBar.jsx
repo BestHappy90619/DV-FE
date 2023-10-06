@@ -17,7 +17,35 @@ const FMTreeSideBar = () => {
           Create
         </div>
       </button>
+      <div className="flex">
+        <img
+          src="/public/image/FMHomeIcon.svg"
+          className="w-[18px] h-[18px]"
+          alt="home icon"
+        />
+        <div className="text-[#757575] text-sm font-bold ml-2">Home</div>
+      </div>
       <FMTreeView />
+
+      <div className="flex">
+        <img
+          src="/public/image/FMUsersIcon.png"
+          className="w-[20px] h-[20px]"
+          alt="home icon"
+        />
+        <div className="text-[#757575] text-sm font-bold ml-2">
+          Available For Me
+        </div>
+      </div>
+
+      <div className="flex ">
+        <img
+          src="/public/image/FMStarIcon.svg"
+          className="w-[20px] h-[20px]"
+          alt="home icon"
+        />
+        <div className="text-[#757575] text-sm font-bold ml-2">Favorite</div>
+      </div>
     </div>
   );
 };

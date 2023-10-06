@@ -4364,15 +4364,14 @@ of the horizontal scrollbar.*/
 .jqx-fill-state-hover {
     -moz-box-sizing: content-box;
     box-sizing: content-box;
-    border-color: #999;
-    background: #e8e8e8;
+    border-color: #E9F0FD;
 }
 
 .jqx-fill-state-pressed {
     -moz-box-sizing: content-box;
     box-sizing: content-box;
-    border-color: #999;
-    background: #d1d1d1;
+    border-color: #E9F0FD;
+    background: #E9F0FD;
 }
 
 .jqx-fill-state-focus {
