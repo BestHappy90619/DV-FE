@@ -55,7 +55,7 @@ const FileManager = () => {
         </div>
       </div>
       <div className="w-full flex relative ">
-        <div className="mt-5">
+        <div className="mt-5 w-full">
           <FMResizablePanel
             width={leftPanelWidth}
             onResize={hadleResizeLeftPanel}
