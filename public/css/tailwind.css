@@ -86,3 +86,7 @@ html {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
+
+textarea:focus, input:focus{
+    outline: none;
+}
