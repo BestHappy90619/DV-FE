@@ -38,19 +38,15 @@ const FileManager = () => {
   return (
     <div className="">
       <NavBar />
-      <div className=" mx-9 w-full flex flex-col md:flex-row justify-start items-center mt-28 overflow-y-hidden ">
+      <div className=" mx-9 w-full flex flex-col md:flex-row justify-start items-center mt-28 overflow-y-hidden font-roboto">
         <div className="flex items-start">
           <img
             src="/image/favicon.png"
             alt="Transcribatron.png"
             className=" mr-2 w-[26px] h-[30px]"
           />
-          <div className="ml-2 text-[#4489FE] text-[22px]  font-roboto">
-            DeskVantage
-          </div>
-          <div className="ml-1 text-[#3F51B5] text-[22px]  font-roboto">
-            Storage
-          </div>
+          <div className="ml-2 text-[#4489FE] text-[22px]  ">DeskVantage</div>
+          <div className="ml-1 text-[#3F51B5] text-[22px]  ">Storage</div>
         </div>
         <div className="w-full md:w-calc-full-without-200  md:max-w-[840px] flex items-end ">
           <SearchBox
@@ -77,7 +73,7 @@ const FileManager = () => {
           </FMResizablePanel>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-8 w-full">
           <FMRightSideBar />
         </div>
       </div>

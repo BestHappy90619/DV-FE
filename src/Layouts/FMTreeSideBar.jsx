@@ -13,7 +13,7 @@ const FMTreeSideBar = () => {
           className="w-[20px] h-[20px]"
           alt="plus icon"
         />
-        <div className="ml-3 text-sm font-medium font-roboto text-[#757575]">
+        <div className="ml-3  font-medium font-roboto text-[#757575]">
           Create
         </div>
       </button>
@@ -23,7 +23,7 @@ const FMTreeSideBar = () => {
           className="w-[18px] h-[18px]"
           alt="home icon"
         />
-        <div className="text-[#757575] text-sm font-bold ml-2">Home</div>
+        <div className="text-[#757575]  font-bold ml-2">Home</div>
       </div>
       <FMTreeView />
 
@@ -33,9 +33,7 @@ const FMTreeSideBar = () => {
           className="w-[20px] h-[20px]"
           alt="home icon"
         />
-        <div className="text-[#757575] text-sm font-bold ml-2">
-          Available For Me
-        </div>
+        <div className="text-[#757575] font-bold ml-2">Available For Me</div>
       </div>
 
       <div className="flex ">
@@ -44,7 +42,7 @@ const FMTreeSideBar = () => {
           className="w-[20px] h-[20px]"
           alt="home icon"
         />
-        <div className="text-[#757575] text-sm font-bold ml-2">Favorite</div>
+        <div className="text-[#757575] font-bold ml-2">Favorite</div>
       </div>
     </div>
   );
