@@ -41,6 +41,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps> {
               border: "none",
               outline: "none",
               overflowX: "hidden",
+              color: "#212121",
             }}
             onDragStart={this.dragStartTreeA}
             onDragEnd={this.dragEndTreeA}

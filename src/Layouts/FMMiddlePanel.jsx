@@ -1,23 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const FMMiddlePanel = () => {
-  const [scrollLeft, setScrollLeft] = useState(0);
-
-  const handleScroll = (e) => {
-    setScrollLeft(e.target.scrollLeft);
-  };
-
-  useEffect(() => {
-    const tableBody = document.querySelector(".table-body");
-    if (tableBody) {
-      tableBody.addEventListener("scroll", handleScroll);
-    }
-    return () => {
-      if (tableBody) {
-        tableBody.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
+  const [sortByNameUD, setSortByNameUD] = useState(false);
+  const [sortByUpdatedUD, setSortByUpdatedUD] = useState(false);
+  const [sortBySizeUD, setSortBySizeUD] = useState(false);
 
   return (
     <div className="w-full flex flex-col">
@@ -96,13 +82,67 @@ const FMMiddlePanel = () => {
                 <input type="checkbox" />
               </th>
               <th className="text-[#212121] font-medium" align="left">
-                Name
+                <div
+                  className="flex items-center cursor-pointer select-none"
+                  onClick={() => setSortByNameUD(!sortByNameUD)}
+                >
+                  Name
+                  {sortByNameUD === true ? (
+                    <img
+                      src="/image/up.png"
+                      className="w-5 h-5 ml-1"
+                      alt="up arrow icon"
+                    />
+                  ) : (
+                    <img
+                      src="/image/down.png"
+                      className="w-5 h-5 ml-1"
+                      alt="up arrow icon"
+                    />
+                  )}
+                </div>
               </th>
               <th className="text-[#212121] font-medium" align="left">
-                Last Updated
+                <div
+                  className="flex items-center cursor-pointer select-none"
+                  onClick={() => setSortByUpdatedUD(!sortByUpdatedUD)}
+                >
+                  Last Updated
+                  {sortByUpdatedUD === true ? (
+                    <img
+                      src="/image/up.png"
+                      className="w-5 h-5 ml-1"
+                      alt="up arrow icon"
+                    />
+                  ) : (
+                    <img
+                      src="/image/down.png"
+                      className="w-5 h-5 ml-1"
+                      alt="up arrow icon"
+                    />
+                  )}
+                </div>
               </th>
               <th className="text-[#212121] font-medium" align="left">
-                Size
+                <div
+                  className="flex items-center cursor-pointer select-none"
+                  onClick={() => setSortBySizeUD(!sortBySizeUD)}
+                >
+                  Size
+                  {sortBySizeUD === true ? (
+                    <img
+                      src="/image/up.png"
+                      className="w-5 h-5 ml-1"
+                      alt="up arrow icon"
+                    />
+                  ) : (
+                    <img
+                      src="/image/down.png"
+                      className="w-5 h-5 ml-1"
+                      alt="up arrow icon"
+                    />
+                  )}
+                </div>
               </th>
               <th align="center">{"  "}</th>
             </tr>

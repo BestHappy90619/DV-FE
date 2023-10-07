@@ -49,7 +49,9 @@ const FMRightSideBar = () => {
                 value={value}
                 onClick={() => setActiveTab(value)}
                 className={
-                  activeTab === value ? "text-[#4489FE] font-medium" : ""
+                  activeTab === value
+                    ? "text-[#4489FE] font-medium text-[13px]"
+                    : "text-[13px]"
                 }
               >
                 {label}
