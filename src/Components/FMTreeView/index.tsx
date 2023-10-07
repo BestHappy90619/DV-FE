@@ -51,7 +51,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps> {
               <li>
                 <div className="  flex">
                   <img
-                    src="/image/FMFolderIcon.svg"
+                    src="/image/FMListfileIcon.svg"
                     className="w-[18px] h-[18px]"
                     alt="folder icon"
                   />
@@ -75,7 +75,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps> {
                   <li className="">
                     <div className="flex  ">
                       <img
-                        src="/image/FMFolderIcon.svg"
+                        src="/image/FMListfileIcon.svg"
                         className="w-[18px] h-[18px]"
                         alt="folder icon"
                       />
@@ -89,7 +89,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps> {
               <li className="">
                 <div className="flex  ">
                   <img
-                    src="/image/FMFolderIcon.svg"
+                    src="/image/FMListfileIcon.svg"
                     className="w-[18px] h-[18px]"
                     alt="folder icon"
                   />
@@ -101,7 +101,7 @@ class TreeView extends React.PureComponent<{}, ITreeProps> {
               <li className="">
                 <div className="flex  ">
                   <img
-                    src="/image/FMFolderIcon.svg"
+                    src="/image/FMListfileIcon.svg"
                     className="w-[18px] h-[18px]"
                     alt="folder icon"
                   />
