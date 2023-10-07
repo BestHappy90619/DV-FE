@@ -83,8 +83,8 @@ const MainLyt = () => {
   return (
     <>
       <NavBar />
-      <div className="flex justify-between w-full">
-        <Breadcrumbs className="ml-[270px] flex items-center h-5 py-0 my-0">
+      <div className="flex mt-[82px] justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px]">
+        <Breadcrumbs className="ml-[300px] flex items-center h-5 py-0 my-0">
           <a href="#" className="text-lg text-[#757575]">
             <span>DeskVantage</span>
           </a>
@@ -93,7 +93,7 @@ const MainLyt = () => {
           </a>
         </Breadcrumbs>
       </div>
-      <div className="flex mt-[122px] mb-[102px]">
+      <div className="flex  mb-[102px]">
         <div className="flex fixed z-40 bg-white">
           <div style={{ width: leftSidebarWidth }}>
             <FMTreeSideBar />

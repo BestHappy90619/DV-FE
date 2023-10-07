@@ -1,29 +1,56 @@
-import { Breadcrumbs } from "@material-tailwind/react";
-
 const FMMiddlePanel = () => {
   return (
     <div className="w-full flex flex-col">
-      <div className="w-full flex justify-between items-center">
-        <div className="flex justify-end">
-          <div className="flex border-r border-[#C4C4C4] gap-2 pr-2">
+      <div className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4]">
+        <div className="flex justify-start ml-10 text-[14px]">
+          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMShareIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
               alt="icon"
             />
+            Create link
+          </div>
+          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMEyeIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
               alt="icon"
             />
+            View selected
           </div>
-          <div className="flex border-r border-[#C4C4C4]  gap-2 px-2">
+          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
-              src="/image/FMNewFolderIcon.svg"
+              src="/image/FMEyeIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
               alt="icon"
             />
+            Zip
+          </div>
+          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
+              src="/image/FMCopyIcon.svg"
+              className="w-[19px] h-[19px] cursor-pointer"
+              alt="icon"
+            />
+            Copy
+          </div>
+          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
+            <img
+              src="/image/FMDownloadIcon.svg"
+              className="w-[20px] h-[20px] cursor-pointer"
+              alt="icon"
+            />
+            Download
+          </div>
+          <div className="flex  gap-2 px-4 cursor-pointer">
+            <img
+              src="/image/FMDotsIcon.svg"
+              className="w-[20px] h-[20px] "
+              alt="icon"
+            />
+            More
+            {/* <img
               src="/image/FMStarIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
               alt="icon"
@@ -33,27 +60,15 @@ const FMMiddlePanel = () => {
               className="w-[20px] h-[20px] cursor-pointer"
               alt="icon"
             />
-          </div>
-          <div className="flex  gap-2 pl-2">
             <img
               src="/image/FMTrashIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
               alt="icon"
-            />
-            <img
-              src="/image/FMCopyIcon.svg"
-              className="w-[19px] h-[19px] cursor-pointer"
-              alt="icon"
-            />
-            <img
-              src="/image/FMDownloadIcon.svg"
-              className="w-[20px] h-[20px] cursor-pointer"
-              alt="icon"
-            />
+            /> */}
           </div>
         </div>
       </div>
-      <div className="w-full mt-5 flex justify-center">
+      <div className="w-full  flex justify-center">
         <table className="w-full">
           <thead>
             <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] ">

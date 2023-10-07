@@ -2,22 +2,19 @@ import FMTreeView from "../Components/FMTreeView";
 
 const FMTreeSideBar = () => {
   return (
-    <div className="flex w-full flex-col ml-10">
+    <div className="flex w-full flex-col ml-10 relative">
       <button
-        className=" flex items-center justify-center h-[50px] w-[150px] rounded-[100px] shadow-md hover:shadow-lg
-        border  border-[rgb(#000, 30%)] mb-5
+        className=" flex items-center justify-center h-[46px] w-[46px] absolute -top-[23px] right-[82px]
+        rounded-full shadow-md hover:shadow-lg        
       "
       >
         <img
-          src="/image/PlusFMCreateButton.svg"
-          className="w-[20px] h-[20px]"
-          alt="plus icon"
+          src="/image/plus-svgrepo-com.svg"
+          className="w-full h-full"
+          alt="plus"
         />
-        <div className="ml-3  font-medium font-roboto text-[#757575]">
-          Create
-        </div>
       </button>
-      <div className="flex">
+      <div className="flex mt-5">
         <img
           src="/image/FMHomeIcon.svg"
           className="w-[18px] h-[18px]"
