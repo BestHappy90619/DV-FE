@@ -2,7 +2,7 @@ import FMTreeView from "../Components/FMTreeView";
 
 const FMTreeSideBar = () => {
   return (
-    <div className="flex w-full flex-col ml-10 relative">
+    <div className="flex w-full flex-col pl-4 relative">
       <button
         className=" flex items-center justify-center h-[46px] w-[46px] absolute -top-[23px] right-[82px]
         rounded-full shadow-md hover:shadow-lg        
