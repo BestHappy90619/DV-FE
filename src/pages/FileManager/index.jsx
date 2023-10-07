@@ -9,7 +9,7 @@ import {
 } from "@/redux-toolkit/reducers/Sidebar";
 
 // layouts
-import NavBar from "../../Layouts/FMNavBar";
+import NavBar from "../../Layouts/NavBar";
 import FMTreeSideBar from "../../Layouts/FMTreeSideBar";
 import FMMiddlePanel from "../../Layouts/FMMiddlePanel";
 import FMRightSideBar from "../../Layouts/FMRightSideBar";
@@ -18,6 +18,7 @@ import FMRightSideBar from "../../Layouts/FMRightSideBar";
 import { RESIZED_SIDEBAR, PREVENT_SELECT } from "@/utils/constant";
 import { EventBus } from "@/utils/function";
 import FMFooter from "../../Layouts/FMFooter";
+import { Breadcrumbs } from "@material-tailwind/react";
 
 const MainLyt = () => {
   const dispatch = useDispatch();
@@ -82,7 +83,16 @@ const MainLyt = () => {
   return (
     <>
       <NavBar />
-
+      <div className="flex justify-between w-full">
+        <Breadcrumbs className="ml-[270px] flex items-center h-5 py-0 my-0">
+          <a href="#" className="text-lg text-[#757575]">
+            <span>DeskVantage</span>
+          </a>
+          <a href="#" className="text-lg text-[#212121]">
+            <span>New Folder</span>
+          </a>
+        </Breadcrumbs>
+      </div>
       <div className="flex mt-[122px] mb-[102px]">
         <div className="flex fixed z-40 bg-white">
           <div style={{ width: leftSidebarWidth }}>

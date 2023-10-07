@@ -9,9 +9,50 @@ import {
   MenuList,
   MenuItem,
   Avatar,
+  Breadcrumbs,
+  Tabs,
+  TabsHeader,
+  TabsBody,
+  Tab,
+  TabPanel,
 } from "@material-tailwind/react";
 
+import SearchBox from "../Components/FMSearchBox";
+import { useState } from "react";
+
 export default function NavBar() {
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+  const data = [
+    {
+      label: "ALL",
+      value: "all",
+      desc: `It really matters and then like it really doesn't matter.
+      What matters is the people who are sparked by it. And the people 
+      who are like offended by it, it doesn't matter.`,
+    },
+    {
+      label: "TASKS",
+      value: "tasks",
+      desc: `Because it's about motivating the doers. Because I'm here
+      to follow my dreams and inspire other people to follow their dreams, too.`,
+    },
+    {
+      label: "PAYMENTS",
+      value: "payments",
+      desc: `We're not always in the position that we want to be at.
+      We're constantly growing. We're constantly making mistakes. We're
+      constantly trying to express ourselves and actualize our dreams.`,
+    },
+    {
+      label: "UPLOADING",
+      value: "uploading",
+      desc: `We're not always in the position that we want to be at.
+      We're constantly growing. We're constantly making mistakes. We're
+      constantly trying to express ourselves and actualize our dreams.`,
+    },
+  ];
+
   const navigate = useNavigate();
 
   const currentUrl = useLocation().pathname;
@@ -19,8 +60,8 @@ export default function NavBar() {
   const menus = [
     {
       title: "Media",
-      path: "/media",
-      key: ["/media", "/media/mines", "/media/upload"],
+      path: "/filemanage",
+      key: ["/filemanage", "/filemanage/mines", "/filemanage/upload"],
       children: [
         {
           title: "My Files",
@@ -62,11 +103,6 @@ export default function NavBar() {
         },
       ],
     },
-    {
-      title: "File Manage",
-      path: "/filemanage",
-      key: ["/filemanage"],
-    },
   ];
 
   return (
@@ -82,7 +118,6 @@ export default function NavBar() {
               alt="Transcribatron.png"
               className=" mr-2 w-[26px] h-[30px]"
             />
-            {/* Transcribatron */}
           </Typography>
           <ul className="flex flex-row gap-6">
             {menus.map((menu) => {
@@ -155,7 +190,264 @@ export default function NavBar() {
             })}
           </ul>
         </div>
-        <div className="">
+
+        <div className="w-full md:w-calc-full-without-200  md:max-w-[450px] flex items-end ">
+          <SearchBox className={`w-full bg-[#F2F3F5] h-[50px] `} />
+        </div>
+        <div className="flex items-center">
+          <div className="relative">
+            <img
+              src="/image/FMNotificationIcon.svg"
+              className="w-12 h-12 mr-4 cursor-pointer"
+              alt="notification icon"
+              onClick={() => setShowNotificationPopup(!showNotificationPopup)}
+            />
+            {showNotificationPopup === true && (
+              <div className="w-[480px] absolute z-10 right-0 top-12 flex flex-col gap-3 bg-white shadow-md">
+                <Tabs value={activeTab} className="w-full min-h-[300px]">
+                  <TabsHeader
+                    className="rounded-none border-b border-[#C4C4C4] bg-transparent p-0 h-[54px] "
+                    indicatorProps={{
+                      className:
+                        "bg-transparent border-b-[3px] border-[#4489FE] shadow-none rounded-none ",
+                    }}
+                  >
+                    {data.map(({ label, value }) => (
+                      <Tab
+                        key={value}
+                        value={value}
+                        onClick={() => setActiveTab(value)}
+                        className={
+                          activeTab === value
+                            ? "text-[#4489FE] font-medium text-[11px]"
+                            : " text-[11px]"
+                        }
+                      >
+                        {label}
+                      </Tab>
+                    ))}
+                  </TabsHeader>
+                  <TabsBody>
+                    <TabPanel key={"all"} value={"all"}>
+                      <div className="flex flex-col gap-5">
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#0FAA5828] rounded-[2px] text-[#0FAA58] text-[11px] text-center ">
+                              Payments
+                            </div>
+                            <div className="flex flex-col ml-3">
+                              <div className="text-[#212121] text-[13px]">
+                                Paymetns #1231423
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                You have new payment
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#E9F0FD] rounded-[2px] text-[#4489FE] text-[11px] text-center ">
+                              Tasks
+                            </div>
+                            <div className="flex flex-col ml-3">
+                              <div className="text-[#212121] text-[13px]">
+                                New notification page
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                You have new comments in task{" "}
+                                <span className="text-[#4489FE]">#2424525</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#E9F0FD] rounded-[2px] text-[#4489FE] text-[11px] text-center ">
+                              Tasks
+                            </div>
+                            <div className="flex flex-col ml-3">
+                              <div className="text-[#212121] text-[13px]">
+                                New notification page
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                You have new comments in task{" "}
+                                <span className="text-[#4489FE]">#2424526</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#F1F3F4] text-[#757575] text-[11px] text-center ">
+                              Uploading
+                            </div>
+                            <div className="flex flex-col ml-3">
+                              <div className="text-[#212121] text-[13px]">
+                                example.mp3
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                Upload complete
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#F1F3F4] text-[#757575] text-[11px] text-center ">
+                              Uploading
+                            </div>
+                            <div className="flex flex-col ml-3 gap-2">
+                              <div className="text-[#212121] text-[13px]">
+                                example.mp3
+                              </div>
+                              <div className="text-[#757575] text-[13px] relative">
+                                <div className="w-[200px] bg-[#F2F1F1] h-[8px] rounded-[3px]" />
+                                <div className="w-[140px] bg-[#4489FE] h-[6px] rounded-[3px] absolute top-[1px] left-0" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+                      </div>
+                    </TabPanel>
+
+                    <TabPanel key={"tasks"} value={"tasks"}>
+                      <div className="flex flex-col gap-5">
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#E9F0FD] rounded-[2px] text-[#4489FE] text-[11px] text-center ">
+                              Tasks
+                            </div>
+                            <div className="flex flex-col ml-3">
+                              <div className="text-[#212121] text-[13px]">
+                                New notification page
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                You have new comments in task{" "}
+                                <span className="text-[#4489FE]">#2424525</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#E9F0FD] rounded-[2px] text-[#4489FE] text-[11px] text-center ">
+                              Tasks
+                            </div>
+                            <div className="flex flex-col ml-3">
+                              <div className="text-[#212121] text-[13px]">
+                                New notification page
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                You have new comments in task{" "}
+                                <span className="text-[#4489FE]">#2424526</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+                      </div>
+                    </TabPanel>
+
+                    <TabPanel key={"payments"} value={"payments"} className="">
+                      <div className="flex flex-col gap-5">
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#0FAA5828] rounded-[2px] text-[#0FAA58] text-[11px] text-center ">
+                              Payments
+                            </div>
+                            <div className="flex flex-col ml-3 ">
+                              <div className="text-[#212121] text-[13px]">
+                                Paymetns #1231423
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                You have new payment
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+                      </div>
+                    </TabPanel>
+
+                    <TabPanel
+                      key={"uploading"}
+                      value={"uploading"}
+                      className=""
+                    >
+                      <div className="flex flex-col gap-5">
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#F1F3F4] rounded-[2px] text-[#757575] text-[11px] text-center ">
+                              Uploading
+                            </div>
+                            <div className="flex flex-col ml-3 ">
+                              <div className="text-[#212121] text-[13px]">
+                                example.mp3
+                              </div>
+                              <div className="text-[#757575] text-[13px]">
+                                Upload complete
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+
+                        <div className="flex w-full px-5 justify-between items-center">
+                          <div className="flex justify-start items-center">
+                            <div className="w-[62px] h-[19px] bg-[#F1F3F4]  rounded-[2px] text-[#757575] text-[11px] text-center ">
+                              Uploading
+                            </div>
+                            <div className="flex flex-col ml-3 gap-2">
+                              <div className="text-[#212121] text-[13px]">
+                                example.mp3
+                              </div>
+                              <div className="text-[#757575] text-[13px] relative">
+                                <div className="w-[200px] bg-[#F2F1F1] h-[8px] rounded-[3px]" />
+                                <div className="w-[140px] bg-[#4489FE] h-[6px] rounded-[3px] absolute top-[1px] left-0" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end text-center text-[11px] text-[#757575]">
+                            Yesterday at 6:56 PM
+                          </div>
+                        </div>
+                      </div>
+                    </TabPanel>
+                  </TabsBody>
+                </Tabs>
+                <div className="text-[#4489FE] underline text-[13px] text-center flex w-full justify-center py-10 ">
+                  View all notification
+                </div>
+              </div>
+            )}
+          </div>
           <Menu>
             <MenuHandler>
               <Avatar
