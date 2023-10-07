@@ -33,15 +33,7 @@ const FMRightSideBar = () => {
   ];
 
   return (
-    <div className="flex flex-col  w-full px-4">
-      <div className="flex justify-start items-center">
-        <img
-          src="/image/FMBigNewfolderIcon.svg"
-          className="w-[36px] h-[36px]"
-          alt="new  folder"
-        />
-        <div className="ml-3 text-[26px] text-[#212121]">New Folder</div>
-      </div>
+    <div className="flex flex-col  w-[350px] px-4">
       <div className="flex justify-center mt-3 w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader
