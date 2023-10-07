@@ -33,11 +33,11 @@ const FMRightSideBar = () => {
   ];
 
   return (
-    <div className="flex flex-col  w-[350px] px-4">
-      <div className="flex justify-center mt-3 w-full">
+    <div className="flex flex-col  w-[350px] px-2 ">
+      <div className="flex justify-center  w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader
-            className="rounded-none border-b border-[#C4C4C4] bg-transparent p-0 h-[54px] "
+            className="rounded-none border-b border-[#C4C4C4] bg-transparent p-0 h-[60px] "
             indicatorProps={{
               className:
                 "bg-transparent border-b-[3px] border-[#4489FE] shadow-none rounded-none",
@@ -59,13 +59,7 @@ const FMRightSideBar = () => {
           <TabsBody>
             <TabPanel key={"details"} value={"details"}>
               <div className="flex flex-col">
-                <div className="text-[#212121] text-lg mb-4">Preview</div>
-                <img
-                  src="/image/Timelinemusicspectrum.svg"
-                  className="w-full"
-                  alt="music spectrum"
-                />
-                <div className="text-[#212121] text-lg mt-8 mb-4">
+                <div className="text-[#212121] text-lg mt-4 mb-4">
                   File Details
                 </div>
                 <div className="flex flex-col gap-4 text-[14px]">
@@ -92,40 +86,6 @@ const FMRightSideBar = () => {
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">File Type</div>
                     <div className="text-[#212121]">MP3</div>
-                  </div>
-                </div>
-                <div className="text-[#212121] text-lg my-4">
-                  Folder Details
-                </div>
-                <div className="flex flex-col gap-4  text-[14px]">
-                  <div className="w-full flex justify-between">
-                    <div className="text-[#757575]">Owner:</div>
-                    <div className="text-[#212121]">Serhii Movchan</div>
-                  </div>
-
-                  <div className="w-full flex justify-between">
-                    <div className="text-[#757575]">Created:</div>
-                    <div className="text-[#212121]">08/24/2019 05:45 PM</div>
-                  </div>
-
-                  <div className="w-full flex justify-between">
-                    <div className="text-[#757575]">Last Activity</div>
-                    <div className="text-[#212121]">Today 04:15 PM</div>
-                  </div>
-
-                  <div className="w-full flex justify-between">
-                    <div className="text-[#757575]">Total Members</div>
-                    <div className="text-[#212121]">11 Members</div>
-                  </div>
-
-                  <div className="w-full flex justify-between">
-                    <div className="text-[#757575]">Total Files</div>
-                    <div className="text-[#212121]">9 Files</div>
-                  </div>
-
-                  <div className="w-full flex justify-between">
-                    <div className="text-[#757575]">Folder Size</div>
-                    <div className="text-[#212121]">27 MB</div>
                   </div>
                 </div>
               </div>
