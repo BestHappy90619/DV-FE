@@ -23,7 +23,7 @@ const FMMiddlePanel = () => {
     <div className="w-full flex flex-col">
       <div className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4]">
         <div className="flex justify-start ml-10 text-[14px]">
-          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
+          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMShareIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
@@ -31,7 +31,7 @@ const FMMiddlePanel = () => {
             />
             Create link
           </div>
-          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
+          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMEyeIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
@@ -39,7 +39,7 @@ const FMMiddlePanel = () => {
             />
             View selected
           </div>
-          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
+          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMEyeIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
@@ -47,7 +47,7 @@ const FMMiddlePanel = () => {
             />
             Zip
           </div>
-          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
+          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMCopyIcon.svg"
               className="w-[19px] h-[19px] cursor-pointer"
@@ -55,7 +55,7 @@ const FMMiddlePanel = () => {
             />
             Copy
           </div>
-          <div className="flex border-r border-[#dee0e4] gap-2 px-4 cursor-pointer">
+          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMDownloadIcon.svg"
               className="w-[20px] h-[20px] cursor-pointer"
@@ -99,7 +99,7 @@ const FMMiddlePanel = () => {
                 Name
               </th>
               <th className="text-[#212121] font-medium" align="left">
-                Updated
+                Last Updated
               </th>
               <th className="text-[#212121] font-medium" align="left">
                 Size
