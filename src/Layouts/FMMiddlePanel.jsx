@@ -3,15 +3,7 @@ import { Breadcrumbs } from "@material-tailwind/react";
 const FMMiddlePanel = () => {
   return (
     <div className="w-full flex flex-col">
-      <div className="w-full flex justify-between pr-4 items-center">
-        <Breadcrumbs className="flex items-center h-5 py-0 my-0">
-          <a href="#" className="text-lg text-[#757575]">
-            <span>DeskVantage</span>
-          </a>
-          <a href="#" className="text-lg text-[#212121]">
-            <span>New Folder</span>
-          </a>
-        </Breadcrumbs>
+      <div className="w-full flex justify-between items-center">
         <div className="flex justify-end">
           <div className="flex border-r border-[#C4C4C4] gap-2 pr-2">
             <img

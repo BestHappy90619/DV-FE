@@ -14,14 +14,6 @@ const SearchBox = ({ className }) => {
         "
         />
       </div>
-      <div className="flex justify-end items-center">
-        <div className="text-sm text-[#757575]">All</div>
-        <img
-          className="ml-3 w-[10px] h-[6px]"
-          src="/image/SmallDownArrow.svg"
-          alt="down arrow"
-        ></img>
-      </div>
     </div>
   );
 };

@@ -1,84 +1,123 @@
-import NavBar from "@/Layouts/NavBar";
-import FMResizablePanel from "@/Components/FMResizablePanel";
-import { useEffect, useState } from "react";
-import SearchBox from "../../Components/FMSearchBox";
+import { useEffect, useRef } from "react";
+
+//redux
+import { useSelector, useDispatch } from "react-redux";
+import {
+  toggleSearch,
+  setLeftSidebarWidth,
+  setRightSidebarWidth,
+} from "@/redux-toolkit/reducers/Sidebar";
+
+// layouts
+import NavBar from "../../Layouts/FMNavBar";
 import FMTreeSideBar from "../../Layouts/FMTreeSideBar";
 import FMMiddlePanel from "../../Layouts/FMMiddlePanel";
 import FMRightSideBar from "../../Layouts/FMRightSideBar";
 
-const FileManager = () => {
-  const [middlePanelWidth, setMiddlePanelWidth] = useState(300);
-  const [leftPanelWidth, setLeftPanelWidth] = useState(300);
+// constant
+import { RESIZED_SIDEBAR, PREVENT_SELECT } from "@/utils/constant";
+import { EventBus } from "@/utils/function";
+import FMFooter from "../../Layouts/FMFooter";
 
-  // Create a function to update the window width when the window is resized
-  const handleWindowResize = () => {
-    setMiddlePanelWidth((window.innerWidth * 5) / 12);
-    setLeftPanelWidth((window.innerWidth * 3) / 12);
-  };
+const MainLyt = () => {
+  const dispatch = useDispatch();
 
-  // Attach the resize event listener when the component mounts
+  const { minWidth, maxWidth } = useSelector((state) => state.sidebar);
+  const leftSidebarWidth = 300;
+  const rightSidebarWidth = 350;
+
+  const isNowLeftResizing = useRef(false);
+  const isNowRightResizing = useRef(false);
+
   useEffect(() => {
-    handleWindowResize();
-    window.addEventListener("resize", handleWindowResize);
+    window.addEventListener("keydown", function (e) {
+      if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
+        e.preventDefault();
+        dispatch(toggleSearch());
+      }
+    });
 
-    // Remove the event listener when the component unmounts to prevent memory leaks
+    window.addEventListener("mousemove", function (e) {
+      if (!isNowLeftResizing.current && !isNowRightResizing.current) return;
+      EventBus.dispatch(PREVENT_SELECT, true);
+      if (isNowLeftResizing.current) {
+        const newWidth = leftSidebarWidth + (e.screenX - leftSidebarWidth);
+        if (newWidth >= minWidth && newWidth <= maxWidth)
+          dispatch(setLeftSidebarWidth(newWidth));
+      }
+      if (isNowRightResizing.current) {
+        const newWidth =
+          rightSidebarWidth +
+          (this.window.innerWidth - rightSidebarWidth - e.screenX);
+        if (newWidth >= minWidth && newWidth <= maxWidth)
+          dispatch(setRightSidebarWidth(newWidth));
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      isNowLeftResizing.current = false;
+      isNowRightResizing.current = false;
+      EventBus.dispatch(PREVENT_SELECT, false);
+    });
+
     return () => {
-      window.removeEventListener("resize", handleWindowResize);
+      window.removeEventListener("keydown", () => {});
+      window.removeEventListener("mousemove", () => {});
+      window.removeEventListener("mouseup", () => {});
     };
   }, []);
 
-  const handleResizwMiddlePanel = (event, { size }) => {
-    setMiddlePanelWidth(size.width);
+  useEffect(() => {
+    EventBus.dispatch(RESIZED_SIDEBAR, RESIZED_SIDEBAR);
+  }, [leftSidebarWidth, rightSidebarWidth]);
+
+  const leftSidebarMouseDown = () => {
+    isNowLeftResizing.current = true;
   };
 
-  const hadleResizeLeftPanel = (event, { size }) => {
-    setLeftPanelWidth(size.width);
+  const rightSidebarMouseDown = () => {
+    isNowRightResizing.current = true;
   };
 
   return (
-    <div className="">
+    <>
       <NavBar />
-      <div className=" mx-9 w-full flex flex-col md:flex-row justify-start items-center mt-28 overflow-y-hidden font-roboto">
-        <div className="flex items-start">
-          <img
-            src="/image/favicon.png"
-            alt="Transcribatron.png"
-            className=" mr-2 w-[26px] h-[30px]"
-          />
-          <div className="ml-2 text-[#4489FE] text-[22px]  ">DeskVantage</div>
-          <div className="ml-1 text-[#3F51B5] text-[22px]  ">Storage</div>
-        </div>
-        <div className="w-full md:w-calc-full-without-200  md:max-w-[840px] flex items-end ">
-          <SearchBox
-            className={`w-10/12 bg-[#F1F3F4] h-[50px] px-3  mx-0 md:ml-28 `}
-          />
-        </div>
-      </div>
-      <div className="w-full flex relative ">
-        <div className="mt-5 w-full">
-          <FMResizablePanel
-            width={leftPanelWidth}
-            onResize={hadleResizeLeftPanel}
-          >
+
+      <div className="flex mt-[122px] mb-[102px]">
+        <div className="flex fixed z-40 bg-white">
+          <div style={{ width: leftSidebarWidth }}>
             <FMTreeSideBar />
-          </FMResizablePanel>
+          </div>
+          <div
+            className="w-1 border-l-2 cursor-col-resize border-blue-gray-50"
+            onMouseDown={leftSidebarMouseDown}
+          ></div>
         </div>
 
-        <div className="mt-10 ">
-          <FMResizablePanel
-            width={middlePanelWidth}
-            onResize={handleResizwMiddlePanel}
-          >
-            <FMMiddlePanel />
-          </FMResizablePanel>
+        <div
+          style={{
+            marginLeft: leftSidebarWidth + "px",
+            marginRight: rightSidebarWidth + "px",
+            width: `calc(100% - ${
+              Number(leftSidebarWidth) + Number(rightSidebarWidth)
+            }px)`,
+          }}
+        >
+          <FMMiddlePanel />
         </div>
 
-        <div className="mt-8 w-full">
+        <div className="flex fixed right-0 z-40 bg-white">
+          <div
+            className="w-1 border-r-2 cursor-col-resize border-blue-gray-50"
+            onMouseDown={rightSidebarMouseDown}
+          ></div>
           <FMRightSideBar />
         </div>
       </div>
-    </div>
+
+      <FMFooter />
+    </>
   );
 };
 
-export default FileManager;
+export default MainLyt;
