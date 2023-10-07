@@ -1,6 +1,6 @@
 const FMFooter = () => {
   return (
-    <div className="w-full flex justify-between px-10 fixed bottom-0 h-[100px] items-center">
+    <div className="w-full flex justify-between px-10 fixed bottom-0 h-[100px] items-center bg-white">
       <div className="text-[#757575]">
         2016-2023 &copy; DeskVantage, Inc. All rights reserved.{" "}
       </div>
