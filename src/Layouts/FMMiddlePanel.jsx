@@ -77,7 +77,7 @@ const FMMiddlePanel = () => {
       <div className={`w-full flex justify-center  `}>
         <table className="w-full">
           <thead className=" ">
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] ">
+            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] text-[14px]">
               <th align="center">
                 <input type="checkbox" />
               </th>
