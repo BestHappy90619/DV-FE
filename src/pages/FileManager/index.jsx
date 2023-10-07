@@ -85,10 +85,10 @@ const MainLyt = () => {
       <NavBar />
       <div className="flex mt-[82px] justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px]">
         <Breadcrumbs className="ml-[300px] flex items-center h-5 py-0 my-0">
-          <a href="#" className="text-lg text-[#757575]">
-            <span>DeskVantage</span>
+          <a href="#" className="text-[14px] text-[#757575]">
+            <span>Site</span>
           </a>
-          <a href="#" className="text-lg text-[#212121]">
+          <a href="#" className="text-[14px] text-[#212121]">
             <span>New Folder</span>
           </a>
         </Breadcrumbs>
