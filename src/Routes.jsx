@@ -20,7 +20,11 @@ const Routes = [
   },
   {
     path: "/filemanage",
-    element: <FileManager />
+    element: <FileManager />,
+  },
+  {
+    path: "/filemanage/mines",
+    element: <FileManager />,
   },
   {
     path: "*",
