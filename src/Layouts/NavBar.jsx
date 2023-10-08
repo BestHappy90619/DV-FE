@@ -218,7 +218,7 @@ export default function NavBar() {
             </ul>
           ) : (
             <div
-              className="relative w-[50px] h-[50px] rounded-[8px] bg-[#E9F0FD] border-[2px] border-[#E9F0FD] flex justify-center items-center"
+              className="relative w-[50px] h-[50px] rounded-[8px] bg-[#E9F0FD] border-[2px] border-[#E9F0FD] flex justify-center items-center cursor-pointer"
               onClick={() => setShowNavMenu(!showNavMenu)}
             >
               <img
