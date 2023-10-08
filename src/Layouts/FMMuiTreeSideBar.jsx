@@ -122,7 +122,7 @@ const FileTreeView = ({ showOrHide }) => {
       }`}
       style={{ display: `${showOrHide === true ? "flex" : "none"}` }}
     >
-      <div className="absolute -top-[23px] right-[46px] select-none cursor-pointer">
+      <div className="z-50 absolute -top-[23px] right-[46px] select-none cursor-pointer">
         <button
           className=" flex items-center justify-center h-[46px] w-[46px] 
         rounded-full shadow-md hover:shadow-lg        select-none
@@ -138,7 +138,7 @@ const FileTreeView = ({ showOrHide }) => {
 
         {showPlusMenu === true && (
           <div
-            className="w-[240px] absolute z-10 left-[24px] top-[24px] flex flex-col gap-3 bg-white shadow-md
+            className=" w-[240px] absolute  left-[24px] top-[24px] flex flex-col gap-3 bg-white shadow-md
             border-[1px] border-[#E5E9EE] rounded-[4px] text-[16px] font-medium
           "
           >

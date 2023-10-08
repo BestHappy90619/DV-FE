@@ -221,7 +221,7 @@ const FMMiddlePanel = () => {
   return (
     <div className="w-full flex flex-col ">
       <div
-        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-40 fill-white            "
+        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-10 fill-white            "
         ref={divOfTableRef}
       >
         <div className="flex  justify-start ml-4 text-[14px] min-w-[400px] select-none ">
