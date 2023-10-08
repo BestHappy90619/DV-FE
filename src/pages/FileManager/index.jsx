@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -22,11 +22,12 @@ import { Breadcrumbs } from "@material-tailwind/react";
 
 const MainLyt = () => {
   const dispatch = useDispatch();
+  const minWidth = 200;
+  const maxWidth = 1920;
 
-  const { minWidth, maxWidth } = useSelector((state) => state.sidebar);
-  const leftSidebarWidth = 300;
-  const rightSidebarWidth = 300;
+  const [leftSidebarWidth, setLeftSidebarWidth] = useState(300);
 
+  const [rightSidebarWidth, setRightSidebarWidth] = useState(300);
   const isNowLeftResizing = useRef(false);
   const isNowRightResizing = useRef(false);
 
@@ -42,16 +43,20 @@ const MainLyt = () => {
       if (!isNowLeftResizing.current && !isNowRightResizing.current) return;
       EventBus.dispatch(PREVENT_SELECT, true);
       if (isNowLeftResizing.current) {
-        const newWidth = leftSidebarWidth + (e.screenX - leftSidebarWidth);
+        // const newWidth = leftSidebarWidth + (e.screenX - leftSidebarWidth);
+        const newWidth = e.clientX;
+
+        console.log("mouse event >>> ", e);
+        console.log("newWidth >>> ", newWidth);
         if (newWidth >= minWidth && newWidth <= maxWidth)
-          dispatch(setLeftSidebarWidth(newWidth));
+          setLeftSidebarWidth(newWidth);
       }
       if (isNowRightResizing.current) {
         const newWidth =
           rightSidebarWidth +
-          (this.window.innerWidth - rightSidebarWidth - e.screenX);
+          (this.window.innerWidth - rightSidebarWidth - e.clientX);
         if (newWidth >= minWidth && newWidth <= maxWidth)
-          dispatch(setRightSidebarWidth(newWidth));
+          setRightSidebarWidth(newWidth);
       }
     });
 
@@ -94,13 +99,14 @@ const MainLyt = () => {
         </Breadcrumbs>
       </div>
       <div className="flex h-full">
-        <div className="flex fixed z-40 bg-white h-full">
-          <div style={{ width: leftSidebarWidth, height: "100%" }}>
-            {/* <FMTreeSideBar /> */}
-            <FMMuiTreeSideBar />
-          </div>
+        <div
+          className="flex fixed left-0 z-40 bg-white h-full"
+          style={{ width: `${leftSidebarWidth}px` }}
+        >
+          {/* <FMTreeSideBar /> */}
+          <FMMuiTreeSideBar />
           <div
-            className="w-1 border-l-2 cursor-col-resize border-blue-gray-50"
+            className="w-1 border-l-2 cursor-col-resize border-blue-gray-50 "
             onMouseDown={leftSidebarMouseDown}
           ></div>
         </div>
@@ -118,7 +124,10 @@ const MainLyt = () => {
           <FMMiddlePanel />
         </div>
 
-        <div className="flex fixed right-0 z-40 bg-white h-full">
+        <div
+          className="flex fixed right-0 z-40 bg-white h-full"
+          style={{ width: `${rightSidebarWidth}px` }}
+        >
           <div
             className="w-1 border-r-2 cursor-col-resize border-blue-gray-50 h-full"
             onMouseDown={rightSidebarMouseDown}
