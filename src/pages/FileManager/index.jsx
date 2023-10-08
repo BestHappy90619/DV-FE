@@ -179,12 +179,12 @@ const MainLyt = () => {
         </div>
 
         {leftSidebarWidth === 0 && (
-          <div className="left-0 top-[40vh] z-50 fixed bg-[#E9F0FD] py-5 pl-5 px-5 rounded-r-full cursor-pointer">
+          <div className="left-0 top-[50vh] z-50 fixed bg-[#E9F0FD] py-5 pl-5 px-5 rounded-r-full cursor-pointer">
             Left
           </div>
         )}
         {rightSidebarWidth === 0 && (
-          <div className="right-0 top-[40vh] z-50 fixed  bg-[#E9F0FD] py-5 pr-5 px-5 rounded-l-full cursor-pointer">
+          <div className="right-0 top-[50vh] z-50 fixed  bg-[#E9F0FD] py-5 pr-5 px-5 rounded-l-full cursor-pointer">
             Right
           </div>
         )}
