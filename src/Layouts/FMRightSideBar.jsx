@@ -21,7 +21,7 @@ const FMRightSideBar = () => {
   ];
 
   return (
-    <div className="flex flex-col  w-[350px] px-2 h-full">
+    <div className="flex flex-col  w-[300px] px-2 h-full">
       <div className="flex justify-center  w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader
