@@ -25,7 +25,7 @@ const MainLyt = () => {
 
   const { minWidth, maxWidth } = useSelector((state) => state.sidebar);
   const leftSidebarWidth = 300;
-  const rightSidebarWidth = 350;
+  const rightSidebarWidth = 300;
 
   const isNowLeftResizing = useRef(false);
   const isNowRightResizing = useRef(false);
@@ -81,7 +81,7 @@ const MainLyt = () => {
   };
 
   return (
-    <div className="h-full">
+    <div className="h-full ">
       <NavBar />
       <div className="flex mt-[82px] justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px]">
         <Breadcrumbs className="ml-[300px] flex items-center h-5 py-0 my-0">
