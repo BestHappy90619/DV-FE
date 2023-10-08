@@ -1,8 +1,39 @@
 import { useEffect, useRef, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import VideoFileIcon from "@mui/icons-material/VideoFile";
+import AudioFileIcon from "@mui/icons-material/AudioFile";
+import TextFileIcon from "@mui/icons-material/TextFields";
+import ZipFileIcon from "@mui/icons-material/FolderZip";
+import ImageIcon from "@mui/icons-material/Image";
 
 const columns = [
-  { field: "FileName", headerName: "File Name", width: 300 },
+  {
+    field: "FileName",
+    headerName: "File Name",
+    width: 300,
+    renderCell: (params) => {
+      const fileExtension = getFileExtension(params.value); // Get the corresponding icon based on the extension
+
+      return (
+        <div className="flex">
+          {fileExtension === "png" ? (
+            <ImageIcon />
+          ) : fileExtension === "zip" ? (
+            <ZipFileIcon />
+          ) : fileExtension === "pdf" || fileExtension === "txt" ? (
+            <TextFileIcon />
+          ) : fileExtension === "mp3" ? (
+            <AudioFileIcon />
+          ) : fileExtension === "mp4" ? (
+            <VideoFileIcon />
+          ) : (
+            <></>
+          )}
+          <div className="ml-1 ">{params.value}</div>
+        </div>
+      );
+    },
+  },
   {
     field: "LastUpdated",
     headerName: "Last Updated",
@@ -50,6 +81,20 @@ const columns = [
 
 const extensionsArray = ["txt", "pdf", "png", "mp3", "mp4", "zip"];
 const wordList = ["apple", "banana", "cat", "dog", "elephant", "fox", "grape"];
+
+function getFileExtension(fileName) {
+  // Split the fileName by dot (.)
+  const parts = fileName.split(".");
+
+  // Check if there's at least one dot in the fileName
+  if (parts.length > 1) {
+    // Return the last part as the file extension (convert to lowercase for consistency)
+    return parts[parts.length - 1].toLowerCase();
+  } else {
+    // If there's no dot, it's an unknown or extension-less file
+    return null;
+  }
+}
 
 function generateRandomFileName(extensions, length = 2) {
   if (!Array.isArray(extensions) || extensions.length === 0) {
