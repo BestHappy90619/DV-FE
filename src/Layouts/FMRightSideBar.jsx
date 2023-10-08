@@ -13,27 +13,15 @@ const FMRightSideBar = () => {
     {
       label: "DETAILS",
       value: "details",
-      desc: `It really matters and then like it really doesn't matter.
-      What matters is the people who are sparked by it. And the people 
-      who are like offended by it, it doesn't matter.`,
-    },
-    {
-      label: "CHAT",
-      value: "chat",
-      desc: `Because it's about motivating the doers. Because I'm here
-      to follow my dreams and inspire other people to follow their dreams, too.`,
     },
     {
       label: "MEMBERS",
       value: "members",
-      desc: `We're not always in the position that we want to be at.
-      We're constantly growing. We're constantly making mistakes. We're
-      constantly trying to express ourselves and actualize our dreams.`,
     },
   ];
 
   return (
-    <div className="flex flex-col  w-[350px] px-2 ">
+    <div className="flex flex-col  w-[350px] px-2 h-full">
       <div className="flex justify-center  w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader
@@ -90,54 +78,6 @@ const FMRightSideBar = () => {
                     <div className="text-[#212121]">MP3</div>
                   </div>
                 </div>
-              </div>
-            </TabPanel>
-
-            <TabPanel key={"chat"} value={"chat"}>
-              <div className="text-[13px] font-bold text-center">Group GPT</div>
-              <div className="text-[11px] font-semibold text-center">
-                8 members, 3 online
-              </div>
-              <div className="flex w-full justify-between relative mt-12">
-                <img
-                  src="/image/avatar4.png"
-                  alt=""
-                  className="w-[31px] h-[31px] rounded-full"
-                ></img>
-                <div className="ml-14 text-[13px] mt-12 text-center absolute top-[-80px]">
-                  <div className="text-[#4489FE] text-left">
-                    Vasili Kovanalchuk
-                  </div>
-                  <div className="text-left">
-                    How u doing? Do you wanna
-                    <br /> change some bitcoins?
-                  </div>
-                </div>
-                <div className="text-[12px] text-[#A4AAB3]">18:52</div>
-              </div>
-              <div className="  w-full flex justify-end mt-6">
-                <div className="bubble right text-white text-[13px] w-8/12 px-2 text-left">
-                  Yeah man! I need to change 895 BTC. Do you have it in your
-                  pocket?
-                  <div className="text-white text-[12px] text-right">18:49</div>
-                </div>
-              </div>
-              <div className="flex w-full justify-between relative mt-14">
-                <img
-                  src="/image/avatar4.png"
-                  alt=""
-                  className="w-[31px] h-[31px] rounded-full"
-                ></img>
-                <div className="ml-14 text-[13px] mt-12 text-center absolute top-[-80px]">
-                  <div className="text-[#4489FE] text-left">
-                    Vasili Kovanalchuk
-                  </div>
-                  <div className="text-left">
-                    Of course,, I have? And Do you
-                    <br /> have money to buy them?
-                  </div>
-                </div>
-                <div className="text-[12px] text-[#A4AAB3]">18:52</div>
               </div>
             </TabPanel>
 

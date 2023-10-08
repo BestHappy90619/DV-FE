@@ -119,3 +119,10 @@ textarea:focus, input:focus{
   margin-left: var(--t);
   place-self: end;
 }
+.MuiDataGrid-footerContainer {
+display: none !important;
+}
+
+.MuiDataGrid-cell:focus {
+outline: none !important;
+}

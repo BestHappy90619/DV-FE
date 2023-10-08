@@ -1,14 +1,82 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+
+const columns = [
+  { field: "id", headerName: "ID", width: 70 },
+  { field: "firstName", headerName: "First name", width: 130 },
+  { field: "lastName", headerName: "Last name", width: 130 },
+  {
+    field: "age",
+    headerName: "Age",
+    type: "number",
+    width: 90,
+  },
+  {
+    field: "fullName",
+    headerName: "Full name",
+    description: "This column has a value getter and is not sortable.",
+    sortable: false,
+    width: 160,
+    valueGetter: (params) =>
+      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
+  },
+];
+
+const rows = [
+  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
+  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
+  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
+  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
+  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
+  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
+  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
+  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
+  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
+  { id: 10, lastName: "Snow", firstName: "Jon", age: 35 },
+  { id: 11, lastName: "Lannister", firstName: "Cersei", age: 42 },
+  { id: 12, lastName: "Lannister", firstName: "Jaime", age: 45 },
+  { id: 13, lastName: "Stark", firstName: "Arya", age: 16 },
+  { id: 14, lastName: "Targaryen", firstName: "Daenerys", age: null },
+  { id: 15, lastName: "Melisandre", firstName: null, age: 150 },
+  { id: 16, lastName: "Clifford", firstName: "Ferrara", age: 44 },
+  { id: 17, lastName: "Frances", firstName: "Rossini", age: 36 },
+  { id: 18, lastName: "Roxie", firstName: "Harvey", age: 65 },
+];
 
 const FMMiddlePanel = () => {
-  const [sortByNameUD, setSortByNameUD] = useState(false);
-  const [sortByUpdatedUD, setSortByUpdatedUD] = useState(false);
-  const [sortBySizeUD, setSortBySizeUD] = useState(false);
+  const divOfTableRef = useRef(null);
+  const [divWidth, setDivWidth] = useState(1000);
+
+  // Function to update the div width when the screen is resized
+  const updateDivWidth = () => {
+    if (divOfTableRef.current) {
+      const width = divOfTableRef.current.offsetWidth;
+      setDivWidth(Number(width));
+    }
+  };
+
+  // Attach an event listener to the window's resize event
+  useEffect(() => {
+    window.addEventListener("resize", updateDivWidth);
+
+    // Call the function initially to get the initial width
+    updateDivWidth();
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", updateDivWidth);
+    };
+  }, []);
 
   return (
-    <div className="w-full flex flex-col">
-      <div className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4]">
-        <div className="flex justify-start ml-10 text-[14px]">
+    <div className="w-full flex flex-col ">
+      <div
+        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4]
+        
+      "
+        ref={divOfTableRef}
+      >
+        <div className="flex justify-start ml-10 text-[14px] ">
           <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMShareIcon.svg"
@@ -25,30 +93,37 @@ const FMMiddlePanel = () => {
             />
             View selected
           </div>
-          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
-            <img
-              src="/image/FMEyeIcon.svg"
-              className="w-[20px] h-[20px] cursor-pointer"
-              alt="icon"
-            />
-            Zip
-          </div>
-          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
-            <img
-              src="/image/FMCopyIcon.svg"
-              className="w-[19px] h-[19px] cursor-pointer"
-              alt="icon"
-            />
-            Copy
-          </div>
-          <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
-            <img
-              src="/image/FMDownloadIcon.svg"
-              className="w-[20px] h-[20px] cursor-pointer"
-              alt="icon"
-            />
-            Download
-          </div>
+          {divOfTableRef.current !== null && divWidth <= 730 ? (
+            <></>
+          ) : (
+            <>
+              <div className=" border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer flex ">
+                <img
+                  src="/image/FMEyeIcon.svg"
+                  className="w-[20px] h-[20px] cursor-pointer"
+                  alt="icon"
+                />
+                Zip
+              </div>
+
+              <div className=" border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer  flex">
+                <img
+                  src="/image/FMCopyIcon.svg"
+                  className="w-[19px] h-[19px] cursor-pointer"
+                  alt="icon"
+                />
+                Copy
+              </div>
+              <div className=" border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer flex">
+                <img
+                  src="/image/FMDownloadIcon.svg"
+                  className="w-[20px] h-[20px] cursor-pointer"
+                  alt="icon"
+                />
+                Download
+              </div>
+            </>
+          )}
           <div className="flex  gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMDotsIcon.svg"
@@ -74,455 +149,20 @@ const FMMiddlePanel = () => {
           </div>
         </div>
       </div>
-      <div className={`w-full flex justify-center  `}>
-        <table className="w-full">
-          <thead className=" ">
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] text-[14px]">
-              <th align="center">
-                <input type="checkbox" />
-              </th>
-              <th className="text-[#212121] font-medium" align="left">
-                <div
-                  className="flex items-center cursor-pointer select-none"
-                  onClick={() => setSortByNameUD(!sortByNameUD)}
-                >
-                  Name
-                  {sortByNameUD === true ? (
-                    <img
-                      src="/image/up.png"
-                      className="w-5 h-5 ml-1"
-                      alt="up arrow icon"
-                    />
-                  ) : (
-                    <img
-                      src="/image/down.png"
-                      className="w-5 h-5 ml-1"
-                      alt="up arrow icon"
-                    />
-                  )}
-                </div>
-              </th>
-              <th className="text-[#212121] font-medium" align="left">
-                <div
-                  className="flex items-center cursor-pointer select-none"
-                  onClick={() => setSortByUpdatedUD(!sortByUpdatedUD)}
-                >
-                  Last Updated
-                  {sortByUpdatedUD === true ? (
-                    <img
-                      src="/image/up.png"
-                      className="w-5 h-5 ml-1"
-                      alt="up arrow icon"
-                    />
-                  ) : (
-                    <img
-                      src="/image/down.png"
-                      className="w-5 h-5 ml-1"
-                      alt="up arrow icon"
-                    />
-                  )}
-                </div>
-              </th>
-              <th className="text-[#212121] font-medium" align="left">
-                <div
-                  className="flex items-center cursor-pointer select-none"
-                  onClick={() => setSortBySizeUD(!sortBySizeUD)}
-                >
-                  Size
-                  {sortBySizeUD === true ? (
-                    <img
-                      src="/image/up.png"
-                      className="w-5 h-5 ml-1"
-                      alt="up arrow icon"
-                    />
-                  ) : (
-                    <img
-                      src="/image/down.png"
-                      className="w-5 h-5 ml-1"
-                      alt="up arrow icon"
-                    />
-                  )}
-                </div>
-              </th>
-              <th align="center">{"  "}</th>
-            </tr>
-          </thead>
-          <tbody className="">
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr className="h-[54px] border-b-[#dee0e4] border-b-[1px] hover:bg-[#E9F0FD]">
-              <td align="center">
-                <div className="px-4">
-                  <input type="checkbox"></input>
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#212121]">
-                  Video_Name_1.mov
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  Yesterday at 6:56 PM by Serhii M...
-                </div>
-              </td>
-              <td>
-                <div className="pr-4 text-[13px] font-normal text-[#757575]">
-                  3MB
-                </div>
-              </td>
-              <td align="center">
-                <div className="flex items-center px-4 h-full">
-                  <img
-                    src="/image/FMDotsIcon.svg"
-                    className="w-[24px] h-[24px]"
-                    alt="dot icon"
-                  />
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div
+        className={`w-full px-4 flex justify-center overflow-y-auto max-h-[calc(100vh-250px)] `}
+      >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={rows.length + 1}
+          checkboxSelection
+          sx={{
+            borderLeft: "none",
+            borderRight: "none",
+            borderTop: "none",
+          }}
+        />
       </div>
     </div>
   );

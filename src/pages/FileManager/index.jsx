@@ -17,7 +17,6 @@ import FMRightSideBar from "../../Layouts/FMRightSideBar";
 // constant
 import { RESIZED_SIDEBAR, PREVENT_SELECT } from "@/utils/constant";
 import { EventBus } from "@/utils/function";
-import FMFooter from "../../Layouts/FMFooter";
 import { Breadcrumbs } from "@material-tailwind/react";
 
 const MainLyt = () => {
@@ -81,7 +80,7 @@ const MainLyt = () => {
   };
 
   return (
-    <>
+    <div className="h-full">
       <NavBar />
       <div className="flex mt-[82px] justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px]">
         <Breadcrumbs className="ml-[300px] flex items-center h-5 py-0 my-0">
@@ -93,9 +92,9 @@ const MainLyt = () => {
           </a>
         </Breadcrumbs>
       </div>
-      <div className="flex  mb-[102px]">
-        <div className="flex fixed z-40 bg-white">
-          <div style={{ width: leftSidebarWidth }}>
+      <div className="flex h-full">
+        <div className="flex fixed z-40 bg-white h-full">
+          <div style={{ width: leftSidebarWidth, height: "100%" }}>
             <FMTreeSideBar />
           </div>
           <div
@@ -111,22 +110,21 @@ const MainLyt = () => {
             width: `calc(100% - ${
               Number(leftSidebarWidth) + Number(rightSidebarWidth)
             }px)`,
+            overflowX: "auto",
           }}
         >
           <FMMiddlePanel />
         </div>
 
-        <div className="flex fixed right-0 z-40 bg-white">
+        <div className="flex fixed right-0 z-40 bg-white h-full">
           <div
-            className="w-1 border-r-2 cursor-col-resize border-blue-gray-50"
+            className="w-1 border-r-2 cursor-col-resize border-blue-gray-50 h-full"
             onMouseDown={rightSidebarMouseDown}
           ></div>
           <FMRightSideBar />
         </div>
       </div>
-
-      <FMFooter />
-    </>
+    </div>
   );
 };
 
