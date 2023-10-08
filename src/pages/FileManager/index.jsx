@@ -68,7 +68,7 @@ const MainLyt = () => {
     window.addEventListener("resize", () => {
       console.log("window.innerWidth   >>> ", window?.innerWidth || 0);
       if (window) {
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 800) {
           setShowLeftSideBar(false);
           setShowRightSideBar(false);
           setRightSidebarWidth(0);
