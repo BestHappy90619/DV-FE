@@ -189,7 +189,6 @@ const FMMiddlePanel = () => {
     if (divOfTableRef.current) {
       const width = divOfTableRef.current.offsetWidth;
 
-      console.log("divOfTableRef.current width >>> ", width);
       setDivWidth(Number(width));
     }
   };
