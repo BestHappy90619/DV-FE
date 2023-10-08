@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 
 export default function NavBar() {
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [showNavMenu, setShowNavMenu] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [isTablet, setIsTablet] = useState(false);
 
@@ -216,12 +217,92 @@ export default function NavBar() {
               })}
             </ul>
           ) : (
-            <div className="relative w-[50px] h-[50px] rounded-[8px] bg-[#E9F0FD] border-[2px] border-[#E9F0FD] flex justify-center items-center">
+            <div
+              className="relative w-[50px] h-[50px] rounded-[8px] bg-[#E9F0FD] border-[2px] border-[#E9F0FD] flex justify-center items-center"
+              onClick={() => setShowNavMenu(!showNavMenu)}
+            >
               <img
                 src="/image/MobilemenuIcon.svg"
                 className="w-6 h-6 "
                 alt="menu icon"
               />
+              {showNavMenu === true && (
+                <ul className="flex flex-row gap-6 absolute z-40 left-10 top-10 bg-white px-5 py-5 border-[1px] border-[#E5E9EE] rounded-[4px] shadow-md">
+                  {menus.map((menu) => {
+                    return (
+                      <li
+                        key={menu.path}
+                        className={`cursor-pointer ${
+                          menu.key.includes(currentUrl)
+                            ? "text-custom-sky"
+                            : "text-custom-black"
+                        }`}
+                      >
+                        <Menu allowHover>
+                          {Object.keys(menu)?.includes("children") ? (
+                            <>
+                              <MenuHandler>
+                                <span
+                                  onClick={() => {
+                                    setShowNavMenu(!showNavMenu);
+                                    menu.children.length > 0
+                                      ? navigate("#")
+                                      : navigate(menu.path);
+                                  }}
+                                  className={`cursor-pointer ${
+                                    menu.key.includes(currentUrl)
+                                      ? "text-custom-sky"
+                                      : "text-custom-black"
+                                  }`}
+                                >
+                                  {menu.title}
+                                </span>
+                              </MenuHandler>
+                              <MenuList>
+                                {menu.children.map((child) => {
+                                  return (
+                                    <MenuItem key={child.path}>
+                                      <span
+                                        className={
+                                          menu.path + child.path == currentUrl
+                                            ? "text-custom-sky"
+                                            : "text-custom-black"
+                                        }
+                                        onClick={() => {
+                                          setShowNavMenu(!showNavMenu);
+                                          navigate(menu.path + child.path);
+                                        }}
+                                      >
+                                        {child.title}
+                                      </span>
+                                    </MenuItem>
+                                  );
+                                })}
+                              </MenuList>
+                            </>
+                          ) : (
+                            <>
+                              <span
+                                className={`cursor-pointer ${
+                                  menu.key.includes(currentUrl)
+                                    ? "text-custom-sky"
+                                    : "text-custom-black"
+                                }`}
+                                onClick={() => {
+                                  showNavMenu(false);
+                                  navigate(menu.path);
+                                }}
+                              >
+                                {menu.title}
+                              </span>
+                            </>
+                          )}
+                        </Menu>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           )}
         </div>

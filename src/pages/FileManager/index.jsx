@@ -36,6 +36,20 @@ const MainLyt = () => {
   const isNowRightResizing = useRef(false);
 
   useEffect(() => {
+    if (window) {
+      if (window.innerWidth <= 800) {
+        setShowLeftSideBar(false);
+        setShowRightSideBar(false);
+        dispatch(setLeftSidebarWidth(0));
+        dispatch(setRightSidebarWidth(0));
+      } else {
+        setShowLeftSideBar(true);
+        setShowRightSideBar(true);
+        dispatch(setLeftSidebarWidth(250));
+        dispatch(setRightSidebarWidth(250));
+      }
+    }
+
     window.addEventListener("keydown", function (e) {
       if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
         e.preventDefault();
