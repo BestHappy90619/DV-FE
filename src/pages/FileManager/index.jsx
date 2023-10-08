@@ -33,6 +33,7 @@ const MainLyt = () => {
   const [showLeftSideBar, setShowLeftSideBar] = useState(true);
   const [showRightSideBar, setShowRightSideBar] = useState(true);
   const [showLeftBarOnMobile, setShowLeftBarOnMobile] = useState(false);
+  const [showRightBarOnMobile, setShowRightBarOnMobile] = useState(false);
   const isNowLeftResizing = useRef(false);
   const isNowRightResizing = useRef(false);
 
@@ -40,12 +41,14 @@ const MainLyt = () => {
     if (window) {
       if (window.innerWidth <= 800) {
         setShowLeftBarOnMobile(false);
+        setShowRightBarOnMobile(false);
         setShowLeftSideBar(false);
         setShowRightSideBar(false);
         dispatch(setLeftSidebarWidth(0));
         dispatch(setRightSidebarWidth(0));
       } else {
         setShowLeftBarOnMobile(false);
+        setShowRightBarOnMobile(true);
         setShowLeftSideBar(true);
         setShowRightSideBar(true);
         dispatch(setLeftSidebarWidth(250));
@@ -89,12 +92,14 @@ const MainLyt = () => {
       if (window) {
         if (window.innerWidth <= 800) {
           setShowLeftBarOnMobile(false);
+          setShowRightBarOnMobile(false);
           setShowLeftSideBar(false);
           setShowRightSideBar(false);
           dispatch(setLeftSidebarWidth(0));
           dispatch(setRightSidebarWidth(0));
         } else {
-          setShowLeftBarOnMobile(true);
+          setShowLeftBarOnMobile(false);
+          setShowRightBarOnMobile(true);
           setShowLeftSideBar(true);
           setShowRightSideBar(true);
           dispatch(setLeftSidebarWidth(250));
@@ -142,7 +147,7 @@ const MainLyt = () => {
       </div>
       <div className="mt-[142px] flex h-full relative">
         <div
-          className="  left-0  bg-white h-full"
+          className="fixed  left-0  bg-white h-full"
           style={{
             width:
               showLeftBarOnMobile === true ? `250px` : `${leftSidebarWidth}px`,
@@ -151,7 +156,6 @@ const MainLyt = () => {
                 ? "flex"
                 : "hidden"
             }`,
-            position: `${showLeftBarOnMobile === true ? "absolute" : "fixed"}`,
             zIndex: `${showLeftBarOnMobile === true ? 50 : 40}`,
           }}
         >
@@ -178,8 +182,16 @@ const MainLyt = () => {
         <div
           className=" fixed right-0 z-40 bg-white h-full"
           style={{
-            width: `${rightSidebarWidth}px`,
-            display: `${showRightSideBar ? "flex" : "hidden"}`,
+            width:
+              showRightBarOnMobile === true
+                ? `250px`
+                : `${rightSidebarWidth}px`,
+            display: `${
+              (showRightSideBar || showRightBarOnMobile) === true
+                ? "flex"
+                : "hidden"
+            }`,
+            zIndex: `${showRightBarOnMobile === true ? 50 : 40}`,
           }}
         >
           <div
@@ -205,7 +217,7 @@ const MainLyt = () => {
         {rightSidebarWidth === 0 && (
           <div
             className="right-0 top-[50vh] z-50 fixed  bg-[#E9F0FD] py-3 pr-3 px-3 rounded-l-full cursor-pointer shadow-md"
-            onClick={() => setShowRightSideBar(!showRightSideBar)}
+            onClick={() => setShowRightBarOnMobile(!showRightBarOnMobile)}
           >
             <img
               src="/image/blueLeftArrow.svg"
