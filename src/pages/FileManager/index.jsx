@@ -136,7 +136,7 @@ const MainLyt = () => {
           </a>
         </Breadcrumbs>
       </div>
-      <div className="mt-[142px] flex h-full">
+      <div className="mt-[142px] flex h-full relative">
         <div
           className=" fixed left-0 z-40 bg-white h-full"
           style={{
@@ -177,6 +177,17 @@ const MainLyt = () => {
           ></div>
           <FMRightSideBar />
         </div>
+
+        {leftSidebarWidth === 0 && (
+          <div className="left-0 top-[40vh] z-50 fixed bg-[#E9F0FD] py-5 pl-5 px-5 rounded-r-full cursor-pointer">
+            Left
+          </div>
+        )}
+        {rightSidebarWidth === 0 && (
+          <div className="right-0 top-[40vh] z-50 fixed  bg-[#E9F0FD] py-5 pr-5 px-5 rounded-l-full cursor-pointer">
+            Right
+          </div>
+        )}
       </div>
     </div>
   );
