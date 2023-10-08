@@ -120,16 +120,16 @@ const FileTreeView = ({ showOrHide }) => {
       }`}
       style={{ display: `${showOrHide === true ? "flex" : "none"}` }}
     >
-      <div className="absolute -top-[23px] right-[46px]">
+      <div className="absolute -top-[23px] right-[46px] select-none cursor-pointer">
         <button
           className=" flex items-center justify-center h-[46px] w-[46px] 
-        rounded-full shadow-md hover:shadow-lg        
+        rounded-full shadow-md hover:shadow-lg        select-none
       "
           onClick={() => setShowPlusMenu(!showPlusMenu)}
         >
           <img
             src="/image/plus-svgrepo-com.svg"
-            className="w-full h-full"
+            className="w-full h-full select-none"
             alt="plus"
           />
         </button>

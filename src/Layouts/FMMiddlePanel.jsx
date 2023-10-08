@@ -35,6 +35,20 @@ const columns = [
     },
   },
   {
+    field: "PlayLength",
+    headerName: "Length",
+    description: "This column shows play time length of file.",
+    width: 150,
+    valueGetter: (params) => {
+      // Convert Date to "hh:mm:ss" string format
+      const date = new Date(params.row.PlayLength);
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      const seconds = date.getSeconds().toString().padStart(2, "0");
+      return `${hours}:${minutes}:${seconds}`;
+    },
+  },
+  {
     field: "LastUpdated",
     headerName: "Last Updated",
     type: Date,
@@ -61,20 +75,6 @@ const columns = [
     },
     sortComparator: (v1, v2, param1, param2) => {
       return parseFileSize(param1.value) - parseFileSize(param2.value);
-    },
-  },
-  {
-    field: "PlayLength",
-    headerName: "Length",
-    description: "This column shows play time length of file.",
-    width: 150,
-    valueGetter: (params) => {
-      // Convert Date to "hh:mm:ss" string format
-      const date = new Date(params.row.PlayLength);
-      const hours = date.getHours().toString().padStart(2, "0");
-      const minutes = date.getMinutes().toString().padStart(2, "0");
-      const seconds = date.getSeconds().toString().padStart(2, "0");
-      return `${hours}:${minutes}:${seconds}`;
     },
   },
 ];
