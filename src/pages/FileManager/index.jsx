@@ -121,11 +121,11 @@ const MainLyt = () => {
           className=" fixed left-0 z-40 bg-white h-full"
           style={{
             width: `${leftSidebarWidth}px`,
-            display: `${showLeftSideBar ? "flex" : "hidden"}`,
+            display: `${showLeftSideBar === true ? "flex" : "hidden"}`,
           }}
         >
           {/* <FMTreeSideBar /> */}
-          <FMMuiTreeSideBar />
+          <FMMuiTreeSideBar showOrHide={showLeftSideBar} />
           <div
             className="w-1 border-l-2 cursor-col-resize border-blue-gray-50 "
             onMouseDown={leftSidebarMouseDown}

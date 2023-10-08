@@ -105,7 +105,7 @@ const treeData = {
   ],
 };
 
-const FileTreeView = () => {
+const FileTreeView = ({ showOrHide }) => {
   const [showPlusMenu, setShowPlusMenu] = useState(false);
 
   const handleDragEnd = (result) => {
@@ -114,7 +114,12 @@ const FileTreeView = () => {
   };
 
   return (
-    <div className="flex w-full flex-col pl-4 relative h-full">
+    <div
+      className={` w-full flex-col pl-4 relative h-full ${
+        showOrHide === true ? "pl-4" : "pl-0"
+      }`}
+      style={{ display: `${showOrHide === true ? "flex" : "none"}` }}
+    >
       <div className="absolute -top-[23px] right-[46px]">
         <button
           className=" flex items-center justify-center h-[46px] w-[46px] 

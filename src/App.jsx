@@ -21,18 +21,23 @@ function App() {
 
   useEffect(() => {
     EventBus.on(PREVENT_SELECT, (flag) => setIsPreventSelect(flag));
-    EventBus.on(SET_LOADING, (data) => { setLoading(data); setIsPreventSelect(data); });
+    EventBus.on(SET_LOADING, (data) => {
+      setLoading(data);
+      setIsPreventSelect(data);
+    });
 
     return () => {
       EventBus.remove(PREVENT_SELECT);
       EventBus.remove(SET_LOADING);
     };
-  }, [])
+  }, []);
 
   return (
     <StrictMode>
       <Provider store={store}>
-        <div className={`${isPreventSelect ? "select-none" : ""}`}>{pages}</div>
+        <div className={`${isPreventSelect ? "select-none" : ""} w-full`}>
+          {pages}
+        </div>
         <div
           style={{
             position: "fixed",
