@@ -32,17 +32,20 @@ const MainLyt = () => {
 
   const [showLeftSideBar, setShowLeftSideBar] = useState(true);
   const [showRightSideBar, setShowRightSideBar] = useState(true);
+  const [showLeftBarOnMobile, setShowLeftBarOnMobile] = useState(false);
   const isNowLeftResizing = useRef(false);
   const isNowRightResizing = useRef(false);
 
   useEffect(() => {
     if (window) {
       if (window.innerWidth <= 800) {
+        setShowLeftBarOnMobile(false);
         setShowLeftSideBar(false);
         setShowRightSideBar(false);
         dispatch(setLeftSidebarWidth(0));
         dispatch(setRightSidebarWidth(0));
       } else {
+        setShowLeftBarOnMobile(false);
         setShowLeftSideBar(true);
         setShowRightSideBar(true);
         dispatch(setLeftSidebarWidth(250));
@@ -83,14 +86,15 @@ const MainLyt = () => {
     });
 
     window.addEventListener("resize", () => {
-      console.log("window.innerWidth   >>> ", window?.innerWidth || 0);
       if (window) {
         if (window.innerWidth <= 800) {
+          setShowLeftBarOnMobile(false);
           setShowLeftSideBar(false);
           setShowRightSideBar(false);
           dispatch(setLeftSidebarWidth(0));
           dispatch(setRightSidebarWidth(0));
         } else {
+          setShowLeftBarOnMobile(true);
           setShowLeftSideBar(true);
           setShowRightSideBar(true);
           dispatch(setLeftSidebarWidth(250));
@@ -138,20 +142,28 @@ const MainLyt = () => {
       </div>
       <div className="mt-[142px] flex h-full relative">
         <div
-          className=" fixed left-0 z-40 bg-white h-full"
+          className="  left-0  bg-white h-full"
           style={{
-            width: `${leftSidebarWidth}px`,
-            display: `${showLeftSideBar === true ? "flex" : "hidden"}`,
+            width:
+              showLeftBarOnMobile === true ? `250px` : `${leftSidebarWidth}px`,
+            display: `${
+              (showLeftSideBar || showLeftBarOnMobile) === true
+                ? "flex"
+                : "hidden"
+            }`,
+            position: `${showLeftBarOnMobile === true ? "absolute" : "fixed"}`,
+            zIndex: `${showLeftBarOnMobile === true ? 50 : 40}`,
           }}
         >
           {/* <FMTreeSideBar /> */}
-          <FMMuiTreeSideBar showOrHide={showLeftSideBar} />
+          <FMMuiTreeSideBar
+            showOrHide={(showLeftSideBar || showLeftBarOnMobile) === true}
+          />
           <div
             className="w-1 border-l-2 cursor-col-resize border-blue-gray-50 "
             onMouseDown={leftSidebarMouseDown}
           ></div>
         </div>
-
         <div
           style={{
             marginLeft: leftSidebarWidth + "px",
@@ -163,7 +175,6 @@ const MainLyt = () => {
         >
           <FMMiddlePanel />
         </div>
-
         <div
           className=" fixed right-0 z-40 bg-white h-full"
           style={{
@@ -177,15 +188,30 @@ const MainLyt = () => {
           ></div>
           <FMRightSideBar />
         </div>
-
         {leftSidebarWidth === 0 && (
-          <div className="left-0 top-[50vh] z-50 fixed bg-[#E9F0FD] py-5 pl-5 px-5 rounded-r-full cursor-pointer">
-            Left
+          <div
+            className="left-0 top-[50vh] z-50 fixed bg-[#E9F0FD] py-3 pl-3 px-3 rounded-r-full cursor-pointer shadow-md"
+            onClick={() => {
+              setShowLeftBarOnMobile(!showLeftBarOnMobile);
+            }}
+          >
+            <img
+              src="/image/blueRightArrow.svg"
+              className="w-10 h-10"
+              alt="right arrow"
+            />
           </div>
         )}
         {rightSidebarWidth === 0 && (
-          <div className="right-0 top-[50vh] z-50 fixed  bg-[#E9F0FD] py-5 pr-5 px-5 rounded-l-full cursor-pointer">
-            Right
+          <div
+            className="right-0 top-[50vh] z-50 fixed  bg-[#E9F0FD] py-3 pr-3 px-3 rounded-l-full cursor-pointer shadow-md"
+            onClick={() => setShowRightSideBar(!showRightSideBar)}
+          >
+            <img
+              src="/image/blueLeftArrow.svg"
+              className="w-10 h-10"
+              alt="right arrow"
+            />
           </div>
         )}
       </div>
