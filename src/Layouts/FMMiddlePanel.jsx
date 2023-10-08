@@ -3,44 +3,150 @@ import { DataGrid } from "@mui/x-data-grid";
 
 const columns = [
   { field: "id", headerName: "", width: 70 },
-  { field: "FileName", headerName: "File Name", width: 130 },
+  { field: "FileName", headerName: "File Name", width: 300 },
   { field: "LastUpdated", headerName: "Last Updated", width: 130 },
   {
     field: "Size",
     headerName: "Size",
     type: "number",
-    width: 90,
+    width: 100,
   }, // name, length, updated, size
   {
-    field: "Length",
+    field: "PlayLength",
     headerName: "Length",
     description: "This column has a value getter and is not sortable.",
     sortable: false,
     width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ""} ${params.row.lastName || ""}`,
   },
 ];
 
 const rows = [
-  { id: 1, FileName: "Snow", LastUpdated: "Jon", Size: 35 },
-  { id: 2, FileName: "Lannister", LastUpdated: "Cersei", Size: 42 },
-  { id: 3, FileName: "Lannister", LastUpdated: "Jaime", Size: 45 },
-  { id: 4, FileName: "Stark", LastUpdated: "Arya", Size: 16 },
-  { id: 5, FileName: "Targaryen", LastUpdated: "Daenerys", Size: null },
-  { id: 6, FileName: "Melisandre", LastUpdated: null, Size: 150 },
-  { id: 7, FileName: "Clifford", LastUpdated: "Ferrara", Size: 44 },
-  { id: 8, FileName: "Frances", LastUpdated: "Rossini", Size: 36 },
-  { id: 9, FileName: "Roxie", LastUpdated: "Harvey", Size: 65 },
-  { id: 10, FileName: "Snow", LastUpdated: "Jon", Size: 35 },
-  { id: 11, FileName: "Lannister", LastUpdated: "Cersei", Size: 42 },
-  { id: 12, FileName: "Lannister", LastUpdated: "Jaime", Size: 45 },
-  { id: 13, FileName: "Stark", LastUpdated: "Arya", Size: 16 },
-  { id: 14, FileName: "Targaryen", LastUpdated: "Daenerys", Size: null },
-  { id: 15, FileName: "Melisandre", LastUpdated: null, Size: 150 },
-  { id: 16, FileName: "Clifford", LastUpdated: "Ferrara", Size: 44 },
-  { id: 17, FileName: "Frances", LastUpdated: "Rossini", Size: 36 },
-  { id: 18, FileName: "Roxie", LastUpdated: "Harvey", Size: 65 },
+  {
+    id: 1,
+    FileName: "Snow",
+    LastUpdated: "Jon",
+    Size: 35,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 2,
+    FileName: "Lannister",
+    LastUpdated: "Cersei",
+    Size: 42,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 3,
+    FileName: "Lannister",
+    LastUpdated: "Jaime",
+    Size: 45,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 4,
+    FileName: "Stark",
+    LastUpdated: "Arya",
+    Size: 16,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 5,
+    FileName: "Targaryen",
+    LastUpdated: "Daenerys",
+    Size: null,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 6,
+    FileName: "Melisandre",
+    LastUpdated: null,
+    Size: 150,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 7,
+    FileName: "Clifford",
+    LastUpdated: "Ferrara",
+    Size: 44,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 8,
+    FileName: "Frances",
+    LastUpdated: "Rossini",
+    Size: 36,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 9,
+    FileName: "Roxie",
+    LastUpdated: "Harvey",
+    Size: 65,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 10,
+    FileName: "Snow",
+    LastUpdated: "Jon",
+    Size: 35,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 11,
+    FileName: "Lannister",
+    LastUpdated: "Cersei",
+    Size: 42,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 12,
+    FileName: "Lannister",
+    LastUpdated: "Jaime",
+    Size: 45,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 13,
+    FileName: "Stark",
+    LastUpdated: "Arya",
+    Size: 16,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 14,
+    FileName: "Targaryen",
+    LastUpdated: "Daenerys",
+    Size: null,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 15,
+    FileName: "Melisandre",
+    LastUpdated: null,
+    Size: 150,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 16,
+    FileName: "Clifford",
+    LastUpdated: "Ferrara",
+    Size: 44,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 17,
+    FileName: "Frances",
+    LastUpdated: "Rossini",
+    Size: 36,
+    PlayLength: "0:25:45",
+  },
+  {
+    id: 18,
+    FileName: "Roxie",
+    LastUpdated: "Harvey",
+    Size: 65,
+    PlayLength: "0:25:45",
+  },
 ];
 
 const FMMiddlePanel = () => {
@@ -71,12 +177,11 @@ const FMMiddlePanel = () => {
   return (
     <div className="w-full flex flex-col ">
       <div
-        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4]
-        
+        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4]        
       "
         ref={divOfTableRef}
       >
-        <div className="flex justify-start ml-10 text-[14px] ">
+        <div className="flex justify-start ml-4 text-[14px] min-w-[400px]">
           <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMShareIcon.svg"
@@ -161,6 +266,18 @@ const FMMiddlePanel = () => {
             borderLeft: "none",
             borderRight: "none",
             borderTop: "none",
+          }}
+          components={{
+            ColumnSortedAscendingIcon: () => (
+              <img
+                src={"/image/down.png"}
+                className="w-4 h-4"
+                alt="Ascending"
+              />
+            ),
+            ColumnSortedDescendingIcon: () => (
+              <img src={"/image/up.png"} className="w-4 h-4" alt="Descending" />
+            ),
           }}
         />
       </div>
