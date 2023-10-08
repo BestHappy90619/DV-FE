@@ -135,3 +135,11 @@ display: none !important;
 .MuiDataGrid-columnHeaderDraggableContainer .MuiDataGrid-menuIcon {
 display: none !important;
 }
+
+.MuiCheckbox-root>svg{
+width:19px; height: 19px;
+}
+.MuiCheckbox-root>svg>path {
+stroke: #dee0e4;
+stroke-width: 1px;
+}
