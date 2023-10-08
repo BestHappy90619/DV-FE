@@ -1,6 +1,6 @@
 import { TreeView } from "@mui/x-tree-view/TreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { makeStyles } from "@mui/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -33,9 +33,11 @@ const MyTreeView = ({ treeData, onDragEnd }) => {
           {nodes.id === "root" ? (
             <></>
           ) : nodes.children ? (
-            <FolderIcon sx={{ width: "18px", height: "18px" }} />
+            <FolderIcon
+              sx={{ width: "18px", height: "18px", fill: "#4489fe" }}
+            />
           ) : (
-            <FileIcon sx={{ width: "18px", height: "18px" }} />
+            <FileIcon sx={{ width: "18px", height: "18px", fill: "#4489fe" }} />
           )}
           <div className="ml-1 text-[14px] font-medium text-[#212121] ">
             {nodes.label}
@@ -65,8 +67,8 @@ const MyTreeView = ({ treeData, onDragEnd }) => {
           <div ref={provided.innerRef} {...provided.droppableProps}>
             <TreeView
               className={classes.root}
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
+              defaultCollapseIcon={<ExpandMoreIcon sx={{ fill: "#4489fe" }} />}
+              defaultExpandIcon={<ChevronRightIcon sx={{ fill: "#4489fe" }} />}
             >
               {renderTree(treeData)}
             </TreeView>

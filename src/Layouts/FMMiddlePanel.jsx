@@ -17,15 +17,15 @@ const columns = [
       return (
         <div className="flex">
           {fileExtension === "png" ? (
-            <ImageIcon />
+            <ImageIcon sx={{ fill: "#4489fe" }} />
           ) : fileExtension === "zip" ? (
-            <ZipFileIcon />
+            <ZipFileIcon sx={{ fill: "#4489fe" }} />
           ) : fileExtension === "pdf" || fileExtension === "txt" ? (
-            <TextFileIcon />
+            <TextFileIcon sx={{ fill: "#4489fe" }} />
           ) : fileExtension === "mp3" ? (
-            <AudioFileIcon />
+            <AudioFileIcon sx={{ fill: "#4489fe" }} />
           ) : fileExtension === "mp4" ? (
-            <VideoFileIcon />
+            <VideoFileIcon sx={{ fill: "#4489fe" }} />
           ) : (
             <></>
           )}
@@ -225,7 +225,7 @@ const FMMiddlePanel = () => {
       "
         ref={divOfTableRef}
       >
-        <div className="flex justify-start ml-4 text-[14px] min-w-[400px]">
+        <div className="flex justify-start ml-4 text-[14px] min-w-[400px] select-none">
           <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMShareIcon.svg"
@@ -299,7 +299,7 @@ const FMMiddlePanel = () => {
         </div>
       </div>
       <div
-        className={`w-full px-4 flex justify-center overflow-auto max-h-[calc(100vh-250px)] font-roboto`}
+        className={`w-full px-4 flex justify-center overflow-auto max-h-[calc(100vh-250px)] font-roboto `}
       >
         <DataGrid
           rows={rows}
