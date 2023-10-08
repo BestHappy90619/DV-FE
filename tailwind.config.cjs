@@ -9,7 +9,7 @@ module.exports = withMT({
         roboto: ["Roboto", "sans"],
       },
       width: {
-        "calc-full-without-200": "calc(100% - 200px)",
+        "calc-full-without-250": "calc(100% - 250px)",
       },
     },
     screens: {
