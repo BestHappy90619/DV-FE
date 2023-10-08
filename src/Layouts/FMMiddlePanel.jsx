@@ -7,7 +7,7 @@ const columns = [
     field: "LastUpdated",
     headerName: "Last Updated",
     type: Date,
-    width: 300,
+    width: 200,
     valueGetter: (params) => {
       // Convert Date to a readable string (e.g., "October 10, 2023")
       return new Date(params.row.LastUpdated).toUTCString();
@@ -22,9 +22,16 @@ const columns = [
   {
     field: "Size",
     headerName: "Size",
-    // type: "number",
     width: 150,
-  }, // name, length, updated, size
+    valueGetter: (params) => {
+      // Convert the numeric file size to a human-readable format
+      const fileSize = params.row.Size;
+      return formatFileSize(fileSize);
+    },
+    sortComparator: (v1, v2, param1, param2) => {
+      return parseFileSize(param1.value) - parseFileSize(param2.value);
+    },
+  },
   {
     field: "PlayLength",
     headerName: "Length",
@@ -74,134 +81,59 @@ const generateRandomDate = () => {
   return new Date(randomTime);
 };
 
-const rows = [
-  {
-    id: 1,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "35 MB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 2,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "42 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 3,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "45 MB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 4,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "16 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 5,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "5 B",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 6,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "150 B",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 7,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "44 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 8,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "36 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 9,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "65 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 10,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "35 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 11,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "42 GB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 12,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "45 GB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 13,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "16 MB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 14,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "6 B",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 15,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "150 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 16,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "44 MB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 17,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "36 KB",
-    PlayLength: generateRandomDate(),
-  },
-  {
-    id: 18,
-    FileName: generateRandomFileName(extensionsArray),
-    LastUpdated: generateRandomDate(),
-    Size: "65 MB",
-    PlayLength: generateRandomDate(),
-  },
-];
+function parseFileSize(fileSizeString) {
+  const sizeParts = fileSizeString.trim().split(" ");
+  if (sizeParts.length !== 2) {
+    throw new Error("Invalid file size format.");
+  }
+
+  const size = parseFloat(sizeParts[0]);
+  const unit = sizeParts[1].toUpperCase();
+
+  switch (unit) {
+    case "B":
+      return size;
+    case "KB":
+      return size * 1024;
+    case "MB":
+      return size * 1024 * 1024;
+    case "GB":
+      return size * 1024 * 1024 * 1024;
+    case "TB":
+      return size * 1024 * 1024 * 1024 * 1024;
+    default:
+      throw new Error("Unsupported unit in file size.");
+  }
+}
+
+function formatFileSize(fileSizeInBytes) {
+  const units = ["B", "kB", "MB", "GB", "TB"];
+  let size = fileSizeInBytes;
+  let unitIndex = 0;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  return `${size.toFixed(2)} ${units[unitIndex]}`;
+}
+
+let rows = [];
+
+const fillRows = () => {
+  for (let index = 0; index < 25; index++) {
+    rows[index] = {
+      id: index + 1,
+      FileName: generateRandomFileName(extensionsArray),
+      LastUpdated: generateRandomDate(),
+      Size: Math.floor(Math.random() * 10995116277760),
+      PlayLength: generateRandomDate(),
+    };
+  }
+};
+
+fillRows();
 
 const FMMiddlePanel = () => {
   const divOfTableRef = useRef(null);
