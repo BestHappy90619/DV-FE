@@ -9,7 +9,6 @@ import {
   MenuList,
   MenuItem,
   Avatar,
-  Breadcrumbs,
   Tabs,
   TabsHeader,
   TabsBody,
@@ -18,11 +17,13 @@ import {
 } from "@material-tailwind/react";
 
 import SearchBox from "../Components/FMSearchBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function NavBar() {
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [isTablet, setIsTablet] = useState(false);
+
   const data = [
     {
       label: "ALL",
@@ -105,12 +106,36 @@ export default function NavBar() {
     },
   ];
 
+  useEffect(() => {
+    if (window && window.innerWidth <= 800) {
+      setIsTablet(true);
+    } else {
+      setIsTablet(false);
+    }
+
+    window.addEventListener("resize", () => {
+      console.log("window.innerWidth   >>> ", window?.innerWidth || 0);
+      if (window) {
+        if (window.innerWidth <= 800) {
+          setIsTablet(true);
+        } else {
+          setIsTablet(false);
+        }
+      }
+    });
+
+    return () => {
+      window.removeEventListener("resize", () => {});
+    };
+  }, []);
+
   return (
     <Navbar className="top-0 z-50 rounded-none fixed bg-white bg-opacity-100 border-white border-opacity-100 backdrop-saturate-0 backdrop-blur-none">
       <div className="flex justify-between">
         <div className="flex items-center">
           <Typography
-            className="flex cursor-pointer mr-16 font-bold text-custom-black text-xl items-center"
+            className="flex cursor-pointer font-bold text-custom-black text-xl items-center"
+            style={{ marginRight: `${isTablet ? "mr-2" : "mr-16"} ` }}
             onClick={() => navigate("/")}
           >
             <img
@@ -119,79 +144,89 @@ export default function NavBar() {
               className=" mr-2 w-[26px] h-[30px]"
             />
           </Typography>
-          <ul className="flex flex-row gap-6">
-            {menus.map((menu) => {
-              return (
-                <li
-                  key={menu.path}
-                  className={`cursor-pointer ${
-                    menu.key.includes(currentUrl)
-                      ? "text-custom-sky"
-                      : "text-custom-black"
-                  }`}
-                >
-                  <Menu allowHover>
-                    {Object.keys(menu)?.includes("children") ? (
-                      <>
-                        <MenuHandler>
+          {isTablet === false ? (
+            <ul className="flex flex-row gap-6">
+              {menus.map((menu) => {
+                return (
+                  <li
+                    key={menu.path}
+                    className={`cursor-pointer ${
+                      menu.key.includes(currentUrl)
+                        ? "text-custom-sky"
+                        : "text-custom-black"
+                    }`}
+                  >
+                    <Menu allowHover>
+                      {Object.keys(menu)?.includes("children") ? (
+                        <>
+                          <MenuHandler>
+                            <span
+                              onClick={() =>
+                                menu.children.length > 0
+                                  ? navigate("#")
+                                  : navigate(menu.path)
+                              }
+                              className={`cursor-pointer ${
+                                menu.key.includes(currentUrl)
+                                  ? "text-custom-sky"
+                                  : "text-custom-black"
+                              }`}
+                            >
+                              {menu.title}
+                            </span>
+                          </MenuHandler>
+                          <MenuList>
+                            {menu.children.map((child) => {
+                              return (
+                                <MenuItem key={child.path}>
+                                  <span
+                                    className={
+                                      menu.path + child.path == currentUrl
+                                        ? "text-custom-sky"
+                                        : "text-custom-black"
+                                    }
+                                    onClick={() =>
+                                      navigate(menu.path + child.path)
+                                    }
+                                  >
+                                    {child.title}
+                                  </span>
+                                </MenuItem>
+                              );
+                            })}
+                          </MenuList>
+                        </>
+                      ) : (
+                        <>
                           <span
-                            onClick={() =>
-                              menu.children.length > 0
-                                ? navigate("#")
-                                : navigate(menu.path)
-                            }
                             className={`cursor-pointer ${
                               menu.key.includes(currentUrl)
                                 ? "text-custom-sky"
                                 : "text-custom-black"
                             }`}
+                            onClick={() => navigate(menu.path)}
                           >
                             {menu.title}
                           </span>
-                        </MenuHandler>
-                        <MenuList>
-                          {menu.children.map((child) => {
-                            return (
-                              <MenuItem key={child.path}>
-                                <span
-                                  className={
-                                    menu.path + child.path == currentUrl
-                                      ? "text-custom-sky"
-                                      : "text-custom-black"
-                                  }
-                                  onClick={() =>
-                                    navigate(menu.path + child.path)
-                                  }
-                                >
-                                  {child.title}
-                                </span>
-                              </MenuItem>
-                            );
-                          })}
-                        </MenuList>
-                      </>
-                    ) : (
-                      <>
-                        <span
-                          className={`cursor-pointer ${
-                            menu.key.includes(currentUrl)
-                              ? "text-custom-sky"
-                              : "text-custom-black"
-                          }`}
-                          onClick={() => navigate(menu.path)}
-                        >
-                          {menu.title}
-                        </span>
-                      </>
-                    )}
-                  </Menu>
-                </li>
-              );
-            })}
-          </ul>
+                        </>
+                      )}
+                    </Menu>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <div className="relative w-[50px] h-[50px] rounded-[8px] bg-[#E9F0FD] border-[2px] border-[#E9F0FD] flex justify-center items-center">
+              <img
+                src="/image/MobilemenuIcon.svg"
+                className="w-6 h-6 "
+                alt="menu icon"
+              />
+            </div>
+          )}
         </div>
 
-        <div className="w-full md:w-calc-full-without-200  md:max-w-[450px] flex items-end ">
+        <div className="w-full md:w-calc-full-without-250  md:max-w-[450px] flex items-end ">
           <SearchBox className={`w-full bg-[#F2F3F5] h-[50px] `} />
         </div>
         <div className="flex items-center">
