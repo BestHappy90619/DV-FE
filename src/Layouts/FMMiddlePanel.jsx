@@ -188,6 +188,8 @@ const FMMiddlePanel = () => {
   const updateDivWidth = () => {
     if (divOfTableRef.current) {
       const width = divOfTableRef.current.offsetWidth;
+
+      console.log("divOfTableRef.current width >>> ", width);
       setDivWidth(Number(width));
     }
   };
@@ -202,6 +204,18 @@ const FMMiddlePanel = () => {
     // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener("resize", updateDivWidth);
+    };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", function (e) {
+      if (!divOfTableRef.current) return;
+
+      updateDivWidth();
+    });
+
+    return () => {
+      window.removeEventListener("mousemove", () => {});
     };
   }, []);
 
@@ -229,7 +243,7 @@ const FMMiddlePanel = () => {
             />
             View selected
           </div>
-          {divOfTableRef.current !== null && divWidth <= 730 ? (
+          {divWidth <= 730 ? (
             <></>
           ) : (
             <>
