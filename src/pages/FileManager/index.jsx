@@ -84,11 +84,11 @@ const MainLyt = () => {
     <div className="h-full ">
       <NavBar />
       <div className="flex mt-[82px] justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px]">
-        <Breadcrumbs className="ml-[300px] flex items-center h-5 py-0 my-0">
-          <a href="#" className="text-[14px] text-[#757575]">
+        <Breadcrumbs className="ml-[300px] flex items-center h-5 py-0 my-0 bg-transparent">
+          <a href="#" className="text-[16px] text-[#757575] font-medium">
             <span>Site</span>
           </a>
-          <a href="#" className="text-[14px] text-[#212121]">
+          <a href="#" className="text-[16px] text-[#212121] font-medium">
             <span>New Folder</span>
           </a>
         </Breadcrumbs>
