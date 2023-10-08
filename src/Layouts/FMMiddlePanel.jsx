@@ -2,150 +2,204 @@ import { useEffect, useRef, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 
 const columns = [
-  { field: "id", headerName: "", width: 70 },
   { field: "FileName", headerName: "File Name", width: 300 },
-  { field: "LastUpdated", headerName: "Last Updated", width: 130 },
+  {
+    field: "LastUpdated",
+    headerName: "Last Updated",
+    type: Date,
+    width: 300,
+    valueGetter: (params) => {
+      // Convert Date to a readable string (e.g., "October 10, 2023")
+      return new Date(params.row.LastUpdated).toUTCString();
+    },
+    sortComparator: (v1, v2, param1, param2) => {
+      // Custom sorting function for "Last updated" column
+      return (
+        new Date(param1.value).getTime() - new Date(param2.value).getTime()
+      );
+    },
+  },
   {
     field: "Size",
     headerName: "Size",
-    type: "number",
-    width: 100,
+    // type: "number",
+    width: 150,
   }, // name, length, updated, size
   {
     field: "PlayLength",
     headerName: "Length",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 160,
+    description: "This column shows play time length of file.",
+    width: 150,
+    valueGetter: (params) => {
+      // Convert Date to "hh:mm:ss" string format
+      const date = new Date(params.row.PlayLength);
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      const seconds = date.getSeconds().toString().padStart(2, "0");
+      return `${hours}:${minutes}:${seconds}`;
+    },
   },
 ];
+
+const extensionsArray = ["txt", "pdf", "png", "mp3", "mp4", "zip"];
+const wordList = ["apple", "banana", "cat", "dog", "elephant", "fox", "grape"];
+
+function generateRandomFileName(extensions, length = 2) {
+  if (!Array.isArray(extensions) || extensions.length === 0) {
+    throw new Error("Extensions array must be provided and not empty.");
+  }
+
+  if (!Array.isArray(wordList) || wordList.length === 0) {
+    throw new Error("Word list array must be provided and not empty.");
+  }
+
+  const randomExtension =
+    extensions[Math.floor(Math.random() * extensions.length)];
+  let randomFileName = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomWordIndex = Math.floor(Math.random() * wordList.length);
+    const randomWord = wordList[randomWordIndex];
+    randomFileName += randomWord;
+  }
+
+  return `${randomFileName}.${randomExtension}`;
+}
+
+const generateRandomDate = () => {
+  const startDate = new Date(2000, 0, 1).getTime(); // Adjust the start date as needed
+  const endDate = new Date().getTime(); // Use the current date as the end date
+
+  const randomTime = startDate + Math.random() * (endDate - startDate);
+  return new Date(randomTime);
+};
 
 const rows = [
   {
     id: 1,
-    FileName: "Snow",
-    LastUpdated: "Jon",
-    Size: 35,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "35 MB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 2,
-    FileName: "Lannister",
-    LastUpdated: "Cersei",
-    Size: 42,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "42 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 3,
-    FileName: "Lannister",
-    LastUpdated: "Jaime",
-    Size: 45,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "45 MB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 4,
-    FileName: "Stark",
-    LastUpdated: "Arya",
-    Size: 16,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "16 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 5,
-    FileName: "Targaryen",
-    LastUpdated: "Daenerys",
-    Size: null,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "5 B",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 6,
-    FileName: "Melisandre",
-    LastUpdated: null,
-    Size: 150,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "150 B",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 7,
-    FileName: "Clifford",
-    LastUpdated: "Ferrara",
-    Size: 44,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "44 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 8,
-    FileName: "Frances",
-    LastUpdated: "Rossini",
-    Size: 36,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "36 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 9,
-    FileName: "Roxie",
-    LastUpdated: "Harvey",
-    Size: 65,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "65 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 10,
-    FileName: "Snow",
-    LastUpdated: "Jon",
-    Size: 35,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "35 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 11,
-    FileName: "Lannister",
-    LastUpdated: "Cersei",
-    Size: 42,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "42 GB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 12,
-    FileName: "Lannister",
-    LastUpdated: "Jaime",
-    Size: 45,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "45 GB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 13,
-    FileName: "Stark",
-    LastUpdated: "Arya",
-    Size: 16,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "16 MB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 14,
-    FileName: "Targaryen",
-    LastUpdated: "Daenerys",
-    Size: null,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "6 B",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 15,
-    FileName: "Melisandre",
-    LastUpdated: null,
-    Size: 150,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "150 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 16,
-    FileName: "Clifford",
-    LastUpdated: "Ferrara",
-    Size: 44,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "44 MB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 17,
-    FileName: "Frances",
-    LastUpdated: "Rossini",
-    Size: 36,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "36 KB",
+    PlayLength: generateRandomDate(),
   },
   {
     id: 18,
-    FileName: "Roxie",
-    LastUpdated: "Harvey",
-    Size: 65,
-    PlayLength: "0:25:45",
+    FileName: generateRandomFileName(extensionsArray),
+    LastUpdated: generateRandomDate(),
+    Size: "65 MB",
+    PlayLength: generateRandomDate(),
   },
 ];
 
