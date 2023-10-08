@@ -46,8 +46,6 @@ const MainLyt = () => {
         // const newWidth = leftSidebarWidth + (e.screenX - leftSidebarWidth);
         const newWidth = e.clientX;
 
-        console.log("mouse event >>> ", e);
-        console.log("newWidth >>> ", newWidth);
         if (newWidth >= minWidth && newWidth <= maxWidth)
           setLeftSidebarWidth(newWidth);
       }
