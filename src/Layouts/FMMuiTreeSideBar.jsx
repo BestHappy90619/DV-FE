@@ -30,7 +30,9 @@ const MyTreeView = ({ treeData, onDragEnd }) => {
       nodeId={nodes.id}
       label={
         <div className={classes.listItem}>
-          {nodes.children ? (
+          {nodes.id === "root" ? (
+            <></>
+          ) : nodes.children ? (
             <FolderIcon sx={{ width: "18px", height: "18px" }} />
           ) : (
             <FileIcon sx={{ width: "18px", height: "18px" }} />
@@ -39,6 +41,15 @@ const MyTreeView = ({ treeData, onDragEnd }) => {
             {nodes.label}
           </div>
         </div>
+      }
+      icon={
+        nodes.id === "root" ? (
+          <img
+            src="/image/FMHomeIcon.svg"
+            className="w-[18px] h-[18px]"
+            alt="home icon"
+          />
+        ) : undefined
       }
     >
       {Array.isArray(nodes.children)
