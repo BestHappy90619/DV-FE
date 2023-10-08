@@ -22,12 +22,13 @@ import { Breadcrumbs } from "@material-tailwind/react";
 
 const MainLyt = () => {
   const dispatch = useDispatch();
-  const minWidth = 200;
+  const minWidth = 0;
   const maxWidth = 1920;
 
   const [leftSidebarWidth, setLeftSidebarWidth] = useState(300);
-
   const [rightSidebarWidth, setRightSidebarWidth] = useState(300);
+  const [showLeftSideBar, setShowLeftSideBar] = useState(true);
+  const [showRightSideBar, setShowRightSideBar] = useState(true);
   const isNowLeftResizing = useRef(false);
   const isNowRightResizing = useRef(false);
 
@@ -64,10 +65,29 @@ const MainLyt = () => {
       EventBus.dispatch(PREVENT_SELECT, false);
     });
 
+    window.addEventListener("resize", () => {
+      console.log("window.innerWidth   >>> ", window?.innerWidth || 0);
+      if (window) {
+        if (window.innerWidth <= 768) {
+          setShowLeftSideBar(false);
+          setShowRightSideBar(false);
+          setRightSidebarWidth(0);
+          setLeftSidebarWidth(0);
+        } else {
+          setShowLeftSideBar(true);
+          setShowRightSideBar(true);
+          setLeftSidebarWidth(300);
+          setRightSidebarWidth(300);
+        }
+      }
+    });
+
     return () => {
       window.removeEventListener("keydown", () => {});
       window.removeEventListener("mousemove", () => {});
       window.removeEventListener("mouseup", () => {});
+
+      window.removeEventListener("resize", () => {});
     };
   }, []);
 
@@ -98,8 +118,11 @@ const MainLyt = () => {
       </div>
       <div className="flex h-full">
         <div
-          className="flex fixed left-0 z-40 bg-white h-full"
-          style={{ width: `${leftSidebarWidth}px` }}
+          className=" fixed left-0 z-40 bg-white h-full"
+          style={{
+            width: `${leftSidebarWidth}px`,
+            display: `${showLeftSideBar ? "flex" : "hidden"}`,
+          }}
         >
           {/* <FMTreeSideBar /> */}
           <FMMuiTreeSideBar />
@@ -123,8 +146,11 @@ const MainLyt = () => {
         </div>
 
         <div
-          className="flex fixed right-0 z-40 bg-white h-full"
-          style={{ width: `${rightSidebarWidth}px` }}
+          className=" fixed right-0 z-40 bg-white h-full"
+          style={{
+            width: `${rightSidebarWidth}px`,
+            display: `${showRightSideBar ? "flex" : "hidden"}`,
+          }}
         >
           <div
             className="w-1 border-r-2 cursor-col-resize border-blue-gray-50 h-full"
