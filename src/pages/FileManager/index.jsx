@@ -22,11 +22,14 @@ import { Breadcrumbs } from "@material-tailwind/react";
 
 const MainLyt = () => {
   const dispatch = useDispatch();
-  const minWidth = 0;
-  const maxWidth = 1920;
 
-  const [leftSidebarWidth, setLeftSidebarWidth] = useState(300);
-  const [rightSidebarWidth, setRightSidebarWidth] = useState(300);
+  const {
+    minWidth,
+    maxWidth,
+    leftSidebarWidth,
+    rightSidebarWidth,
+  } = useSelector((state) => state.sidebar);
+
   const [showLeftSideBar, setShowLeftSideBar] = useState(true);
   const [showRightSideBar, setShowRightSideBar] = useState(true);
   const isNowLeftResizing = useRef(false);
@@ -48,14 +51,14 @@ const MainLyt = () => {
         const newWidth = e.clientX;
 
         if (newWidth >= minWidth && newWidth <= maxWidth)
-          setLeftSidebarWidth(newWidth);
+          dispatch(setLeftSidebarWidth(newWidth));
       }
       if (isNowRightResizing.current) {
         const newWidth =
           rightSidebarWidth +
           (this.window.innerWidth - rightSidebarWidth - e.clientX);
         if (newWidth >= minWidth && newWidth <= maxWidth)
-          setRightSidebarWidth(newWidth);
+          dispatch(setRightSidebarWidth(newWidth));
       }
     });
 
@@ -71,13 +74,13 @@ const MainLyt = () => {
         if (window.innerWidth <= 800) {
           setShowLeftSideBar(false);
           setShowRightSideBar(false);
-          setRightSidebarWidth(0);
-          setLeftSidebarWidth(0);
+          dispatch(setLeftSidebarWidth(0));
+          dispatch(setRightSidebarWidth(0));
         } else {
           setShowLeftSideBar(true);
           setShowRightSideBar(true);
-          setLeftSidebarWidth(300);
-          setRightSidebarWidth(300);
+          dispatch(setLeftSidebarWidth(250));
+          dispatch(setRightSidebarWidth(250));
         }
       }
     });
@@ -107,7 +110,10 @@ const MainLyt = () => {
     <div className="h-full ">
       <NavBar />
       <div className="flex mt-[82px] justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px]">
-        <Breadcrumbs className="ml-[300px] flex items-center h-5 py-0 my-0 bg-transparent">
+        <Breadcrumbs
+          className={` flex items-center h-5 py-0 my-0 bg-transparent`}
+          style={{ marginLeft: `${leftSidebarWidth + 10}px` }}
+        >
           <a href="#" className="text-[16px] text-[#757575] font-medium">
             <span>Site</span>
           </a>
