@@ -221,11 +221,10 @@ const FMMiddlePanel = () => {
   return (
     <div className="w-full flex flex-col ">
       <div
-        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4]        
-      "
+        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-40 fill-white            "
         ref={divOfTableRef}
       >
-        <div className="flex justify-start ml-4 text-[14px] min-w-[400px] select-none">
+        <div className="flex  justify-start ml-4 text-[14px] min-w-[400px] select-none ">
           <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMShareIcon.svg"
@@ -298,9 +297,7 @@ const FMMiddlePanel = () => {
           </div>
         </div>
       </div>
-      <div
-        className={`w-full px-4 flex justify-center overflow-auto max-h-[calc(100vh-250px)] font-roboto `}
-      >
+      <div className={`w-full px-4 flex justify-center  font-roboto mt-[60px]`}>
         <DataGrid
           rows={rows}
           columns={columns}

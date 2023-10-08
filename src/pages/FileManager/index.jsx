@@ -109,9 +109,9 @@ const MainLyt = () => {
   return (
     <div className="h-full ">
       <NavBar />
-      <div className="flex mt-[82px] justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px]">
+      <div className="flex z-40 bg-white justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px] top-[82px] fixed">
         <Breadcrumbs
-          className={` flex items-center h-5 py-0 my-0 bg-transparent`}
+          className={`flex items-center h-5 py-0 my-0 bg-transparent`}
           style={{ marginLeft: `${leftSidebarWidth + 10}px` }}
         >
           <a href="#" className="text-[16px] text-[#757575] font-medium">
@@ -122,7 +122,7 @@ const MainLyt = () => {
           </a>
         </Breadcrumbs>
       </div>
-      <div className="flex h-full">
+      <div className="mt-[142px] flex h-full">
         <div
           className=" fixed left-0 z-40 bg-white h-full"
           style={{
@@ -145,7 +145,6 @@ const MainLyt = () => {
             width: `calc(100% - ${
               Number(leftSidebarWidth) + Number(rightSidebarWidth)
             }px)`,
-            overflowX: "auto",
           }}
         >
           <FMMiddlePanel />
