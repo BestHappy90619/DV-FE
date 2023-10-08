@@ -130,3 +130,7 @@ outline: none !important;
 .MuiDataGrid-iconSeparator{
 display: none !important;
 }
+
+.MuiSvgIcon-root, .MuiTreeItem-label {
+  fill: #4489FE !important; /* Change the fill color to #4489FE */
+}

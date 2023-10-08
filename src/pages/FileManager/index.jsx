@@ -10,7 +10,8 @@ import {
 
 // layouts
 import NavBar from "../../Layouts/NavBar";
-import FMTreeSideBar from "../../Layouts/FMTreeSideBar";
+// import FMTreeSideBar from "../../Layouts/FMTreeSideBar";
+import FMMuiTreeSideBar from "../../Layouts/FMMuiTreeSideBar";
 import FMMiddlePanel from "../../Layouts/FMMiddlePanel";
 import FMRightSideBar from "../../Layouts/FMRightSideBar";
 
@@ -95,7 +96,8 @@ const MainLyt = () => {
       <div className="flex h-full">
         <div className="flex fixed z-40 bg-white h-full">
           <div style={{ width: leftSidebarWidth, height: "100%" }}>
-            <FMTreeSideBar />
+            {/* <FMTreeSideBar /> */}
+            <FMMuiTreeSideBar />
           </div>
           <div
             className="w-1 border-l-2 cursor-col-resize border-blue-gray-50"
