@@ -77,7 +77,6 @@ const MainLyt = () => {
         const newWidth =
           rightSidebarWidth +
           (this.window.innerWidth - rightSidebarWidth - e.clientX);
-        console.log("newWidth >>> ", newWidth);
         if (newWidth >= minWidth && newWidth <= maxWidth)
           dispatch(setRightSidebarWidth(newWidth));
       }
