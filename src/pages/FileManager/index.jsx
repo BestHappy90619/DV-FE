@@ -132,7 +132,7 @@ const MainLyt = () => {
   return (
     <div className="h-full ">
       <NavBar />
-      <div className="flex z-40 bg-white justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px] top-[82px] fixed">
+      <div className="flex z-20 bg-white justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px] top-[82px] fixed">
         <Breadcrumbs
           className={`flex items-center h-5 py-0 my-0 bg-transparent`}
           style={{ marginLeft: `${leftSidebarWidth + 10}px` }}
@@ -156,7 +156,7 @@ const MainLyt = () => {
                 ? "flex"
                 : "hidden"
             }`,
-            zIndex: `${showLeftBarOnMobile === true ? 50 : 40}`,
+            zIndex: `${showLeftBarOnMobile === true ? 30 : 20}`,
           }}
         >
           {/* <FMTreeSideBar /> */}
@@ -180,7 +180,7 @@ const MainLyt = () => {
           <FMMiddlePanel />
         </div>
         <div
-          className=" fixed right-0 z-40 bg-white h-full"
+          className=" fixed right-0 z-20 bg-white h-full"
           style={{
             width:
               showRightBarOnMobile === true
@@ -191,7 +191,7 @@ const MainLyt = () => {
                 ? "flex"
                 : "hidden"
             }`,
-            zIndex: `${showRightBarOnMobile === true ? 50 : 40}`,
+            zIndex: `${showRightBarOnMobile === true ? 30 : 20}`,
           }}
         >
           <div
