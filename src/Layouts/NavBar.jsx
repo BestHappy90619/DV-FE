@@ -319,7 +319,7 @@ export default function NavBar() {
             />
             {showNotificationPopup === true && (
               <div
-                className="w-[480px] absolute z-10 right-0 top-12 flex flex-col gap-3 bg-white shadow-md
+                className="w-[480px] absolute z-30 right-0 top-12 flex flex-col gap-3 bg-white shadow-md
               border-[1px] border-[#E5E9EE] rounded-[4px]
               "
               >

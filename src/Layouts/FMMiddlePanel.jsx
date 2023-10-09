@@ -52,7 +52,7 @@ const columns = [
     field: "LastUpdated",
     headerName: "Last Updated",
     type: Date,
-    width: 150,
+    width: 200,
     valueGetter: (params) => {
       // Convert Date to a readable string (e.g., "October 10, 2023")
       return new Date(params.row.LastUpdated).toUTCString();
