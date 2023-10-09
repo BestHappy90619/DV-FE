@@ -113,6 +113,7 @@ const FileTreeView = ({ showOrHide }) => {
   const handleDragEnd = (result) => {
     // Implement logic to update tree structure based on drag-and-drop actions
     // result.source.index and result.destination.index can be used to determine the new order.
+    console.log("handle drag end result >>> ", result);
   };
 
   return (

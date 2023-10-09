@@ -48,7 +48,7 @@ const MainLyt = () => {
         dispatch(setRightSidebarWidth(0));
       } else {
         setShowLeftBarOnMobile(false);
-        setShowRightBarOnMobile(true);
+        setShowRightBarOnMobile(false);
         setShowLeftSideBar(true);
         setShowRightSideBar(true);
         dispatch(setLeftSidebarWidth(250));
@@ -77,6 +77,7 @@ const MainLyt = () => {
         const newWidth =
           rightSidebarWidth +
           (this.window.innerWidth - rightSidebarWidth - e.clientX);
+        console.log("newWidth >>> ", newWidth);
         if (newWidth >= minWidth && newWidth <= maxWidth)
           dispatch(setRightSidebarWidth(newWidth));
       }
@@ -99,7 +100,7 @@ const MainLyt = () => {
           dispatch(setRightSidebarWidth(0));
         } else {
           setShowLeftBarOnMobile(false);
-          setShowRightBarOnMobile(true);
+          setShowRightBarOnMobile(false);
           setShowLeftSideBar(true);
           setShowRightSideBar(true);
           dispatch(setLeftSidebarWidth(250));
