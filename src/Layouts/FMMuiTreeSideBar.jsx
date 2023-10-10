@@ -118,10 +118,10 @@ const FileTreeView = ({ showOrHide }) => {
 
   return (
     <div
-      className={` w-full flex-col pl-4 relative h-full ${
+      className={`w-full flex-col pl-4 relative  ${
         showOrHide === true ? "pl-4" : "pl-0"
       }`}
-      style={{ display: `${showOrHide === true ? "flex" : "none"}` }}
+      style={{ display: `${showOrHide === true ? "flex relative" : "none"}` }}
     >
       <div className="z-50 absolute -top-[23px] right-[46px] select-none cursor-pointer">
         <button
@@ -188,9 +188,10 @@ const FileTreeView = ({ showOrHide }) => {
           </div>
         )}
       </div>
-      <div className="text-[#212121] mt-5 font-bold">Directory</div>
-      <div className="flex mt-3"></div>
-      <MyTreeView treeData={treeData} onDragEnd={handleDragEnd} />
+      <div className="absolute  bottom-0 right-0 left-5 top-0 flex flex-col  mt-3  h-[calc(100vh-160px)] overflow-y-auto">
+        <div className="text-[#212121] mt-5  font-bold">Directory</div>
+        <MyTreeView treeData={treeData} onDragEnd={handleDragEnd} />
+      </div>
     </div>
   );
 };
