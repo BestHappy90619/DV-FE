@@ -22,7 +22,7 @@ const getAllMedias = () => {
 
 const getTranscriptionByFileId = (fileId) => {
     return http
-        .get(MEDIA_API + "?filename=" + fileId)
+        .get(MEDIA_API + "?fileName=" + fileId)
         .then(
             (res) => {
                 return res;
