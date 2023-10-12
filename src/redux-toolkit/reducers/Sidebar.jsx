@@ -214,5 +214,4 @@ const sidebarSlice = createSlice({
 const { reducer, actions } = sidebarSlice;
 
 export const { togglePlaylist, toggleNote, toggleSearch, setPlaylistSidebarPosition, setNoteSidebarPosition, setSearchSidebarPosition, setLeftSidebarWidth, setRightSidebarWidth, initSidebar } = actions;
-
 export default reducer;
