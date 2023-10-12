@@ -150,14 +150,15 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
 
     useEffect(() => {
         function onTimeSlideDrag() {
-            let activeElement = document.getElementById(activeWordId.current);
-            window.scrollTo({ behavior: 'smooth', top: activeElement?.offsetTop - 216 - (window.innerHeight - 314) / 4 })
+            setTimeout(() => {
+                let activeElement = document.getElementById(activeWordId.current);
+                window.scrollTo({ behavior: 'smooth', top: activeElement?.offsetTop - 216 - (window.innerHeight - 314) / 4 })
+            }, 50)
         }
         EventBus.on(TIME_SLIDE_DRAG, onTimeSlideDrag);
         // Remove the event listeners when the component unmounts
         return () => {
             EventBus.remove(TIME_SLIDE_DRAG, onTimeSlideDrag);
-            // document.removeEventListener(SELECTION_CHANGE, onChangeSelection);
         };
     }, [])
 
