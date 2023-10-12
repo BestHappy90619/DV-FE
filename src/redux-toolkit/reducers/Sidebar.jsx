@@ -205,10 +205,13 @@ const sidebarSlice = createSlice({
       }
       return { ...state, searchOrder: newOrder, leftSidebarWidth: newLeftSidebarWidth, rightSidebarWidth: newRightSidebarWidth, prevLeftSidebarWidth: newPrevLeftSidebarWidth, prevRightSidebarWidth: newPrevRightSidebarWidth };
     },
+    initSidebar: (state, action) => {
+      return initialState;
+    }
   },
 });
 
 const { reducer, actions } = sidebarSlice;
 
-export const { togglePlaylist, toggleNote, toggleSearch, setPlaylistSidebarPosition, setNoteSidebarPosition, setSearchSidebarPosition, setLeftSidebarWidth, setRightSidebarWidth } = actions;
+export const { togglePlaylist, toggleNote, toggleSearch, setPlaylistSidebarPosition, setNoteSidebarPosition, setSearchSidebarPosition, setLeftSidebarWidth, setRightSidebarWidth, initSidebar } = actions;
 export default reducer;
