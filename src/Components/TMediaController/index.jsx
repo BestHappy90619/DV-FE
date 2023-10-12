@@ -15,7 +15,7 @@ import { FaListUl } from "react-icons/fa";
 
 // constant
 import { EventBus, getIndexFromArr, getItemFromArr, msToTime, setMinimumFractionFormat } from "@/utils/function";
-import { TIME_UPDATE_OUTSIDE } from "@/utils/constant";
+import { TIME_SLIDE_DRAG, TIME_UPDATE_OUTSIDE } from "@/utils/constant";
 
 const TMediaController = () => {
   const dispatch = useDispatch();
@@ -53,7 +53,8 @@ const TMediaController = () => {
     if (selectedMediaId == "") return;
     let percent = e.target.value == 0 ? 0.000001 : e.target.value;
     setCurrentTimePercent(percent);
-    EventBus.dispatch(TIME_UPDATE_OUTSIDE, {time : percent / 100 * getItemFromArr(medias, "fileId", selectedMediaId)?.duration, mediaId: selectedMediaId});
+    EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time: percent / 100 * getItemFromArr(medias, "fileId", selectedMediaId)?.duration, mediaId: selectedMediaId });
+    EventBus.dispatch(TIME_SLIDE_DRAG);
   }
 
   useEffect(() => {
