@@ -73,7 +73,7 @@ export const getIndexFromArr = (array, property, threshold) => {
 
 // get active word by time from words array 
 export const getActiveWord = (words, time) => {
-  let word = words.find(item => time >= item.startTime && time < item.endTime)
+  let word = words.find(item => !item.removed && time >= item.startTime && time < item.endTime)
   return word == undefined ? {} : word;
 }
 

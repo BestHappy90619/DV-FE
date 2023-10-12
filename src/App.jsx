@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "@/redux-toolkit/store";
 
 import { Spinner } from "@material-tailwind/react";
+import { Toaster } from "react-hot-toast";
 
 import { EventBus } from "./utils/function";
 import { PREVENT_SELECT, SET_LOADING } from "./utils/constant";
@@ -20,24 +21,28 @@ function App() {
   };
 
   useEffect(() => {
-    EventBus.on(PREVENT_SELECT, (flag) => setIsPreventSelect(flag));
-    EventBus.on(SET_LOADING, (data) => {
+    function onPreventSelect(flag) {
+      setIsPreventSelect(flag)
+    }
+
+    function onSetLoading(data) {
       setLoading(data);
       setIsPreventSelect(data);
-    });
+    }
+
+    EventBus.on(PREVENT_SELECT, onPreventSelect);
+    EventBus.on(SET_LOADING, onSetLoading);
 
     return () => {
-      EventBus.remove(PREVENT_SELECT);
-      EventBus.remove(SET_LOADING);
+      EventBus.remove(PREVENT_SELECT, onPreventSelect);
+      EventBus.remove(SET_LOADING, onSetLoading);
     };
-  }, []);
+  }, [])
 
   return (
     <StrictMode>
       <Provider store={store}>
-        <div className={`${isPreventSelect ? "select-none" : ""} w-full`}>
-          {pages}
-        </div>
+        <div className={`${isPreventSelect ? "select-none" : ""}`}>{pages}</div>
         <div
           style={{
             position: "fixed",
@@ -54,6 +59,7 @@ function App() {
         >
           <Spinner color="blue" className="h-10 w-10" />
         </div>
+        <Toaster />
       </Provider>
     </StrictMode>
   );

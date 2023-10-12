@@ -82,6 +82,7 @@ class TFadeInOut extends Component {
     const { children, duration, className, style } = this.props;
     return (
       <div
+        id="editableSection"
         contentEditable
         suppressContentEditableWarning
         className={className}

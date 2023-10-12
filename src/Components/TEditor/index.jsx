@@ -84,11 +84,12 @@ const TEditor = () => {
     }
 
     useEffect(() => {
-        EventBus.on(RESIZED_FUNCTION_BAR, (width) => {
+        function onResizedFunctionBar(width) {
             setFunctionBarWidth(width)
-        });
+        }
+        EventBus.on(RESIZED_FUNCTION_BAR, onResizedFunctionBar);
         return () => {
-            EventBus.remove(RESIZED_FUNCTION_BAR);
+            EventBus.remove(RESIZED_FUNCTION_BAR, onResizedFunctionBar);
         };
     }, [])
 
