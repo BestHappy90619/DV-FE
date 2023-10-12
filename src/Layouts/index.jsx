@@ -15,7 +15,7 @@ import SearchSideBar from "./SearchSideBar";
 import TMediaController from "@/Components/TMediaController";
 
 // constant
-import { NOTE_SIDEBAR, PLAYLIST_SIDEBAR, RESIZED_SIDEBAR, SEARCH_SIDEBAR, PREVENT_SELECT } from "@/utils/constant";
+import { NOTE_SIDEBAR, PLAYLIST_SIDEBAR, RESIZED_SIDEBAR, SEARCH_SIDEBAR, PREVENT_SELECT, KEY_DOWN, MOUSE_MOVE, MOUSE_UP } from "@/utils/constant";
 import { EventBus } from "@/utils/function";
 
 const MainLyt = () => {
@@ -26,14 +26,15 @@ const MainLyt = () => {
   const isNowRightResizing = useRef(false);
   
   useEffect(() => {
-    window.addEventListener('keydown', function (e) {
+    function onKeyDown(e) {
       if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
         e.preventDefault();
         dispatch(toggleSearch())
       }
-    });
+    }
+    window.addEventListener(KEY_DOWN, onKeyDown);
     
-    window.addEventListener('mousemove', function (e) {
+    function onMouseMove(e) {
       if (!isNowLeftResizing.current && !isNowRightResizing.current) return;
       EventBus.dispatch(PREVENT_SELECT, true);
       if (isNowLeftResizing.current) {
@@ -46,18 +47,20 @@ const MainLyt = () => {
         if (newWidth >= minWidth && newWidth <= maxWidth)
           dispatch(setRightSidebarWidth(newWidth));
       }
-    });
+    }
+    window.addEventListener(MOUSE_MOVE, onMouseMove);
     
-    window.addEventListener('mouseup', () => {
+    function onMouseUp() {
       isNowLeftResizing.current = false;
       isNowRightResizing.current = false;
       EventBus.dispatch(PREVENT_SELECT, false);
-    });
+    }
+    window.addEventListener(MOUSE_UP, onMouseUp);
 
     return () => {
-      window.removeEventListener("keydown", () => {});
-      window.removeEventListener("mousemove", () => {});
-      window.removeEventListener("mouseup", () => {});
+      window.removeEventListener(KEY_DOWN, onKeyDown);
+      window.removeEventListener(MOUSE_MOVE, onMouseMove);
+      window.removeEventListener(MOUSE_UP, onMouseUp);
     };
   }, [])
 
