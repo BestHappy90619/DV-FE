@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { togglePlaylist, toggleNote, toggleSearch, setLeftSidebarWidth, setRightSidebarWidth } from "@/redux-toolkit/reducers/Sidebar";
+import { togglePlaylist, toggleNote, toggleSearch, setLeftSidebarWidth, setRightSidebarWidth, initSidebar } from "@/redux-toolkit/reducers/Sidebar";
 
 // layouts
 import NavBar from "./NavBar";
@@ -26,6 +26,8 @@ const MainLyt = () => {
   const isNowRightResizing = useRef(false);
   
   useEffect(() => {
+    dispatch(initSidebar());
+
     function onKeyDown(e) {
       if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
         e.preventDefault();

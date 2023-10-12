@@ -149,34 +149,16 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
     }, [isPlaying])
 
     useEffect(() => {
-        // function onChangeSelection(e) {
-        //     e.preventDefault();
-        //     let { anchorNode, anchorOffset, focusNode, focusOffset } = window.getSelection();
-        //     let startSelEle, startSelOffset, endSelEle, endSelOffset;
-        //     if (anchorNode.parentElement.dataset.start * 1 < focusNode.parentElement.dataset.start * 1) {
-        //         startSelEle = anchorNode.parentElement
-        //         startSelOffset = anchorOffset;
-        //         endSelEle = focusNode.parentElement
-        //         endSelOffset = focusOffset;
-        //     } else {
-        //         startSelEle = focusNode.parentElement
-        //         startSelOffset = focusOffset;
-        //         endSelEle = anchorNode.parentElement
-        //         endSelOffset = anchorOffset;
-        //     }
-        //     selectionRange.current = { startSelEle, startSelOffset, endSelEle, endSelOffset };
-        // }
-        // document.addEventListener(SELECTION_CHANGE, onChangeSelection)
-
         function onTimeSlideDrag() {
-            let activeElement = document.getElementById(activeWordId.current);
-            window.scrollTo({ behavior: 'smooth', top: activeElement?.offsetTop - 216 - (window.innerHeight - 314) / 4 })
+            setTimeout(() => {
+                let activeElement = document.getElementById(activeWordId.current);
+                window.scrollTo({ behavior: 'smooth', top: activeElement?.offsetTop - 216 - (window.innerHeight - 314) / 4 })
+            }, 50)
         }
         EventBus.on(TIME_SLIDE_DRAG, onTimeSlideDrag);
         // Remove the event listeners when the component unmounts
         return () => {
             EventBus.remove(TIME_SLIDE_DRAG, onTimeSlideDrag);
-            // document.removeEventListener(SELECTION_CHANGE, onChangeSelection);
         };
     }, [])
 
@@ -302,18 +284,12 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
     },[changeStyle])
 
     const highlightActiveWord = () => {
-        // let activeWord = getItemFromArr(transcription.words, "id", activeWordId.current);
-        // remove highlight from previous active word
-        // if (currentTime >= activeWord?.startTime && currentTime < activeWord?.endTime) {
-        //     document.getElementById(activeWordId.current)?.classList.add("activeWord");
-        // } else {
         document.getElementById(activeWordId.current)?.classList.remove("activeWord");
         let newActiveWord = getActiveWord(transcription.words, currentTime)
         if (isEmpty(newActiveWord)) return;
         let activeElement = document.getElementById(newActiveWord.id);
         activeElement?.classList.add("activeWord");
         activeWordId.current = newActiveWord.id;
-        // }
     }
 
     const onClickAddSpeaker = (id) => {
@@ -375,7 +351,7 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
             document.getElementById(pauseBtnId).style.display = "none";
             dispatch(setIsPlaying(false));
         } else {    // make play
-            document.getElementById(activeWordId.current).classList.remove("activeWord");
+            document.getElementById(activeWordId.current)?.classList.remove("activeWord");
             document.getElementById(firstWordId).classList.add("activeWord");
             activeWordId.current = firstWordId;
             dispatch(setIsPlaying(true))

@@ -94,10 +94,11 @@ const Home = () => {
       let { time, mediaId } = data;
       if (mediaId == "") return;
       let mediaRef = getItemFromArr(medias, "fileId", mediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef : audioRef;
+      if (!mediaRef.current) return;
       isUpdatedFromOutside.current = true;
       mediaRef.current.currentTime = time;
       dispatch(setCurrentTime(time));
-      if (time == mediaRef.current.duration) dispatch(setIsPlaying(false));
+      if (time == mediaRef?.current.duration) dispatch(setIsPlaying(false));
     }
     EventBus.on(TIME_UPDATE_OUTSIDE, onTimeUpdateOutside)
 
