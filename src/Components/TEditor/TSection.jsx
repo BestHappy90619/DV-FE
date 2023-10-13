@@ -30,7 +30,6 @@ import MediaService from "@/services/media";
 const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, changeHighlightClr}) => {
     const dispatch = useDispatch();
     const activeWordId = useRef("");
-    const selectionRange = useRef(null);
 
     const { zoomTranscriptNum, speakerMethod } = useSelector((state) => state.editor); //true: left, false: right
     const { selectedMediaId, medias, isPlaying, currentTime } = useSelector((state) => state.media);
@@ -178,15 +177,17 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
                 let parentStartTime = parEle.dataset.start * 1;
                 let parentDuration = parEle.dataset.duration * 1;
 
+                let isCarLast = parEleText.length == caretPosition;
+
                 let eleTextBefCar = parEleText.substring(0, caretPosition - 1);
                 let eleIdBefCar = uuidv4();
                 let eleStartTimeBefCar = parentStartTime;
-                let eleDurBefCar = eleTextBefCar.length / parEleText.length * parentDuration;
+                let eleDurBefCar = isCarLast ? parentDuration / 2 : eleTextBefCar.length / parEleText.length * parentDuration;
 
-                let eleTextAftCar = " " + parEleText.substring(caretPosition);
+                let eleTextAftCar = "\u00A0" + parEleText.substring(caretPosition);
                 let eleIdAftCar = uuidv4();
                 let eleStartTimeAftCar = eleStartTimeBefCar + eleDurBefCar;
-                let eleDurAftCar = parentDuration - eleDurBefCar;
+                let eleDurAftCar = isCarLast ? parentDuration / 2 : parentDuration - eleDurBefCar;
 
                 let rawFontSize = Math.ceil(zoomTranscriptNum / 100 * DEFAULT_FONT_SIZE);
                 // create element to insert before the caret
