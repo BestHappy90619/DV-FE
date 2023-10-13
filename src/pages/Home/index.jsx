@@ -32,7 +32,7 @@ const Home = () => {
     EventBus.dispatch(RESIZED_FUNCTION_BAR, editorWidth == 80 ? 0 : editorWidth);
   }
 
-  useEffect(() => {    
+  useEffect(() => {
     EventBus.dispatch(SET_LOADING, true);
     MediaService.getAllMedias()
       .then((res) => {
