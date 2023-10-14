@@ -7,11 +7,7 @@ import { setIsPlaying } from "@/redux-toolkit/reducers/Media";
 import TFadeInOut from "../TFadeInOut";
 
 // material
-import {
-  Popover,
-  PopoverHandler,
-  PopoverContent,
-} from "@material-tailwind/react";
+import { Popover, PopoverHandler, PopoverContent} from "@material-tailwind/react";
 import { v4 as uuidv4 } from "uuid";
 
 // Toast
@@ -19,12 +15,12 @@ import { toast } from "react-hot-toast";
 
 // icons
 import { HiMiniUser } from "react-icons/hi2";
-import { AiFillCaretDown } from "react-icons/ai";
+import { AiFillCaretDown, AiOutlineDelete } from "react-icons/ai";
 import { BiPlay, BiPencil, BiPause } from "react-icons/bi";
 
 // utils
 import { EventBus, getActiveWord, getIndexFromArr, getItemFromArr, hexToRGB, isEmpty, msToTime } from "@/utils/function";
-import { TIME_UPDATE_OUTSIDE, SET_LOADING, BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, GRAY, ACTIVE_WORD_COLOR, DEFAULT_FONT_SIZE, SPEAKER_TAG, WORD, TIME_SLIDE_DRAG, KEY_UP, SELECTION_CHANGE } from "@/utils/constant";
+import { TIME_UPDATE_OUTSIDE, SET_LOADING, BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, GRAY, ACTIVE_WORD_COLOR, DEFAULT_FONT_SIZE, SPEAKER_TAG, WORD, TIME_SLIDE_DRAG, KEY_DOWN } from "@/utils/constant";
 import MediaService from "@/services/media";
 
 const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, changeHighlightClr}) => {
@@ -178,8 +174,17 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
                 let parentDuration = parEle.dataset.duration * 1;
 
                 let isCarLast = parEleText.length == caretPosition;
+                if (caretPosition == 1 && (parEleText.charCodeAt() == 160 || parEleText.charCodeAt() == 32)) return;
+                if (isCarLast) {
+                    selection.removeAllRanges();
+                    const newRange = document.createRange();
+                    newRange.setStart(parEle.nextSibling.childNodes[0], 1); // Adjust caret position to end of space element
+                    newRange.setEnd(parEle.nextSibling.childNodes[0], 1);
+                    selection.addRange(newRange);
+                    return;
+                }
 
-                let eleTextBefCar = parEleText.substring(0, caretPosition - 1);
+                let eleTextBefCar = parEleText.substring(0, caretPosition);
                 let eleIdBefCar = uuidv4();
                 let eleStartTimeBefCar = parentStartTime;
                 let eleDurBefCar = isCarLast ? parentDuration / 2 : eleTextBefCar.length / parEleText.length * parentDuration;
@@ -246,11 +251,11 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
             }
         }
         let editableSection = document.getElementById('editableSection');
-        editableSection && editableSection.addEventListener(KEY_UP, handleKeyupEditableSection);
+        editableSection && editableSection.addEventListener(KEY_DOWN, handleKeyupEditableSection);
 
         // Remove the event listeners when the component unmounts
         return () => {
-            editableSection && editableSection.removeEventListener(KEY_UP, handleKeyupEditableSection)
+            editableSection && editableSection.removeEventListener(KEY_DOWN, handleKeyupEditableSection)
         }
     }, [currentTime])
 
@@ -294,6 +299,7 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
     }
 
     const onClickAddSpeaker = (id) => {
+        setSelectedEditSpeakerId(-1);
         setShowAddSpeaker(true);
         setNewSpeaker("");
         setTimeout(() => {
@@ -302,10 +308,11 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
     }
 
     const onClickEditSpeaker = (speaker, editInputId) => {
+        setShowAddSpeaker(false);
         setSelectedEditSpeakerId(speaker.id);
         setUpdatedSpeaker(speaker.label);
         setTimeout(() => {
-            document.getElementById(editInputId).focus();
+            document.getElementById(editInputId).select();
         }, 10)
     }
 
@@ -427,7 +434,7 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
                                 <PopoverHandler onClick={() => { setSelectedEditSpeakerId(-1);  setShowAddSpeaker(false)}}>
                                     <div className="flex items-center gap-2 cursor-pointer">
                                         <HiMiniUser />
-                                        <p>{ curSpeaker.label == undefined ? transcription.speakers[0].label : curSpeaker.label }</p>
+                                        {curSpeaker.label == undefined ? <p className="text-custom-medium-gray">(New Speaker)</p> : <p>{curSpeaker.label}</p> }
                                         <AiFillCaretDown />
                                     </div>
                                 </PopoverHandler>
@@ -456,8 +463,9 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
                                         })
                                     }
                                     <div>
-                                        <div className={`${showAddSpeaker ? "hidden" : ""} py-1`} onClick={() => onClickAddSpeaker(speakerTagAddSpeakerInputId)}>
-                                            <p className="text-custom-sky text-sm cursor-pointer">+ Add new speaker</p>
+                                        <div className={`${showAddSpeaker ? "hidden" : ""} py-1 flex items-center justify-between`}>
+                                            <p className="text-custom-sky text-sm cursor-pointer" onClick={() => onClickAddSpeaker(speakerTagAddSpeakerInputId)}>+ Add new speaker</p>
+                                            <AiOutlineDelete className="cursor-pointer text-red-400" onClick={() => changeSpeakerId(speakerTagCurrentId, "")} />
                                         </div>
                                         <div className={`w-full py-1 flex h-9 gap-1 ${showAddSpeaker ? "" : "hidden"}`}>
                                             <input

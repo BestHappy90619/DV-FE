@@ -21,7 +21,7 @@ const Home = () => {
   const editorRef = useRef();
   const isUpdatedFromOutside = useRef(false);
 
-  const { selectedMediaId, showMedia, mediaSide, medias, isPlaying, frameSpeed, volume } = useSelector((state) => state.media);
+  const { selectedMediaId, showMedia, mediaSide, medias, isPlaying, frameSpeed, volume, autoPlay } = useSelector((state) => state.media);
 
   const [videoWidth, setVideoWidth] = useState(0);
 
@@ -37,15 +37,15 @@ const Home = () => {
     MediaService.getAllMedias()
       .then((res) => {
         if (res.status == 200) {
-          dispatch(setSelectedMediaId(res.data.data[0].fileId));
           dispatch(setMedias(res.data.data))
+          dispatch(setSelectedMediaId(res.data.data[0].fileId));
         } else {
-          console.warn("While getting all media files, an error occurred on the server side::: ", res);
+          toast.error("Sorry, but an error has been ocurred while getting media list!");
         }
         EventBus.dispatch(SET_LOADING, false);
       })
       .catch((err) => {
-        console.warn("While getting all media files, an error occurred on the client's side::: ", err);
+        toast.error("Sorry, but an error has been ocurred while getting media list!");
         EventBus.dispatch(SET_LOADING, false);
       });
   }, [])
@@ -116,7 +116,12 @@ const Home = () => {
     handleResize();
   }, [showMedia]);
 
-  useEffect(() => { 
+  useEffect(() => {
+    handleResize();
+    dispatch(setIsPlaying(autoPlay));
+  }, [selectedMediaId]);
+
+  useEffect(() => {
     if (selectedMediaId == "") return;
     isPlaying ? getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.play() : audioRef.current.play() : getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.pause() : audioRef.current.pause();
   }, [isPlaying]);
@@ -133,7 +138,7 @@ const Home = () => {
 
   return (
     <div className={`flex ${mediaSide ? "" : "flex-row-reverse"}`}>
-      <video ref={videoRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`fixed ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} w-96 h-72 ${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}/>
+      <video ref={videoRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`fixed ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} w-96 h-72 ${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}/>
       <audio ref={audioRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_AUDIO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`hidden`} />
       <div ref={editorRef} style={{padding: showMedia ? mediaSide ? "0 0 0 " + videoWidth + "px" : "0 " + videoWidth + "px 0 0" : ""}}>
         <TEditor />
