@@ -34,7 +34,8 @@ import { BiChevronDown } from "react-icons/bi";
 
 // constant
 import { EventBus } from "@/utils/function";
-import { BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, RESIZED_FUNCTION_BAR, MEDIUM_GRAY, GRAY } from "@/utils/constant";
+import { BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, RESIZED_FUNCTION_BAR, MEDIUM_GRAY } from "@/utils/constant";
+import { setShowMedia } from "../../redux-toolkit/reducers/Media";
 
 const TEditor = () => {
     const dispatch = useDispatch();
@@ -299,7 +300,10 @@ const TEditor = () => {
                                             </MenuItem>
                                             <MenuItem name="videoPositionRight" onClick={() => mediaSide ? dispatch(toggleMediaSide()) : ''}>
                                                 <span className="flex cursor-pointer items-center gap-2"><AiOutlineCheck className={`${!mediaSide ? "" : "invisible"}`} />Right</span>
-                                            </MenuItem>                              
+                                            </MenuItem>
+                                            <MenuItem name="videoShowHide" onClick={() => dispatch(setShowMedia(!showMedia))}>
+                                                <span className="flex cursor-pointer items-center gap-2"><AiOutlineCheck className={`invisible`} />{ showMedia ? 'Hide' : 'Show' }</span>
+                                            </MenuItem>                             
                                         </MenuList>
                                     </Menu>
                                 </MenuItem>

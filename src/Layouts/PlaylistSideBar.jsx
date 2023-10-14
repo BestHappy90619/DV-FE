@@ -1,11 +1,12 @@
 // redux
-import { setSelectedMediaId, clearSelectedMediaId } from "@/redux-toolkit/reducers/Media";
+import { setSelectedMediaId } from "@/redux-toolkit/reducers/Media";
 import { useSelector, useDispatch } from "react-redux";
 
 // icons
 import { AiOutlineClose } from "react-icons/ai";
 import { CgPlayButtonO, CgPlayPause } from "react-icons/cg";
 import { msToTime } from "@/utils/function";
+import { STATUS_TRANSCRIBED } from "../utils/constant";
 
 const PlaylistSideBar = ({ close }) => {
   const dispatch = useDispatch();
@@ -13,8 +14,8 @@ const PlaylistSideBar = ({ close }) => {
   const { selectedMediaId, medias, isPlaying } = useSelector((state) => state.media); //true: left, false: right
 
   const onClickMedia = (id) => {
-    if (id === selectedMediaId) dispatch(clearSelectedMediaId());
-    else dispatch(setSelectedMediaId(id))
+    if (id === selectedMediaId) return;
+    dispatch(setSelectedMediaId(id))
   }
 
   return (
@@ -30,7 +31,7 @@ const PlaylistSideBar = ({ close }) => {
       <div className="h-[calc(100%-124px)] overflow-auto scrollbar scrollPaddingRight ml-5 mr-[10px]">
         {medias.map((media, index) => {
           let selected = selectedMediaId === media.fileId;
-          return (
+          return media.status == STATUS_TRANSCRIBED && (
             <div key={media.fileId} className={`flex justify-between cursor-pointer ${index == 0 ? "" : "mt-3"}`} onClick={() => onClickMedia(media.fileId)}>
               <div className="flex gap-3 overflow-hidden">
                 {selected && isPlaying ? <CgPlayPause className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} /> : <CgPlayButtonO className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} />}
