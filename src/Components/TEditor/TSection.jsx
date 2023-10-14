@@ -408,12 +408,13 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
         return element;
     }
 
-    const getSpeakerTags = (range, hideSpeaker) => {
+    const getSpeakerTags = (sectionTag) => {
+        let { range, isWordGroup } = sectionTag;
         if (transcription.speakerTags == undefined || transcription.speakers == undefined) return;
         let element = [];
-        if (hideSpeaker) {
+        if (isWordGroup) {
             element.push(
-                <div key={uuidv4()}>
+                <div key={sectionTag.id}>
                     <p className="text-custom-gray w-full h-auto text-justify">
                         {getWords(range)}
                     </p>
@@ -428,8 +429,8 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
                 let speakerTagPlayBtnId = speakerTag.id + "-playBtnId";
                 let speakerTagPauseBtnId = speakerTag.id + "-pauseBtnId";
                 element.push(
-                    <div key={speakerTag.id} className={`${speakerMethod ? "flex" : ""} ${hideSpeaker ? "" : "gap-2"}`}>
-                        <div contentEditable={false} className={`${hideSpeaker ? "hidden" : ""} select-none text-custom-sky text-sm ${speakerMethod ? "w-40" : "flex gap-2"}`}>
+                    <div key={speakerTag.id} className={`${speakerMethod ? "flex" : ""} `}>
+                        <div contentEditable={false} className={`select-none text-custom-sky text-sm ${speakerMethod ? "w-40" : "flex gap-2"}`}>
                             <Popover placement="bottom">
                                 <PopoverHandler onClick={() => { setSelectedEditSpeakerId(-1);  setShowAddSpeaker(false)}}>
                                     <div className="flex items-center gap-2 cursor-pointer">
@@ -506,7 +507,7 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
                 <div key={sectionTag.id}>
                     <input contentEditable={false} className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base mb-2 ${sectionTag.showHeading ? "" : "hidden"}`} value={sectionTag.label} onChange={(e) => setSectionHeading(e.target.value)}/>
                         <div className="grid gap-4">
-                            {getSpeakerTags(sectionTag.range, sectionTag.isWordGroup)}
+                            {getSpeakerTags(sectionTag)}
                         </div>
                     <p contentEditable={false} className={`text-custom-black text-xs mt-2 ${sectionTag.showHeading ? "" : "hidden"}`} >- End of {sectionTag.label} -</p>
                 </div>
