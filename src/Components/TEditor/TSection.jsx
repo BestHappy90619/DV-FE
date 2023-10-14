@@ -175,7 +175,15 @@ const TSection = ({actionStyle, startEle, endEle, changeStyle, changeFontClr, ch
 
                 let isCarLast = parEleText.length == caretPosition;
                 if (caretPosition == 1 && (parEleText.charCodeAt() == 160 || parEleText.charCodeAt() == 32)) return;
-                if (isCarLast) {
+                if (isCarLast && (parEle.nextSibling.textContent.charCodeAt() == 160 || parEle.nextSibling.textContent.charCodeAt() == 32)) {
+                    selection.removeAllRanges();
+                    const newRange = document.createRange();
+                    newRange.setStart(parEle.nextSibling.childNodes[0], 1); // Adjust caret position to end of space element
+                    newRange.setEnd(parEle.nextSibling.childNodes[0], 1);
+                    selection.addRange(newRange);
+                    return;
+                } else if (isCarLast && !(parEle.nextSibling.textContent.charCodeAt() == 160 || parEle.nextSibling.textContent.charCodeAt() == 32)) {
+                    parEle.nextSibling.textContent = "\u00A0" + parEle.nextSibling.textContent;
                     selection.removeAllRanges();
                     const newRange = document.createRange();
                     newRange.setStart(parEle.nextSibling.childNodes[0], 1); // Adjust caret position to end of space element
