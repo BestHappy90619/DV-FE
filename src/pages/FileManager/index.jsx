@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 
 //redux
@@ -16,24 +17,35 @@ import FMMiddlePanel from "../../Layouts/FMMiddlePanel";
 import FMRightSideBar from "../../Layouts/FMRightSideBar";
 
 // constant
-import { RESIZED_SIDEBAR, PREVENT_SELECT, KEY_DOWN, MOUSE_MOVE, MOUSE_UP, RESIZED_WINDOW } from "@/utils/constant";
+import {
+  RESIZED_SIDEBAR,
+  PREVENT_SELECT,
+  KEY_DOWN,
+  MOUSE_MOVE,
+  MOUSE_UP,
+  RESIZED_WINDOW,
+} from "@/utils/constant";
 import { EventBus } from "@/utils/function";
-import { Breadcrumbs } from "@material-tailwind/react";
+import BreadCrumb from "../../Layouts/BreadCrumb";
+
+import {
+  fetchData,
+  selectFileTreeData,
+} from "../../redux-toolkit/reducers/fileTreeSlice";
+
 
 const MainLyt = () => {
   const dispatch = useDispatch();
 
-  const {
-    minWidth,
-    maxWidth,
-    leftSidebarWidth,
-    rightSidebarWidth,
-  } = useSelector((state) => state.sidebar);
+  const { minWidth, maxWidth, leftSidebarWidth, rightSidebarWidth } =
+    useSelector((state) => state.sidebar);
 
   const [showLeftSideBar, setShowLeftSideBar] = useState(true);
   const [showRightSideBar, setShowRightSideBar] = useState(true);
   const [showLeftBarOnMobile, setShowLeftBarOnMobile] = useState(false);
   const [showRightBarOnMobile, setShowRightBarOnMobile] = useState(false);
+  const [breadcrumb, setBreadcrumb] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
   const isNowLeftResizing = useRef(false);
   const isNowRightResizing = useRef(false);
 
@@ -132,21 +144,65 @@ const MainLyt = () => {
     isNowRightResizing.current = true;
   };
 
+
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
+  const fileDirectoryData = useSelector(selectFileTreeData);
+
+  
+  const handleUserSelection = (user) => {
+    setSelectedUser(user);
+  };
+
+
+  const treeDataFromApi = fileDirectoryData ? fileDirectoryData : null;
+  const enhanceWithPath = (node, path = []) => {
+    const newPath = [...path, node.name || node.FileName];
+  
+    return {
+      ...node,
+      id: node.id || node.Id, // Include the id field
+      label: node.name || node.FileName,
+      mediaType:node.mediaType,
+      fileType:node.fileType,
+      path: newPath,
+      children: node.children ? node.children.map((child) => enhanceWithPath(child, newPath)) : undefined,
+    };
+  };
+  
+  const updatedDirectoryData = {
+    id: 'root',
+    label: 'Site',
+    children: treeDataFromApi.date.map(item => enhanceWithPath(item)),
+  };
+  
   return (
     <div className="h-full ">
       <NavBar />
       <div className="flex z-20 bg-white justify-between w-full h-[60px] items-center border-b-[#dee0e4] border-b-[1px] top-[82px] fixed">
-        <Breadcrumbs
+        {/* <Breadcrumbs
           className={`flex items-center h-5 py-0 my-0 bg-transparent`}
           style={{ marginLeft: `${leftSidebarWidth + 10}px` }}
         >
           <a href="#" className="text-[16px] text-[#757575] font-medium">
-            <span>Site</span>
+            <span>My Files</span>
           </a>
           <a href="#" className="text-[16px] text-[#212121] font-medium">
-            <span>New Folder</span>
+          <span>Subfolder name goes here...</span>
           </a>
-        </Breadcrumbs>
+        </Breadcrumbs> */}
+        {/* {breadcrumb.map((item, index) => (
+          <span key={index}>
+            {item}
+            {index < breadcrumb.length - 1 && <span>/</span>}
+          </span>
+        ))} */}
+        <BreadCrumb
+        
+          items={breadcrumb}
+          leftSidebarWidth={leftSidebarWidth}
+        />
       </div>
       <div className="mt-[142px] flex h-full relative">
         <div
@@ -154,16 +210,21 @@ const MainLyt = () => {
           style={{
             width:
               showLeftBarOnMobile === true ? `250px` : `${leftSidebarWidth}px`,
-            display: `${
-              (showLeftSideBar || showLeftBarOnMobile) === true
+            display: `${(showLeftSideBar || showLeftBarOnMobile) === true
                 ? "flex"
                 : "hidden"
-            }`,
+              }`,
             zIndex: `${showLeftBarOnMobile === true ? 30 : 20}`,
           }}
         >
           {/* <FMTreeSideBar /> */}
           <FMMuiTreeSideBar
+          updatedDirectoryData={updatedDirectoryData}
+          breadcrumb={breadcrumb}
+          
+            setBreadcrumb={setBreadcrumb}
+            onUserSelect={handleUserSelection}
+            fileDirectoryData={fileDirectoryData}
             showOrHide={(showLeftSideBar || showLeftBarOnMobile) === true}
           />
           <div
@@ -175,12 +236,16 @@ const MainLyt = () => {
           style={{
             marginLeft: leftSidebarWidth + "px",
             marginRight: rightSidebarWidth + "px",
-            width: `calc(100% - ${
-              Number(leftSidebarWidth) + Number(rightSidebarWidth)
-            }px)`,
+            width: `calc(100% - ${Number(leftSidebarWidth) + Number(rightSidebarWidth)
+              }px)`,
           }}
         >
-          <FMMiddlePanel />
+          <FMMiddlePanel
+      
+            // fileDirectoryData={fileDirectoryData}
+            onUserSelect={handleUserSelection}
+           
+          />
         </div>
         <div
           className=" fixed right-0 z-20 bg-white h-full"
@@ -189,11 +254,10 @@ const MainLyt = () => {
               showRightBarOnMobile === true
                 ? `250px`
                 : `${rightSidebarWidth}px`,
-            display: `${
-              (showRightSideBar || showRightBarOnMobile) === true
+            display: `${(showRightSideBar || showRightBarOnMobile) === true
                 ? "flex"
                 : "hidden"
-            }`,
+              }`,
             zIndex: `${showRightBarOnMobile === true ? 30 : 20}`,
           }}
         >
@@ -201,7 +265,7 @@ const MainLyt = () => {
             className="w-1 border-r-2 cursor-col-resize border-blue-gray-50 h-full"
             onMouseDown={rightSidebarMouseDown}
           ></div>
-          <FMRightSideBar />
+          <FMRightSideBar selectedUser={selectedUser} />
         </div>
         {leftSidebarWidth === 0 && (
           <div

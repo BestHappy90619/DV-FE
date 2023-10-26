@@ -1,7 +1,7 @@
 import { DEBUG_MODE } from "@/utils/constant";
 import http from "@/utils/http";
 
-const MEDIA_API = "";
+const MEDIA_API = "preview";
 
 const getAllMedias = () => {
     return http

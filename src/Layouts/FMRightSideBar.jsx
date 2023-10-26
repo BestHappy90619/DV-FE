@@ -7,12 +7,16 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-const FMRightSideBar = () => {
+const FMRightSideBar = ({ selectedUser }) => {
   const [activeTab, setActiveTab] = useState("details");
   const data = [
     {
       label: "DETAILS",
       value: "details",
+    },
+    {
+      label: "CHAT",
+      value: "",
     },
     {
       label: "MEMBERS",
@@ -55,27 +59,33 @@ const FMRightSideBar = () => {
                 <div className="flex flex-col gap-4 text-[14px]">
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">Uploaded by:</div>
-                    <div className="text-[#212121]">Serhii Movchan</div>
+                    <div className="text-[#212121]"></div>
                   </div>
 
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">Uploaded Date:</div>
-                    <div className="text-[#212121]">08/24/2019 05:45 PM</div>
+                    <div className="text-[#212121]">
+                      {selectedUser ? selectedUser.LastUpdated || "" : 0}
+                    </div>
                   </div>
 
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">Last Activity</div>
-                    <div className="text-[#212121]">Today 04:15 PM</div>
+                    <div className="text-[#212121]">0 </div>
                   </div>
 
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">File Size</div>
-                    <div className="text-[#212121]">3 MB</div>
+                    <div className="text-[#212121]">
+                      {selectedUser ? selectedUser.Size || "" : 0}
+                    </div>
                   </div>
 
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">File Type</div>
-                    <div className="text-[#212121]">MP3</div>
+                    <div className="text-[#212121]">
+                      {selectedUser ? selectedUser.fileType || "" : ""}
+                    </div>
                   </div>
                 </div>
               </div>

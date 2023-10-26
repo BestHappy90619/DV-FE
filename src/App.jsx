@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useRoutes } from "react-router-dom";
 import Routes from "./Routes";
 import { Provider } from "react-redux";
@@ -40,7 +40,6 @@ function App() {
   }, [])
 
   return (
-    <StrictMode>
       <Provider store={store}>
         <div className={`${isPreventSelect ? "select-none" : ""}`}>{pages}</div>
         <div
@@ -61,7 +60,6 @@ function App() {
         </div>
         <Toaster />
       </Provider>
-    </StrictMode>
   );
 }
 
