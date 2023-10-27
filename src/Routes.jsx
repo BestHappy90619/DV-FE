@@ -1,9 +1,12 @@
 // layouts
 import MainLyt from "./Layouts";
 
-// pages
+// Error pages
 import Error404 from "./pages/Error/404";
+
+// pages
 import Ordering from "./pages/Ordering";
+import OrderingEdit from "./pages/Ordering/Edit";
 
 // define routes
 const Routes = [
@@ -14,6 +17,10 @@ const Routes = [
       {
         path: "/",
         element: <Ordering />,
+      },
+      {
+        path: "/ordering/edit",
+        element: <OrderingEdit />,
       },
       {
         path: "*",
