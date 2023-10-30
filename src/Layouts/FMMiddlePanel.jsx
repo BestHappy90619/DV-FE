@@ -17,7 +17,7 @@ import {
   rowDropped,
   selectFileTreeData,
 } from "../redux-toolkit/reducers/fileTreeSlice";
-import { Box, Menu, MenuItem } from "@mui/material";
+import { Box, IconButton, Menu, MenuItem } from "@mui/material";
 import { useSelector } from "react-redux";
 
 import {
@@ -25,6 +25,7 @@ import {
   fetchAdditionalData,
 } from "../redux-toolkit/reducers/fileTreeSliceDetail";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Assignment, AssignmentInd, Delete, FileCopy, GetApp, Label, MoveToInbox, NoteAdd, Share } from "@mui/icons-material";
 
 function parseFileSize(fileSizeString) {
   const sizeParts = fileSizeString.trim().split(" ");
@@ -90,7 +91,6 @@ const FMMiddlePanel = ({ onUserSelect }) => {
   const treeDataFromApi = fileDirectoryData ? fileDirectoryData : null;
   const enhanceWithPath = (node, path = []) => {
     const newPath = [...path, node.name || node.FileName];
-
     return {
       ...node,
       id: node.id || node.Id, // Include the id field
@@ -98,10 +98,15 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       mediaType: node.mediaType,
       fileType: node.fileType,
       path: newPath,
+      downloadURL: node.downloadURL,
+      duration: node.duration,
+      size: node.size,
+      status: node.status,
       children: node.children
         ? node.children.map((child) => enhanceWithPath(child, newPath))
         : undefined,
     };
+ 
   };
 
   const updatedDirectoryData = {
@@ -254,7 +259,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
                     textOverflow: "ellipsis",
                     width: "250px",
                     position: 'absolute',
-                    marginTop:"7px",
+                    marginTop:"12px",
                     marginLeft:"35px",
                     left: "auto !important",
                     top: "auto !important",}}
@@ -275,8 +280,19 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       headerName: "Length",
       description: "This column shows play time length of file.",
       width: 150,
-      valueGetter: () => {
-        return 0;
+      valueGetter: (params) => {
+        const playLength = params.row.PlayLength;
+    
+        if (playLength !== null && playLength !== undefined) {
+          const hours = Math.floor(playLength / 3600);
+          const minutes = Math.floor((playLength % 3600) / 60);
+          const seconds = playLength % 60;
+          // Pad the values with leading zeros if necessary
+          const formattedLength = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+          return formattedLength;
+        }
+    
+        return null;
       },
     },
     {
@@ -298,6 +314,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       headerName: "Size",
       width: 150,
       valueGetter: (params) => {
+        
         const fileSize = params.row.Size;
         return formatFileSize(fileSize);
       },
@@ -470,12 +487,12 @@ const FMMiddlePanel = ({ onUserSelect }) => {
  
   const openMenu = (event, rowData) => {
     setAnchorEl(event.currentTarget);
-    setSelectedRowData(rowData);
+    // setSelectedRowData(rowData);
   };
 
   const closeMenu = () => {
     setAnchorEl(null);
-    setSelectedRowData(null);
+    // setSelectedRowData(null);
   };
 
   return (
@@ -586,39 +603,68 @@ const FMMiddlePanel = ({ onUserSelect }) => {
           )}
         </Droppable>
       </DragDropContext>
+        
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        {selectedRowData && (
-          <Box
-            sx={{
-              minWidth: "250px",
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            <MenuItem onClick={closeMenu}>
-              File Name: {selectedRowData.FileName}
-            </MenuItem>
-            <MenuItem onClick={closeMenu}>
-              Size: {formatFileSize(selectedRowData.Size)}
-            </MenuItem>
-            <MenuItem onClick={closeMenu}>
-              Last Updated: {selectedRowData.LastUpdated}
-            </MenuItem>
-          </Box>
-        )}
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <Assignment />
+          </IconButton>
+          Transcribe
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <AssignmentInd />
+          </IconButton>
+          Assign
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <NoteAdd />
+          </IconButton>
+          Add Note
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <MoveToInbox />
+          </IconButton>
+          Move
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <Label />
+          </IconButton>
+          Tag
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <Share />
+          </IconButton>
+          Share
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <GetApp />
+          </IconButton>
+          Download
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <FileCopy />
+          </IconButton>
+          Copy
+        </MenuItem>
+        <MenuItem onClick={closeMenu}>
+          <IconButton size="small" edge="start">
+            <Delete />
+          </IconButton>
+          Delete
+        </MenuItem>
       </Menu>
     </div>
   );

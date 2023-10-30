@@ -150,7 +150,7 @@ const MainLyt = () => {
   }, [dispatch]);
   const fileDirectoryData = useSelector(selectFileTreeData);
 
-  
+
   const handleUserSelection = (user) => {
     setSelectedUser(user);
   };
@@ -164,10 +164,16 @@ const MainLyt = () => {
       ...node,
       id: node.id || node.Id, // Include the id field
       label: node.name || node.FileName,
-      mediaType:node.mediaType,
-      fileType:node.fileType,
+      mediaType: node.mediaType,
+      fileType: node.fileType,
       path: newPath,
-      children: node.children ? node.children.map((child) => enhanceWithPath(child, newPath)) : undefined,
+      downloadURL: node.downloadURL,
+      duration: node.duration,
+      size: node.size,
+      status: node.status,
+      children: node.children
+        ? node.children.map((child) => enhanceWithPath(child, newPath))
+        : undefined,
     };
   };
   const updatedDirectoryData = {

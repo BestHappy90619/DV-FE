@@ -14,10 +14,7 @@ const FMRightSideBar = ({ selectedUser }) => {
       label: "DETAILS",
       value: "details",
     },
-    {
-      label: "CHAT",
-      value: "",
-    },
+
     {
       label: "MEMBERS",
       value: "members",
