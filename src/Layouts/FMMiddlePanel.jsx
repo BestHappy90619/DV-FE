@@ -105,9 +105,9 @@ const FMMiddlePanel = ({ onUserSelect }) => {
   };
 
   const updatedDirectoryData = {
-    id: "root",
-    label: "Site",
-    children: treeDataFromApi?.date?.map((item) => enhanceWithPath(item)),
+    id: 'root',
+    label: 'Site',
+    children: Array.isArray(treeDataFromApi?.date) ? treeDataFromApi.date.map(item => enhanceWithPath(item)) : [],
   };
 
   useEffect(() => {
@@ -249,17 +249,22 @@ const FMMiddlePanel = ({ onUserSelect }) => {
                   {...provided.dragHandleProps}
                   className="m-1"
                   style={{
+                    ...provided.draggableProps.style,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     width: "250px",
-                    ...provided.draggableProps.style,
-                  }}
+                    position: 'absolute',
+                    marginTop:"7px",
+                    marginLeft:"35px",
+                    left: "auto !important",
+                    top: "auto !important",}}
                 >
              
                   {params.value}
             
                 </div>
               )}
+             
             </Draggable>
           </div>
         );
@@ -361,80 +366,23 @@ const FMMiddlePanel = ({ onUserSelect }) => {
   const handleUserClick = (user) => {
     onUserSelect(user);
   };
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const sourceIndex = result.source.index;
-    const destIndex = result.destination.index;
-    if (sourceIndex === destIndex) {
-      return;
-    }
-
-    const draggedRowId = result.draggableId;
-
-    const newRows = [...rowsss];
-
-    const rowIndexToRemove = newRows.findIndex((row, i) => i == draggedRowId);
-
-    const destinationRow = newRows[destIndex];
-
-    if (destinationRow?.mediaType !== "file") {
-      if (
-        newRows[destIndex].children &&
-        !newRows[destIndex]?.children[0]?.children
-      ) {
-        newRows[destIndex] = { ...newRows[destIndex] };
-        newRows[destIndex].children = [
-          ...newRows[destIndex].children,
-          newRows[rowIndexToRemove],
-        ];
-      } else if (
-        newRows[destIndex]?.children &&
-        newRows[destIndex]?.children[0]?.children
-      ) {
-        newRows[destIndex].children = [
-          ...newRows[destIndex].children,
-          newRows[rowIndexToRemove],
-        ];
-      } else if (newRows[destIndex] && newRows[destIndex].children) {
-        newRows[destIndex].children = [
-          ...newRows[destIndex],
-          newRows[rowIndexToRemove],
-        ];
-      } else {
-        newRows[destIndex].children = [newRows[rowIndexToRemove]];
-      }
-
-      if (rowIndexToRemove !== -1) {
-        newRows.splice(rowIndexToRemove, 1);
-      }
-
-      dispatch(draggedItem(newRows));
-      dispatch(rowDropped(newRows));
-    } else {
-      toast.error("Dragging a file into another file is not allowed!");
-
-      return;
-    }
-  };
   // const onDragEnd = (result) => {
   //   if (!result.destination) return;
-  // console.log("updatedDirectoryData",updatedDirectoryData)
+
   //   const sourceIndex = result.source.index;
   //   const destIndex = result.destination.index;
   //   if (sourceIndex === destIndex) {
   //     return;
   //   }
-  
+
   //   const draggedRowId = result.draggableId;
-  
+
   //   const newRows = [...rowsss];
-  //   const newTree = { ...updatedDirectoryData?.children}; 
-  
+
   //   const rowIndexToRemove = newRows.findIndex((row, i) => i == draggedRowId);
-  
+
   //   const destinationRow = newRows[destIndex];
-  
+
   //   if (destinationRow?.mediaType !== "file") {
   //     if (
   //       newRows[destIndex].children &&
@@ -455,28 +403,71 @@ const FMMiddlePanel = ({ onUserSelect }) => {
   //       ];
   //     } else if (newRows[destIndex] && newRows[destIndex].children) {
   //       newRows[destIndex].children = [
-  //         ...newRows[destIndex].children,
+  //         ...newRows[destIndex],
   //         newRows[rowIndexToRemove],
   //       ];
   //     } else {
   //       newRows[destIndex].children = [newRows[rowIndexToRemove]];
   //     }
-  
+
   //     if (rowIndexToRemove !== -1) {
   //       newRows.splice(rowIndexToRemove, 1);
   //     }
-  
-  //     // Dispatch the entire updated tree structure for rowDropped
-  //     dispatch(rowDropped(newTree));
-  //     // Dispatch the updated rows for draggedItem
+
   //     dispatch(draggedItem(newRows));
+  //     dispatch(rowDropped(newRows));
   //   } else {
   //     toast.error("Dragging a file into another file is not allowed!");
-  
+
   //     return;
   //   }
   // };
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const sourceIndex = result.source.index;
+    const destIndex = result.destination.index;
   
+    if (sourceIndex === destIndex) {
+      return;
+    }
+  
+    const draggedRowId = result.draggableId;
+  
+    const newRows = [...rowsss];
+    const updatedChildren = [...updatedDirectoryData.children];
+  
+    const rowIndexToRemove = newRows.findIndex((row, i) => i === draggedRowId);
+    const destinationRow = newRows[destIndex];
+  
+    if (destinationRow?.mediaType !== "file") {
+      // Remove the dragged row from the newRows
+      const [draggedRow] = newRows.splice(rowIndexToRemove, 1);
+      newRows.splice(destIndex, 0, draggedRow);
+      if (destinationRow.children) {
+        destinationRow?.children?.push(draggedRow);
+      } else {
+        destinationRow.children = [draggedRow];
+      }
+  
+      // Update the children in updatedDirectoryData
+      const updatedDataTree = updatedChildren.map((item) => {
+        if (item.id === destinationRow.id) {
+          return {
+            ...item,
+            children: destinationRow.children,
+          };
+        }
+        return item;
+      });
+  
+      dispatch(rowDropped(updatedDataTree));
+      dispatch(draggedItem(newRows));
+    } else {
+      toast.error("Dragging a file into another file is not allowed!");
+    }
+  };
+ 
+ 
   const openMenu = (event, rowData) => {
     setAnchorEl(event.currentTarget);
     setSelectedRowData(rowData);

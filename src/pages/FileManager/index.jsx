@@ -170,11 +170,10 @@ const MainLyt = () => {
       children: node.children ? node.children.map((child) => enhanceWithPath(child, newPath)) : undefined,
     };
   };
-  
   const updatedDirectoryData = {
     id: 'root',
     label: 'Site',
-    children: treeDataFromApi.date.map(item => enhanceWithPath(item)),
+    children: Array.isArray(treeDataFromApi?.date) ? treeDataFromApi.date.map(item => enhanceWithPath(item)) : [],
   };
   
   return (

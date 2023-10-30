@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { TreeView, TreeItem, useTreeItem } from "@mui/x-tree-view";
-import clsx from 'clsx';
+import { TreeView, TreeItem } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -16,8 +15,6 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
 import VideoFileIcon from "@mui/icons-material/VideoFile";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
-import { RiHomeFill } from 'react-icons/ri';
-
 import {
   Box,
   Button,
@@ -28,10 +25,7 @@ import {
   ListItemText,
   MenuItem,
   Select,
-  Tooltip,
   Typography,
-  styled,
-  tooltipClasses,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadFile } from "../redux-toolkit/reducers/fileUpload";
@@ -41,24 +35,26 @@ import {
 } from "../redux-toolkit/reducers/fileTreeSliceDetail";
 import { rowDropped } from "../redux-toolkit/reducers/fileTreeSlice";
 
-const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick,props,ref }) => {
+const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick }) => {
   if (!treeData) {
     return null;
   }
 
+
+
   const handleDetail = async (id, data) => {
     const dataApi = await dispatchProp(fetchAdditionalData(id));
-  
-    // Combine data from dataApi and data.children
+    console.log("dataApi",dataApi)
+    // Main area dispatch
     const updatedData = [
-      ...dataApi.payload.date.filter(
-        (dateItem) => !data?.children?.some((child) => child?.id === dateItem?.Id)
+      ...dataApi.payload.date.filter(dateItem => 
+        !data.children.some(child => child.id === dateItem.Id )
       ),
-      ...data.children,
+      ...data.children
     ];
-    dispatchProp(draggedItem(updatedData))
-  
-    // Find the subtree with the matching id
+    dispatchProp(draggedItem(updatedData));
+
+    // Side bar dispatch
     const subtree = treeData.children.find((item) => item.id === id);
 
     if (subtree) {
@@ -148,97 +144,28 @@ const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick,props,ref }) => {
       alignItems: "center",
       padding: "8px 0 8px 0",
     };
-    const LightTooltip = styled(({ className, ...props }) => (
-      <Tooltip {...props} classes={{ popper: className }} />
-    ))(({ theme }) => ({
-      [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: theme.palette.common.white,
-        color: 'rgba(0, 0, 0, 0.87)',
-        boxShadow: theme.shadows[1],
-        fontSize: 11,
-      },
-    }));
-    
-const CustomContent = React.forwardRef(function CustomContent(props, ref) {
-  const {
-    classes,
-    className,
-    label,
-    nodeId,
-    icon: iconProp,
-    expansionIcon,
-    displayIcon,
-  } = props;
-
-  const {
-    disabled,
-    expanded,
-    selected,
-    focused,
-    handleExpansion,
-    handleSelection,
-    preventSelection,
-  } = useTreeItem(nodeId);
-
-  const icon = iconProp || expansionIcon || displayIcon;
-
-  const handleMouseDown = (event) => {
-    preventSelection(event);
-  };
-
-  const handleExpansionClick = (event) => {
-    handleExpansion(event);
-  };
-
-  const handleSelectionClick = (event) => {
-    handleSelection(event);
-  };
-
-  return (
-    <div
-      className={clsx(className, classes.root, {
-        [classes.expanded]: expanded,
-        [classes.selected]: selected,
-        [classes.focused]: focused,
-        [classes.disabled]: disabled,
-      })}
-      onMouseDown={handleMouseDown}
-      ref={ref}
-    >
-      <div onClick={handleExpansionClick} className={classes.iconContainer}>
-        {icon}
-      </div>
-      <Typography
-        onClick={handleSelectionClick}
-        component="div"
-        className={classes.label}
-      >
-        {label}
-      </Typography>
-    </div>
-  );
-});
 
     return (
       <TreeItem
-      ContentComponent={CustomContent} {...props} ref={ref}
         key={data.id}
         nodeId={data.id}
         label={
           <div style={nodeStyle} onClick={() => handleClick(data?.id, data)}>
             {data.id === "root" ? (
-             <RiHomeFill size={18} style={{color:"#4489FE"}} />
+              <img
+                src="/image/FMHomeIcon.svg"
+                className="w-[18px] h-[18px]"
+                alt="home icon"
+              />
             ) : (
               iconComponent
             )}
-            <LightTooltip title={data.label || data.FileName} >   
-              <div
-                className="ml-1 text-[14px] font-medium text-[#212121]"
-                style={ellipsisStyle}
-              >
-                {data.label || data.FileName}
-              </div>
-            </LightTooltip>
+            <div
+              className="ml-1 text-[14px] font-medium text-[#212121]"
+              style={ellipsisStyle}
+            >
+              {data.label || data.FileName}
+            </div>
           </div>
         }
         onClick={() => onTreeItemClick(data.path || [])}
@@ -310,13 +237,13 @@ const FileList = () => {
                 boxShadow: "none",
                 ".MuiOutlinedInput-notchedOutline": { border: 0 },
                 "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
-                {
-                  border: 0,
-                },
+                  {
+                    border: 0,
+                  },
                 "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                {
-                  border: 0,
-                },
+                  {
+                    border: 0,
+                  },
               }}
               value={selectedOption}
               onChange={handleChangeSelect}
@@ -428,8 +355,9 @@ const FileTreeView = ({
 
   return (
     <div
-      className={`w-full flex-col pl-4 relative ${showOrHide === true ? "pl-4" : "pl-0"
-        }`}
+      className={`w-full flex-col pl-4 relative ${
+        showOrHide === true ? "pl-4" : "pl-0"
+      }`}
       style={{ display: `${showOrHide === true ? "flex relative" : "none"}` }}
     >
       <div className="z-50 absolute -top-[23px] right-[46px] select-none cursor-pointer">
