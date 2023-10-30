@@ -238,7 +238,8 @@ const FMRightSideBar = ({ selectedUser }) => {
               </div>
               <div className="w-full mt-2 border-[1px] border-[#DEE0E4] py-2 px-1 flex items-center">
                 <FileCopy />
-                <div style={{ whiteSpace: "nowrap" }}>
+                <div className="ellipsis">
+
                 {selectedUser?.downloadURL ?? "Not available"}
                 </div>
               </div>
