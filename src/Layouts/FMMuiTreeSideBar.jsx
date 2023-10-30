@@ -44,11 +44,11 @@ const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick }) => {
 
   const handleDetail = async (id, data) => {
     const dataApi = await dispatchProp(fetchAdditionalData(id));
-    console.log("dataApi",dataApi)
+   
     // Main area dispatch
     const updatedData = [
       ...dataApi.payload.date.filter(dateItem => 
-        !data.children.some(child => child.id === dateItem.Id )
+        !data?.children?.some(child => child.id === dateItem.Id )
       ),
       ...data.children
     ];
@@ -84,10 +84,11 @@ const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick }) => {
     if (!data) {
       return null;
     }
-
+    
+    console.log("data:",data)
     const mediaType = data.mediaType;
     const fileType = data.fileType;
-
+  
     const isFolder = mediaType === "folder";
     const isFile = mediaType === "file";
     const iconMapping = {
@@ -150,7 +151,11 @@ const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick }) => {
         key={data.id}
         nodeId={data.id}
         label={
-          <div style={nodeStyle} onClick={() => handleClick(data?.id, data)}>
+          <div style={nodeStyle}  onClick={(event) => {
+            event.stopPropagation(); // Prevent TreeItem from expanding
+            handleClick(data?.id, data);
+          }}>
+            
             {data.id === "root" ? (
               <img
                 src="/image/FMHomeIcon.svg"
@@ -179,11 +184,12 @@ const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick }) => {
 
   return (
     <TreeView
-      defaultCollapseIcon={<ExpandMoreIcon sx={{ fill: "#4489fe" }} />}
-      defaultExpandIcon={<ChevronRightIcon sx={{ fill: "#4489fe" }} />}
-    >
-      {renderTree(treeData, onTreeItemClick)}
-    </TreeView>
+    
+    defaultCollapseIcon={<ExpandMoreIcon sx={{ fill: "#4489fe" }} />}
+    defaultExpandIcon={<ChevronRightIcon sx={{ fill: "#4489fe" }}/>}
+  >
+    {renderTree(treeData, onTreeItemClick)}
+  </TreeView>
   );
 };
 
