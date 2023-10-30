@@ -17,7 +17,7 @@ import {
   rowDropped,
   selectFileTreeData,
 } from "../redux-toolkit/reducers/fileTreeSlice";
-import { Box, IconButton, Menu, MenuItem } from "@mui/material";
+import { Box, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { useSelector } from "react-redux";
 
 import {
@@ -25,7 +25,18 @@ import {
   fetchAdditionalData,
 } from "../redux-toolkit/reducers/fileTreeSliceDetail";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Assignment, AssignmentInd, Delete, FileCopy, GetApp, Label, MoveToInbox, NoteAdd, Share } from "@mui/icons-material";
+import {
+  Share,
+  DeleteOutlineOutlined as Delete,
+  ContentCopyOutlined as FileCopy,
+  FileDownloadOutlined as GetApp,
+  DriveFileMoveOutlined as MoveToInbox,
+  EventSeatOutlined as AssignmentInd,
+  LocalOfferOutlined as Label,
+  NoteAddOutlined as NoteAdd,
+  BorderColorTwoTone as Assignment,
+} from "@mui/icons-material";
+
 
 function parseFileSize(fileSizeString) {
   const sizeParts = fileSizeString.trim().split(" ");
@@ -106,7 +117,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
         ? node.children.map((child) => enhanceWithPath(child, newPath))
         : undefined,
     };
- 
+
   };
 
   const updatedDirectoryData = {
@@ -259,17 +270,18 @@ const FMMiddlePanel = ({ onUserSelect }) => {
                     textOverflow: "ellipsis",
                     width: "250px",
                     position: 'absolute',
-                    marginTop:"12px",
-                    marginLeft:"35px",
+                    marginTop: "12px",
+                    marginLeft: "35px",
                     left: "auto !important",
-                    top: "auto !important",}}
+                    top: "auto !important",
+                  }}
                 >
-             
+
                   {params.value}
-            
+
                 </div>
               )}
-             
+
             </Draggable>
           </div>
         );
@@ -282,7 +294,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       width: 150,
       valueGetter: (params) => {
         const playLength = params.row.PlayLength;
-    
+
         if (playLength !== null && playLength !== undefined) {
           const hours = Math.floor(playLength / 3600);
           const minutes = Math.floor((playLength % 3600) / 60);
@@ -291,7 +303,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
           const formattedLength = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
           return formattedLength;
         }
-    
+
         return null;
       },
     },
@@ -314,7 +326,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       headerName: "Size",
       width: 150,
       valueGetter: (params) => {
-        
+
         const fileSize = params.row.Size;
         return formatFileSize(fileSize);
       },
@@ -443,19 +455,19 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     if (!result.destination) return;
     const sourceIndex = result.source.index;
     const destIndex = result.destination.index;
-  
+
     if (sourceIndex === destIndex) {
       return;
     }
-  
+
     const draggedRowId = result.draggableId;
-  
+
     const newRows = [...rowsss];
     const updatedChildren = [...updatedDirectoryData.children];
-  
+
     const rowIndexToRemove = newRows.findIndex((row, i) => i === draggedRowId);
     const destinationRow = newRows[destIndex];
-  
+
     if (destinationRow?.mediaType !== "file") {
       // Remove the dragged row from the newRows
       const [draggedRow] = newRows.splice(rowIndexToRemove, 1);
@@ -465,7 +477,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       } else {
         destinationRow.children = [draggedRow];
       }
-  
+
       // Update the children in updatedDirectoryData
       const updatedDataTree = updatedChildren.map((item) => {
         if (item.id === destinationRow.id) {
@@ -476,15 +488,15 @@ const FMMiddlePanel = ({ onUserSelect }) => {
         }
         return item;
       });
-  
+
       dispatch(rowDropped(updatedDataTree));
       dispatch(draggedItem(newRows));
     } else {
       toast.error("Dragging a file into another file is not allowed!");
     }
   };
- 
- 
+
+
   const openMenu = (event, rowData) => {
     setAnchorEl(event.currentTarget);
     // setSelectedRowData(rowData);
@@ -568,7 +580,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
                 className={`w-full px-4 flex justify-center  font-roboto mt-[60px]`}
               >
                 <DataGrid
-                autoHeight
+                  autoHeight
                   rows={rowsss}
                   columns={columns}
                   pageSize={rowsss.length + 1}
@@ -603,7 +615,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
           )}
         </Droppable>
       </DragDropContext>
-        
+
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -611,61 +623,41 @@ const FMMiddlePanel = ({ onUserSelect }) => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <Assignment />
-          </IconButton>
-          Transcribe
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <AssignmentInd />
-          </IconButton>
-          Assign
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <NoteAdd />
-          </IconButton>
-          Add Note
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <MoveToInbox />
-          </IconButton>
-          Move
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <Label />
-          </IconButton>
-          Tag
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <Share />
-          </IconButton>
-          Share
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <GetApp />
-          </IconButton>
-          Download
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <FileCopy />
-          </IconButton>
-          Copy
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <IconButton size="small" edge="start">
-            <Delete />
-          </IconButton>
-          Delete
-        </MenuItem>
+        {[
+          { icon: <Assignment />, text: 'Transcribe' },
+          { icon: <AssignmentInd />, text: 'Assign' },
+          { icon: <NoteAdd />, text: 'Add Note' },
+          { divider: true },
+          { icon: <MoveToInbox />, text: 'Move' },
+          { icon: <Label />, text: 'Tag' },
+          { icon: <Share />, text: 'Share' },
+          { divider: true },
+          { icon: <GetApp />, text: 'Download' },
+          { icon: <FileCopy />, text: 'Copy' },
+          { icon: <Delete />, text: 'Delete' },
+        ].map((item, index) => (
+          item.divider ? (
+            <Divider key={index} />
+          ) : (
+            <MenuItem key={index} onClick={closeMenu}
+            sx={{
+              display: "flex",
+              width:"200px",
+              alignItems: "center",
+              "& .MuiSvgIcon-root": {
+                marginRight: 1, 
+              },
+            }}
+            >
+              <IconButton size="small" edge="start">
+                {item.icon}
+              </IconButton>
+              {item.text}
+            </MenuItem>
+          )
+        ))}
       </Menu>
+
     </div>
   );
 };
