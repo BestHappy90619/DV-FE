@@ -83,6 +83,7 @@ const fillRows = (apiData) => {
       identifier: i,
       mediaType: item?.mediaType,
       fileType: item?.fileType,
+      downloadURL: item?.downloadURL,
       FileName: item?.name ? item?.name : item?.FileName,
       LastUpdated: item?.lastUpdated ? new Date(item?.lastUpdated) : null,
       Size: item?.size || 0,
@@ -125,10 +126,10 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     label: 'Site',
     children: Array.isArray(treeDataFromApi?.date) ? treeDataFromApi.date.map(item => enhanceWithPath(item)) : [],
   };
-
   useEffect(() => {
     dispatch(fetchAdditionalData(0));
   }, []);
+ 
   const dispatch = useDispatch();
   const divOfTableRef = useRef(null);
   const [divWidth, setDivWidth] = useState(1000);
@@ -249,7 +250,6 @@ const FMMiddlePanel = ({ onUserSelect }) => {
             style={nodeStyle}
             onClick={() =>
               handleUserClick(params.row)
-
             }
             onDoubleClick={() => handleDetail(params.row.id, params)}
           >
@@ -617,6 +617,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       </DragDropContext>
 
       <Menu
+   
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}

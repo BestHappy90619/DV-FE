@@ -5,6 +5,7 @@ import {
   Tab,
   TabPanel,
 } from "@material-tailwind/react";
+import { ContentCopyOutlined as FileCopy } from "@mui/icons-material";
 import { useState } from "react";
 
 const FMRightSideBar = ({ selectedUser }) => {
@@ -20,6 +21,13 @@ const FMRightSideBar = ({ selectedUser }) => {
       value: "members",
     },
   ];
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB";
+    else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + " MB";
+    else return (bytes / 1073741824).toFixed(2) + " GB";
+  }
 
   return (
     <div className="flex flex-col  w-full px-2   h-[calc(100vh-160px)] overflow-y-auto">
@@ -55,7 +63,7 @@ const FMRightSideBar = ({ selectedUser }) => {
                 </div>
                 <div className="flex flex-col gap-4 text-[14px]">
                   <div className="w-full flex justify-between">
-                    <div className="text-[#757575]">Uploaded by:</div>
+                    <div className="text-[#757575]">Uploaded By:</div>
                     <div className="text-[#212121]"></div>
                   </div>
 
@@ -74,7 +82,8 @@ const FMRightSideBar = ({ selectedUser }) => {
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">File Size</div>
                     <div className="text-[#212121]">
-                      {selectedUser ? selectedUser.Size || "" : 0}
+
+                      {(selectedUser ? formatFileSize(selectedUser.Size) : "")}
                     </div>
                   </div>
 
@@ -227,14 +236,14 @@ const FMRightSideBar = ({ selectedUser }) => {
               <div className="mt-6 text-[#212121] text-[12px] font-medium">
                 Folder Link
               </div>
-              <div className="w-full mt-2 border-[1px] border-[#DEE0E4] py-2 px-4 flex items-center">
-                <img
-                  src="/image/FMShareIcon.svg"
-                  className="w-[20px] h-[20px] mr-4"
-                  alt="share icon"
-                />
-                https://www.dv.com/packs/file-folder
+              <div className="w-full mt-2 border-[1px] border-[#DEE0E4] py-2 px-1 flex items-center">
+                <FileCopy />
+                <div style={{ whiteSpace: "nowrap" }}>
+                {selectedUser?.downloadURL ?? "Not available"}
+                </div>
               </div>
+
+
             </TabPanel>
           </TabsBody>
         </Tabs>

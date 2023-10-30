@@ -7,8 +7,8 @@ const initialState = {
   // leftsidebar width
   leftSidebarWidth: 0,        // store current width
   rightSidebarWidth: 0,
-  prevLeftSidebarWidth: 250,    // store prev width before set 0
-  prevRightSidebarWidth: 250,
+  prevLeftSidebarWidth: 300,    // store prev width before set 0
+  prevRightSidebarWidth: 300,
 
   // show sidebar as per order(+: left sidebar order, -: right sidebar order 1/-1: hidden)
   playlistOrder: 1,
