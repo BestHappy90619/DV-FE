@@ -46,7 +46,9 @@
 }
 
 html {
-  overflow-y: scroll;
+  /* overflow-y: auto; */
+  height:100vh;
+  overflow:hidden;
 }
 
 .activeWord {
@@ -189,11 +191,26 @@ stroke-width: 1px;
 
 .scrollable-container {
   scrollbar-width: thin; 
-  
   scrollbar-color: #888 transparent; 
 }
 
 
 .scrollable-container:hover {
   scrollbar-color: #666 transparent; 
+}
+.scrollable-content {
+  overflow-y: hidden;
+  max-height: calc(100vh - 60px);
+}
+
+.scrollable-content:hover {
+  overflow-y: auto;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 24ch; 
+
 }

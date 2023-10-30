@@ -17,7 +17,7 @@ import {
   rowDropped,
   selectFileTreeData,
 } from "../redux-toolkit/reducers/fileTreeSlice";
-import { Box, Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import { Box, Divider, IconButton, Menu, MenuItem, Paper } from "@mui/material";
 import { useSelector } from "react-redux";
 
 import {
@@ -36,6 +36,7 @@ import {
   NoteAddOutlined as NoteAdd,
   BorderColorTwoTone as Assignment,
 } from "@mui/icons-material";
+import { MenuList } from "@material-tailwind/react";
 
 
 function parseFileSize(fileSizeString) {
@@ -194,8 +195,11 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     {
       field: "FileName",
       headerName: "Name",
-      width: 300,
+      flex: 1,
+      width: 250,
+      
       renderCell: (params) => {
+        
         const mediaType = params.row.mediaType;
         const fileType = params.row.fileType;
         const isFolder = mediaType === "folder";
@@ -263,14 +267,12 @@ const FMMiddlePanel = ({ onUserSelect }) => {
                   ref={provided.innerRef}
                   {...provided.draggableProps}
                   {...provided.dragHandleProps}
-                  className="m-1"
+                  className="m-1 ellipsis"
                   style={{
                     ...provided.draggableProps.style,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    width: "250px",
+                 
                     position: 'absolute',
-                    marginTop: "12px",
+                    marginTop: "8px",
                     marginLeft: "35px",
                     left: "auto !important",
                     top: "auto !important",
@@ -290,6 +292,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     {
       field: "PlayLength",
       headerName: "Length",
+      flex: 1,
       description: "This column shows play time length of file.",
       width: 150,
       valueGetter: (params) => {
@@ -309,6 +312,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     },
     {
       field: "LastUpdated",
+      flex: 1,
       headerName: "Last Updated",
       type: Date,
       width: 200,
@@ -324,6 +328,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     {
       field: "Size",
       headerName: "Size",
+      flex: 1,
       width: 150,
       valueGetter: (params) => {
 
@@ -338,6 +343,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       field: "Actions",
       headerName: "",
       width: 100,
+      flex: 1,
       sortable: false,
       renderCell: (params) => {
         return (
@@ -453,46 +459,75 @@ const FMMiddlePanel = ({ onUserSelect }) => {
   // };
   const onDragEnd = (result) => {
     if (!result.destination) return;
+  
     const sourceIndex = result.source.index;
     const destIndex = result.destination.index;
-
     if (sourceIndex === destIndex) {
       return;
     }
-
+  
     const draggedRowId = result.draggableId;
-
+  
     const newRows = [...rowsss];
-    const updatedChildren = [...updatedDirectoryData.children];
-
-    const rowIndexToRemove = newRows.findIndex((row, i) => i === draggedRowId);
+  
+    const rowIndexToRemove = newRows.findIndex((row, i) => i == draggedRowId);
     const destinationRow = newRows[destIndex];
-
-    if (destinationRow?.mediaType !== "file") {
-      // Remove the dragged row from the newRows
-      const [draggedRow] = newRows.splice(rowIndexToRemove, 1);
-      newRows.splice(destIndex, 0, draggedRow);
-      if (destinationRow.children) {
-        destinationRow?.children?.push(draggedRow);
-      } else {
-        destinationRow.children = [draggedRow];
-      }
-
-      // Update the children in updatedDirectoryData
-      const updatedDataTree = updatedChildren.map((item) => {
-        if (item.id === destinationRow.id) {
-          return {
-            ...item,
-            children: destinationRow.children,
-          };
+  
+    const updateTree = (nodes, idToMatch, draggedNode) => {
+      return nodes.map((node) => {
+        if (node.id === idToMatch) {
+          if (node.children) {
+            // Match found, add the dragged node to the children
+            node.children = [...node.children, draggedNode];
+          } else {
+            // If the children array doesn't exist, create it and add the dragged node
+            node.children = [draggedNode];
+          }
+        } else if (node.children) {
+          // Recursively search for the matching ID in the children
+          node.children = updateTree(node.children, idToMatch, draggedNode);
         }
-        return item;
+        return node;
       });
-
-      dispatch(rowDropped(updatedDataTree));
+    };
+  
+    if (destinationRow?.mediaType !== "file") {
+      const draggedNode = newRows[rowIndexToRemove];
+  
+      if (destinationRow.id === draggedNode.id) {
+        // The file is being dragged back to its original location
+        return;
+      }
+  
+      // Remove the dragged node from its previous place in the tree
+      newRows.splice(rowIndexToRemove, 1);
+  
+      const updatedDestinationRow = {
+        ...newRows[destIndex],
+        children: newRows[destIndex]?.children ? [...newRows[destIndex].children] : [],
+      };
+  
+      updatedDestinationRow.children = [...updatedDestinationRow.children, draggedNode];
+  
+      newRows[destIndex] = updatedDestinationRow;
+  
       dispatch(draggedItem(newRows));
+  
+      if (updatedDirectoryData?.children) {
+        // Find the destination ID in the tree and update it
+        const updatedTree = updateTree(
+          updatedDirectoryData.children,
+          destinationRow.id,
+          draggedNode
+        );
+        updatedTree.splice(rowIndexToRemove, 1);
+        console.log("updatedTree",updatedTree)
+  
+        dispatch(rowDropped(updatedTree));
+      }
     } else {
       toast.error("Dragging a file into another file is not allowed!");
+      return;
     }
   };
 
@@ -506,14 +541,27 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     setAnchorEl(null);
     // setSelectedRowData(null);
   };
-
+const IconName=[
+  { icon: <Assignment />, text: 'Transcribe' },
+  { icon: <AssignmentInd />, text: 'Assign' },
+  { icon: <NoteAdd />, text: 'Add Note' },
+  { divider: true },
+  { icon: <MoveToInbox />, text: 'Move' },
+  { icon: <Label />, text: 'Tag' },
+  { icon: <Share />, text: 'Share' },
+  { divider: true },
+  { icon: <GetApp />, text: 'Download' },
+  { icon: <FileCopy />, text: 'Copy' },
+  { icon: <Delete />, text: 'Delete' },
+]
   return (
-    <div className="w-full flex flex-col ">
+    <div className="w-full flex flex-col scrollable-content ">
       <div
-        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-10 fill-white            "
+      
+        className="w-[full] flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-10 fill-white            "
         ref={divOfTableRef}
       >
-        <div className="flex  justify-start ml-4 text-[14px] min-w-[400px] select-none ">
+        <div className="flex  justify-start ml-4 text-[14px] min-w-[400px] select-none " >
           <div className="flex border-r-[2px] border-[#dee0e4] gap-2 px-4 cursor-pointer">
             <img
               src="/image/FMShareIcon.svg"
@@ -572,6 +620,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
         </div>
       </div>
 
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable" key="droppable">
           {(provided) => (
@@ -615,28 +664,16 @@ const FMMiddlePanel = ({ onUserSelect }) => {
           )}
         </Droppable>
       </DragDropContext>
-
-      <Menu
    
+      <Menu
+        id="basic-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={closeMenu}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        {[
-          { icon: <Assignment />, text: 'Transcribe' },
-          { icon: <AssignmentInd />, text: 'Assign' },
-          { icon: <NoteAdd />, text: 'Add Note' },
-          { divider: true },
-          { icon: <MoveToInbox />, text: 'Move' },
-          { icon: <Label />, text: 'Tag' },
-          { icon: <Share />, text: 'Share' },
-          { divider: true },
-          { icon: <GetApp />, text: 'Download' },
-          { icon: <FileCopy />, text: 'Copy' },
-          { icon: <Delete />, text: 'Delete' },
-        ].map((item, index) => (
+        {IconName.map((item, index) => (
           item.divider ? (
             <Divider key={index} />
           ) : (
@@ -658,7 +695,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
           )
         ))}
       </Menu>
-
+  
     </div>
   );
 };

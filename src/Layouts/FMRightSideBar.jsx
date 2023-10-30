@@ -30,7 +30,7 @@ const FMRightSideBar = ({ selectedUser }) => {
   }
 
   return (
-    <div className="flex flex-col  w-full px-2   h-[calc(100vh-160px)] overflow-y-auto">
+    <div className="flex flex-col  w-full px-1   h-[calc(100vh-160px)] overflow-y-auto " >
       <div className="flex justify-center  w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader
@@ -61,7 +61,7 @@ const FMRightSideBar = ({ selectedUser }) => {
                 <div className="text-[#212121] text-lg mt-4 mb-4">
                   File Details
                 </div>
-                <div className="flex flex-col gap-4 text-[14px]">
+                <div className="flex flex-col gap-2 text-[14px]">
                   <div className="w-full flex justify-between">
                     <div className="text-[#757575]">Uploaded By:</div>
                     <div className="text-[#212121]"></div>
