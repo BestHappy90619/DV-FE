@@ -11,12 +11,15 @@ import SlideshowIcon from "@mui/icons-material/Slideshow";
 import FolderIcon from "@mui/icons-material/Folder";
 import { toast } from "react-hot-toast";
 import { MOUSE_MOVE, RESIZED_WINDOW } from "@/utils/constant";
+import { debounce } from "lodash"
 import { useDispatch } from "react-redux";
 import { draggedItem } from "../redux-toolkit/reducers/fileTreeSliceDetail";
 import {
   rowDropped,
   selectFileTreeData,
 } from "../redux-toolkit/reducers/fileTreeSlice";
+
+
 import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { useSelector } from "react-redux";
 
@@ -193,8 +196,9 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     {
       field: "FileName",
       headerName: "Name",
-      flex: 1,
+      flex: 2,
       width: 250,
+      resizable: true,
 
       renderCell: (params) => {
         const mediaType = params.row.mediaType;
@@ -285,6 +289,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       field: "PlayLength",
       headerName: "Length",
       flex: 1,
+      resizable: true,
       description: "This column shows play time length of file.",
       width: 150,
       valueGetter: (params) => {
@@ -307,6 +312,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     {
       field: "LastUpdated",
       flex: 1,
+      resizable: true,
       headerName: "Last Updated",
       type: Date,
       width: 200,
@@ -323,6 +329,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       field: "Size",
       headerName: "Size",
       flex: 1,
+      resizable: true,
       width: 150,
       valueGetter: (params) => {
         const fileSize = params.row.Size;
@@ -337,6 +344,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       headerName: "",
       width: 100,
       flex: 1,
+      resizable: true,
       sortable: false,
       renderCell: (params) => {
         return (
@@ -370,14 +378,17 @@ const FMMiddlePanel = ({ onUserSelect }) => {
   };
 
   useEffect(() => {
-    window.addEventListener(RESIZED_WINDOW, updateDivWidth);
-
+    const debouncedUpdateDivWidth = debounce(updateDivWidth, 200); // Adjust the delay as needed
+  
+    window.addEventListener(RESIZED_WINDOW, debouncedUpdateDivWidth);
+  
     updateDivWidth();
-
+  
     return () => {
-      window.removeEventListener(RESIZED_WINDOW, updateDivWidth);
+      window.removeEventListener(RESIZED_WINDOW, debouncedUpdateDivWidth);
     };
   }, []);
+  
 
   useEffect(() => {
     function onMouseMove() {
@@ -551,10 +562,11 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     { icon: <FileCopy />, text: "Copy" },
     { icon: <Delete />, text: "Delete" },
   ];
+  
   return (
-    <div className="w-full flex flex-col scrollable-content ">
+    <div className="w-full flex flex-col">
       <div
-        className="w-[full] flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-10 fill-white            "
+        className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-10 fill-white            "
         ref={divOfTableRef}
       >
         <div className="flex  justify-start ml-4 text-[14px] min-w-[400px] select-none ">
@@ -624,7 +636,8 @@ const FMMiddlePanel = ({ onUserSelect }) => {
                 className={`w-full px-4 flex justify-center  font-roboto mt-[60px]`}
               >
                 <DataGrid
-                  autoHeight
+                className="noSelect"
+            
                   rows={rowsss}
                   columns={columns}
                   pageSize={rowsss.length + 1}

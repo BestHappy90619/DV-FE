@@ -441,7 +441,7 @@ const FileTreeView = ({
           </Dialog>
         )}
       </div>
-      <div className="absolute bottom-0 right-0 left-5 top-0 flex flex-col mt-3 h-[calc(100vh-160px)] scrollable-container">
+      <div className="absolute bottom-0 right-0 left-5 top-0 flex flex-col mt-3 h-[calc(100vh-160px)] scrollable-content" >
         <div className="text-[#212121] mt-5 font-bold">Directory</div>
         <MyTreeView
           treeData={updatedDirectoryData}

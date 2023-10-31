@@ -45,12 +45,15 @@
   padding-right: 10px;
 }
 
-html {
-  /* overflow-y: auto; */
-  height:100vh;
-  overflow:hidden;
+body::-webkit-scrollbar {
+  width: 6px;               
 }
 
+body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 20px;      
+
+}
 .activeWord {
   text-shadow: 0 0 1px !important;
   color: #4489FE !important;
@@ -146,66 +149,49 @@ stroke: #dee0e4;
 stroke-width: 1px;
 }
 
-.scrollable-container {
-  max-height: calc(100vh - 160px); 
-  overflow: hidden;
-  
+/* body Scroll */
+
+/* ::-webkit-scrollbar {
+  width: 5px;
 }
-
-.scrollable-container:hover {
-  overflow-y: auto; 
-
-  border-radius: 2px;
-  scrollbar-width: thin; 
-  scrollbar-color: #b8b7b7 transparent;
-}
-
-.scrollable-container::-webkit-scrollbar {
-  width: 6px; 
-}
-
-.scrollable-container::-webkit-scrollbar-thumb {
-  background-color: #888; 
-}
-
-::-webkit-scrollbar {
-  width: 6px; 
-  border-radius: 4px;
-}
-
 
 ::-webkit-scrollbar-thumb {
-  background: #888; 
-  border-radius: 4px; 
+  background: rgb(255, 255, 255);
 }
 
-
-::-webkit-scrollbar-track {
-  background: transparent; 
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #666; 
-}
+.scrollable-content:hover::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4rem;
+} */
 
 
-.scrollable-container {
-  scrollbar-width: thin; 
-  scrollbar-color: #888 transparent; 
-}
+/* ==================================== */
 
+/* Scroll Containers  */
 
-.scrollable-container:hover {
-  scrollbar-color: #666 transparent; 
-}
 .scrollable-content {
-  overflow-y: hidden;
-  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  /* max-height: calc(100vh - 160px); */
 }
 
-.scrollable-content:hover {
-  overflow-y: auto;
+.scrollable-content::-webkit-scrollbar {
+  width: 5px;
 }
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: rgb(255, 255, 255);
+}
+
+.scrollable-content:hover::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4rem;
+}
+
+/* .scrollable-content.more-width::-webkit-scrollbar {
+  width: 10px;
+} */
+
+/* ======================================= */
 
 .ellipsis {
   overflow: hidden;
@@ -213,4 +199,10 @@ stroke-width: 1px;
   white-space: nowrap;
   max-width: 24ch; 
 
+}
+.noSelect {
+  user-select: none; /* standard syntax */
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
 }

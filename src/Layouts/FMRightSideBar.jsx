@@ -30,7 +30,7 @@ const FMRightSideBar = ({ selectedUser }) => {
   }
 
   return (
-    <div className="flex flex-col  w-full px-1   h-[calc(100vh-160px)] overflow-y-auto " >
+    <div className="flex flex-col  w-full px-1   h-[calc(100vh-160px)] scrollable-content"  >
       <div className="flex justify-center  w-full">
         <Tabs value={activeTab} className="w-full">
           <TabsHeader
@@ -246,6 +246,8 @@ const FMRightSideBar = ({ selectedUser }) => {
 
 
             </TabPanel>
+          
+
           </TabsBody>
         </Tabs>
       </div>
