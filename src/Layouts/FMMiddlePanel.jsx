@@ -11,7 +11,7 @@ import SlideshowIcon from "@mui/icons-material/Slideshow";
 import FolderIcon from "@mui/icons-material/Folder";
 import { toast } from "react-hot-toast";
 import { MOUSE_MOVE, RESIZED_WINDOW } from "@/utils/constant";
-import { debounce } from "lodash"
+// import { debounce } from "lodash"
 import { useDispatch } from "react-redux";
 import { draggedItem } from "../redux-toolkit/reducers/fileTreeSliceDetail";
 import {
@@ -378,14 +378,12 @@ const FMMiddlePanel = ({ onUserSelect }) => {
   };
 
   useEffect(() => {
-    const debouncedUpdateDivWidth = debounce(updateDivWidth, 200); // Adjust the delay as needed
-  
-    window.addEventListener(RESIZED_WINDOW, debouncedUpdateDivWidth);
-  
+    window.addEventListener(RESIZED_WINDOW, updateDivWidth);
+
     updateDivWidth();
-  
+
     return () => {
-      window.removeEventListener(RESIZED_WINDOW, debouncedUpdateDivWidth);
+      window.removeEventListener(RESIZED_WINDOW, updateDivWidth);
     };
   }, []);
   

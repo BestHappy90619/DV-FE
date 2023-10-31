@@ -22,6 +22,7 @@ const initialState = {
   error: null,
 };
 
+
 const fileTreeSlice = createSlice({
   name: "fileTree",
   initialState,
@@ -38,6 +39,7 @@ const fileTreeSlice = createSlice({
       // state.data.date = updatedDate;
       state.data.date = action.payload;
     },
+   
   },
   extraReducers: (builder) => {
     builder
@@ -55,8 +57,11 @@ const fileTreeSlice = createSlice({
       });
   },
 });
+
 export const { rowDropped } = fileTreeSlice.actions;
+
 export default fileTreeSlice.reducer;
+
 
 export const selectFileTreeData = (state) => {
 

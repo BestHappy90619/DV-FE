@@ -44,7 +44,7 @@ const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick }) => {
 
   const handleDetail = async (id, data) => {
     const dataApi = await dispatchProp(fetchAdditionalData(id));
-   
+  
     // Main area dispatch
     const updatedData = [
       ...dataApi.payload.date.filter(dateItem => 
@@ -53,6 +53,7 @@ const MyTreeView = ({ treeData, dispatchProp, onTreeItemClick }) => {
       ...data.children
     ];
     dispatchProp(draggedItem(updatedData));
+   
 
     // Side bar dispatch
     const subtree = treeData.children.find((item) => item.id === id);

@@ -2,39 +2,83 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectAdditionalData,
+  fetchAdditionalData,
+} from "../redux-toolkit/reducers/fileTreeSliceDetail";
+import { selectFileTreeData } from "../redux-toolkit/reducers/fileTreeSlice";
 
 // eslint-disable-next-line react/prop-types
-function BreadCrumb({ items, leftSidebarWidth }) {
+function BreadCrumb({ leftSidebarWidth }) {
   const handleClick = (event) => {
     event.preventDefault();
   };
 
-  // eslint-disable-next-line react/prop-types
-  const breadcrumbItems = items?.map((item, index) => (
-    <Link
-      key={index}
-      underline="hover"
-      color="inherit"
-      href={item.href}
-      onClick={(event) => handleClick(event, item.href)}
-    >
-      {item}
-    </Link>
-  ));
-  const defaultCrumb = (
-    <Link
-      key="root"
-      underline="hover"
-      color="inherit"
-      href="/"
-      onClick={(event) => handleClick(event, -1)} // You can use a special index like -1 for the default "/"
-    >
-      Site
-    </Link>
-  );
+  const dispatch = useDispatch();
 
-  // Insert the default breadcrumb at the beginning
-  breadcrumbItems.unshift(defaultCrumb);
+  const breadCrumb = useSelector(selectAdditionalData).breadCrumb;
+  const data = useSelector(selectFileTreeData).date;
+
+  const recursiveSearch = (searchName, dataArray) => {
+    for (let item of dataArray) {
+      if (item.name === searchName || item.FileName === searchName) {
+        return item;
+      }
+      if (item.children) {
+        const result = recursiveSearch(searchName, item.children);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    return null;
+  };
+
+  if (breadCrumb && breadCrumb.length > 0) {
+    const breadCrumbCopy = [...breadCrumb];
+    breadCrumbCopy[0] = "Site";
+    const reversedBreadCrumb = breadCrumbCopy.slice(0, 1).concat(breadCrumbCopy.slice(1).reverse());
+
+    const breadcrumbItems = reversedBreadCrumb.map((item, index) => (
+      <Link
+        key={index}
+        underline="hover"
+        color="inherit"
+        href={item.href}
+        style={{ cursor: "pointer" }}
+        onClick={(event) => {
+          if (item === "Site") {
+            // Handle the "Site" breadcrumb click separately
+            dispatch(fetchAdditionalData(0)); // Pass 0 as the ID
+          } else {
+            const selectedItem = recursiveSearch(item, data);
+            if (selectedItem) {
+              dispatch(fetchAdditionalData(selectedItem.Id || selectedItem.id));
+            }
+          }
+          handleClick(event, item.href);
+        }}
+      >
+        {item}
+      </Link>
+    ));
+
+    return (
+      <Stack
+        className={`flex items-center h-5 py-0 my-0 bg-transparent`}
+        style={{ marginLeft: `${leftSidebarWidth + 10}px` }}
+      >
+        <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="medium" />}
+          aria-label="breadcrumb"
+        >
+          {breadcrumbItems}
+        </Breadcrumbs>
+      </Stack>
+    );
+  }
+
   return (
     <Stack
       className={`flex items-center h-5 py-0 my-0 bg-transparent`}
@@ -44,7 +88,15 @@ function BreadCrumb({ items, leftSidebarWidth }) {
         separator={<NavigateNextIcon fontSize="medium" />}
         aria-label="breadcrumb"
       >
-        {breadcrumbItems}
+        <Link
+          key="root"
+          underline="hover"
+          color="inherit"
+          href="/"
+          onClick={(event) => handleClick(event, -1)}
+        >
+          Site
+        </Link>
       </Breadcrumbs>
     </Stack>
   );
