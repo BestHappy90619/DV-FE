@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 
 //redux
@@ -15,8 +15,8 @@ import SearchSideBar from "./SearchSideBar";
 import TMediaController from "@/Components/TMediaController";
 
 // constant
-import { NOTE_SIDEBAR, PLAYLIST_SIDEBAR, RESIZED_SIDEBAR, SEARCH_SIDEBAR, PREVENT_SELECT, KEY_DOWN, MOUSE_MOVE, MOUSE_UP } from "@/utils/constant";
-import { EventBus } from "@/utils/function";
+import { NOTE_SIDEBAR, PLAYLIST_SIDEBAR, RESIZED_SIDEBAR, SEARCH_SIDEBAR, PREVENT_SELECT, KEY_DOWN, MOUSE_MOVE, MOUSE_UP } from "@/utils/Constant";
+import { EventBus } from "@/utils/Functions";
 
 const MainLyt = () => {
   const dispatch = useDispatch();

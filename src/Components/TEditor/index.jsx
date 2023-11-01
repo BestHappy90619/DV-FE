@@ -7,7 +7,7 @@ import { toggleNote, toggleSearch, setPlaylistSidebarPosition, setNoteSidebarPos
 import { toggleMediaSide } from "@/redux-toolkit/reducers/Media";
 
 // components
-import TSection from "./TSection";
+import TBody from "./TBody";
 
 // material
 import {
@@ -33,8 +33,8 @@ import { TbSettingsCode } from "react-icons/tb";
 import { BiChevronDown } from "react-icons/bi";
 
 // constant
-import { EventBus } from "@/utils/function";
-import { BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, RESIZED_FUNCTION_BAR, MEDIUM_GRAY } from "@/utils/constant";
+import { EventBus } from "@/utils/Functions";
+import { BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, RESIZED_FUNCTION_BAR, MEDIUM_GRAY } from "@/utils/Constant";
 import { setShowMedia } from "../../redux-toolkit/reducers/Media";
 
 const TEditor = () => {
@@ -49,18 +49,20 @@ const TEditor = () => {
     const [openZoomMenu, setOpenZoomMenu] = useState(false);
     const [openEditMenu, setOpenEditMenu] = useState(false);
     const [openInsertMenu, setOpenInsertMenu] = useState(false);
-    const [openViewMenu, setOpenViewMenu] = useState(false)
+    const [openViewMenu, setOpenViewMenu] = useState(false);
     const [openFunctionBar, setOpenFunctionBar] = useState(true);
     const [zoomTranscript, setZoomTranscript] = useState("100%");
     const [functionBarWidth, setFunctionBarWidth] = useState(0);
     const [actionStyle, setActionStyle] = useState();
-    const [startEle, setStartEle] = useState();
-    const [endEle, setEndEle] = useState();
-    const [changeFontClr, setChangeFontClr] = useState();
-    const [changeHighlightClr, setChangeHighlightClr] = useState();
+    const [changedFontClr, setChangedFontClr] = useState();
+    const [changedHighlightClr, setChangedHighlightClr] = useState();
     const [changeStyle, setChangeStyle] = useState(false);
     const [fontColor, setFontColor] = useState(MEDIUM_GRAY);
     const [highlightBg, setHighlightBg] = useState(MEDIUM_GRAY);
+    const [undo, setUndo] = useState(false);
+    const [redo, setRedo] = useState(false);
+    const [enableUndo, setEnableUndo] = useState(false);
+    const [enableRedo, setEnableRedo] = useState(false);
 
     const onKeyDownZoomTranscriptInput = (e) => {
         if (e.key !== 'Enter') return;
@@ -95,34 +97,25 @@ const TEditor = () => {
     }, [])
 
     const onClickEditStyle = (actionStyle) => {
-        let { anchorNode, focusNode } = document.getSelection();
-        if (anchorNode?.parentElement?.dataset?.start == undefined || focusNode?.parentElement?.dataset?.start == undefined) return;
         setActionStyle(actionStyle);
-        if (anchorNode.parentElement.dataset.start * 1 < focusNode.parentElement.dataset.start * 1) {
-            setStartEle(anchorNode.parentElement)
-            setEndEle(focusNode.parentElement)
-        } else {
-            setStartEle(focusNode.parentElement)
-            setEndEle(anchorNode.parentElement)
-        }
         if (actionStyle == FONT_COLOR && fontColor != MEDIUM_GRAY)
-            setChangeFontClr(fontColor);
+            setChangedFontClr(fontColor);
         if (actionStyle == HIGHLIGHT_BG && highlightBg != MEDIUM_GRAY)
-            setChangeHighlightClr(highlightBg);
+            setChangedHighlightClr(highlightBg);
         setChangeStyle(!changeStyle);
     }
 
     const onChangeFontClr = (clr) => {
         setFontColor(clr.hex);
         setActionStyle(FONT_COLOR);
-        setChangeFontClr(clr.hex);
+        setChangedFontClr(clr.hex);
         setChangeStyle(!changeStyle);
     }
 
     const onChangeHighlightBg = (clr) => {
         setHighlightBg(clr.hex);
         setActionStyle(HIGHLIGHT_BG);
-        setChangeHighlightClr(clr.hex);
+        setChangedHighlightClr(clr.hex);
         setChangeStyle(!changeStyle);
     }
 
@@ -134,16 +127,14 @@ const TEditor = () => {
             <div className={`${openFunctionBar ? "" : "hidden"} fixed z-30 bg-white flex pb-5 pt-8 px-10`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
                 <div className={`flex gap-2 `}>
                     <div className="flex gap-4 self-center select-none">
-                        <LuUndo2 className="text-custom-medium-gray" />
-                        <LuRedo2 className="text-custom-medium-gray" />
+                        <LuUndo2 className={`${enableUndo ? "text-custom-black" : "text-custom-medium-gray"} cursor-pointer`} onClick={() => enableUndo && setUndo(!undo)}/>
+                        <LuRedo2 className={`${enableRedo ? "text-custom-black" : "text-custom-medium-gray"} cursor-pointer`} onClick={() => enableRedo && setRedo(!redo)}/>
                     </div>
                     <RxDividerVertical className="text-custom-medium-gray self-center" />
                     <div className="flex gap-4 self-center select-none">
-                        <AiOutlineBold className="text-custom-medium-gray self-center" onClick={() => onClickEditStyle(BOLD)} />
-                        <AiOutlineItalic className="text-custom-medium-gray self-center" onClick={() => onClickEditStyle(ITALIC)} />
-                        <AiOutlineUnderline className="text-custom-medium-gray self-center" onClick={() => onClickEditStyle(UNDERLINE)} />
-                        {/* <TbSubscript className="text-custom-medium-gray" /> */}
-                        {/* <TbSuperscript className="text-custom-medium-gray" /> */}
+                        <AiOutlineBold className="text-custom-medium-gray self-center cursor-pointer" onClick={() => onClickEditStyle(BOLD)} />
+                        <AiOutlineItalic className="text-custom-medium-gray self-center cursor-pointer" onClick={() => onClickEditStyle(ITALIC)} />
+                        <AiOutlineUnderline className="text-custom-medium-gray self-center cursor-pointer" onClick={() => onClickEditStyle(UNDERLINE)} />
                         <div className="flex">
                             <AiOutlineFontColors onClick={() => onClickEditStyle(FONT_COLOR)} className="cursor-pointer text-custom-medium-gray" style={{color: fontColor}}/>
                             <Popover placement="bottom-end" open={openFontColorPicker} handler={setOpenFontColorPicker}>
@@ -166,7 +157,7 @@ const TEditor = () => {
                                 <PopoverContent className="z-50 bg-opacity-0 border-opacity-0 shadow-none p-0 pt-2"><Github color={highlightBg} onChange={onChangeHighlightBg}/></PopoverContent>
                             </Popover>
                         </div>
-                        <TbSettingsCode className="text-custom-medium-gray self-center" />
+                        <TbSettingsCode className="text-custom-medium-gray self-center cursor-pointer" />
                     </div>
                     <RxDividerVertical className="text-custom-medium-gray self-center" />
                     <div className="flex gap-4 self-center" onFocus={onFocusZoomTranscriptMenu} onBlur={() => onBlurZoomTranscriptMenu()}>
@@ -320,7 +311,7 @@ const TEditor = () => {
             </div>
             
             <div className={`grid gap-8 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
-                <TSection actionStyle={actionStyle} startEle={startEle} endEle={endEle} changeStyle={changeStyle} changeFontClr={changeFontClr} changeHighlightClr={changeHighlightClr} />
+                <TBody actionStyle={actionStyle} changeStyle={changeStyle} changedFontClr={changedFontClr} changedHighlightClr={changedHighlightClr} undo={undo} redo={redo} setEnableUndo={setEnableUndo} setEnableRedo={setEnableRedo} />
             </div>
         </>
     )

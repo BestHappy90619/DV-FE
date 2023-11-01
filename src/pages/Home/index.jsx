@@ -7,9 +7,12 @@ import { setCurrentTime, setIsPlaying, setMedias, setSelectedMediaId } from "@/r
 // components
 import TEditor from "@/Components/TEditor";
 
+// Toast
+import { toast } from "react-hot-toast";
+
 // utils
-import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_SIDEBAR, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING } from "@/utils/constant";
-import { EventBus, getItemFromArr } from "@/utils/function";
+import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_SIDEBAR, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING } from "@/utils/Constant";
+import { EventBus, getItemFromArr } from "@/utils/Functions";
 
 // services
 import MediaService from "@/services/media";

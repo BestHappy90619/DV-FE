@@ -16,9 +16,9 @@ export const KEY_UP = 'keyup';
 export const KEY_DOWN = 'keydown';
 export const MOUSE_MOVE = 'mousemove';
 export const MOUSE_UP = 'mouseup';
-export const SELECTION_CHANGE = 'selectionchange';
 export const RESIZED_WINDOW = 'resize';
 export const MEDIA_TIME_UPDATE = "timeupdate";
+export const SELECTION_CHANGE = 'selectionchange';
 
 // Custom Event
 export const RESIZED_SIDEBAR = 'resizedSidebar';
@@ -55,3 +55,16 @@ export const STATUS_UPLOADING = "uploading";
 export const STATUS_UPLOADED = "uploaded";
 export const STATUS_TRANSCRIBING = "transcribing";
 export const STATUS_TRANSCRIBED = 'transcribed';
+
+// Modifier Keys
+export const KEY_SCROLL = "Scroll";
+export const KEY_SCROLL_LOCK = "ScrollLock";
+export const KEY_CTRL = "Control";
+export const KEY_ALT = "Alt";
+export const KEY_META = "Meta";
+export const KEY_SHIFT = "Shift";
+export const KEY_NUMLOCK = "NumLock";
+export const KEY_CAPSLOCK = "CapsLock";
+
+// New Line Sign
+export const NEW_LINE_SIGN = "LxG8M5fJk3rWHztDQ2i7T9nGw4bR6oAe";
