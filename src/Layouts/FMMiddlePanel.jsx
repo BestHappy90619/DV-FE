@@ -386,7 +386,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       window.removeEventListener(RESIZED_WINDOW, updateDivWidth);
     };
   }, []);
-  
+
 
   useEffect(() => {
     function onMouseMove() {
@@ -537,7 +537,7 @@ const FMMiddlePanel = ({ onUserSelect }) => {
       return;
     }
   };
-
+  const open = Boolean(anchorEl);
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
     // setSelectedRowData(rowData);
@@ -560,9 +560,9 @@ const FMMiddlePanel = ({ onUserSelect }) => {
     { icon: <FileCopy />, text: "Copy" },
     { icon: <Delete />, text: "Delete" },
   ];
-  
+
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col ">
       <div
         className="w-full flex justify-between items-center h-[60px] border-b border-b-[#dee0e4] fixed bg-white z-10 fill-white            "
         ref={divOfTableRef}
@@ -625,57 +625,16 @@ const FMMiddlePanel = ({ onUserSelect }) => {
           </div>
         </div>
       </div>
-
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable" key="droppable">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              <div
-                className={`w-full px-4 flex justify-center  font-roboto mt-[60px]`}
-              >
-                <DataGrid
-                className="noSelect"
-            
-                  rows={rowsss}
-                  columns={columns}
-                  pageSize={rowsss.length + 1}
-                  checkboxSelection
-                  disableRowSelectionOnClick
-                  getRowId={(row) => row.identifier}
-                  sx={{
-                    borderLeft: "none",
-                    borderRight: "none",
-                    borderTop: "none",
-                  }}
-                  components={{
-                    ColumnSortedAscendingIcon: () => (
-                      <img
-                        src={"/image/down.png"}
-                        className="w-4 h-4"
-                        alt="Ascending"
-                      />
-                    ),
-                    ColumnSortedDescendingIcon: () => (
-                      <img
-                        src={"/image/up.png"}
-                        className="w-4 h-4"
-                        alt="Descending"
-                      />
-                    ),
-                  }}
-                />
-              </div>
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-
       <Menu
-        id="basic-menu"
+         id="simple-menu"
+         disableScrollLock={true}
         anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        getContentAnchorEl={null}
+        open={open}
         onClose={closeMenu}
+        MenuListProps={{
+          autoFocusItem: false,
+        }}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
@@ -703,6 +662,54 @@ const FMMiddlePanel = ({ onUserSelect }) => {
           )
         )}
       </Menu>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable" key="droppable">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              <div
+                className={`w-full px-4 flex justify-center  font-roboto mt-[60px]`}
+              >
+                <DataGrid
+                  className="noSelect"
+                  autoHeight
+                  rows={rowsss}
+                  columns={columns}
+                  pageSize={rowsss.length + 1}
+                  checkboxSelection
+                  disableRowSelectionOnClick
+                  getRowId={(row) => row.identifier}
+                  sx={{
+                    borderLeft: "none",
+                    borderRight: "none",
+                    borderTop: "none",
+                    '& .MuiDataGrid-virtualScroller::-webkit-scrollbar': { display: 'none' }
+
+                  }}
+                  components={{
+                    ColumnSortedAscendingIcon: () => (
+                      <img
+                        src={"/image/down.png"}
+                        className="w-4 h-4"
+                        alt="Ascending"
+                      />
+                    ),
+                    ColumnSortedDescendingIcon: () => (
+                      <img
+                        src={"/image/up.png"}
+                        className="w-4 h-4"
+                        alt="Descending"
+                      />
+                    ),
+                  }}
+                />
+              </div>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+
+  
     </div>
   );
 };
