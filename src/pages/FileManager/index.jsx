@@ -16,8 +16,8 @@ import FMMiddlePanel from "../../Layouts/FMMiddlePanel";
 import FMRightSideBar from "../../Layouts/FMRightSideBar";
 
 // constant
-import { RESIZED_SIDEBAR, PREVENT_SELECT, KEY_DOWN, MOUSE_MOVE, MOUSE_UP, RESIZED_WINDOW } from "@/utils/constant";
-import { EventBus } from "@/utils/function";
+import { RESIZED_SIDEBAR, PREVENT_SELECT, KEY_DOWN, MOUSE_MOVE, MOUSE_UP, RESIZED_WINDOW } from "@/utils/Constant";
+import { EventBus } from "@/utils/Functions";
 import { Breadcrumbs } from "@material-tailwind/react";
 
 const MainLyt = () => {

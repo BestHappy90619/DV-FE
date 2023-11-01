@@ -5,8 +5,8 @@ import { useSelector, useDispatch } from "react-redux";
 // icons
 import { AiOutlineClose } from "react-icons/ai";
 import { CgPlayButtonO, CgPlayPause } from "react-icons/cg";
-import { msToTime } from "@/utils/function";
-import { STATUS_TRANSCRIBED } from "../utils/constant";
+import { msToTime } from "@/utils/Functions";
+import { STATUS_TRANSCRIBED } from "../utils/Constant";
 
 const PlaylistSideBar = ({ close }) => {
   const dispatch = useDispatch();
