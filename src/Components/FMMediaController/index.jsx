@@ -22,7 +22,7 @@ import {
   getItemFromArr,
   msToTime,
   setMinimumFractionFormat,
-} from "@/utils/function";
+} from "@/utils/Functions";
 
 const TMediaController = () => {
   const dispatch = useDispatch();

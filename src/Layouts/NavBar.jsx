@@ -18,7 +18,7 @@ import {
 
 import SearchBox from "../Components/FMSearchBox";
 import { useEffect, useState } from "react";
-import { RESIZED_WINDOW } from "@/utils/constant";
+import { RESIZED_WINDOW } from "@/utils/Constant";
 
 export default function NavBar() {
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);

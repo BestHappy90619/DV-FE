@@ -5,7 +5,7 @@ import AudioFileIcon from "@mui/icons-material/AudioFile";
 import TextFileIcon from "@mui/icons-material/TextFields";
 import ZipFileIcon from "@mui/icons-material/FolderZip";
 import ImageIcon from "@mui/icons-material/Image";
-import { MOUSE_MOVE, RESIZED_WINDOW } from "@/utils/constant";
+import { MOUSE_MOVE, RESIZED_WINDOW } from "@/utils/Constant";
 
 const columns = [
   {
