@@ -7,8 +7,8 @@ import { store } from "@/redux-toolkit/store";
 import { Spinner } from "@material-tailwind/react";
 import { Toaster } from "react-hot-toast";
 
-import { EventBus } from "./utils/function";
-import { PREVENT_SELECT, SET_LOADING } from "./utils/constant";
+import { EventBus } from "./utils/Functions";
+import { PREVENT_SELECT, SET_LOADING } from "./utils/Constant";
 
 function App() {
   const pages = useRoutes(Routes);
@@ -40,7 +40,7 @@ function App() {
   }, [])
 
   return (
-    <StrictMode>
+    // <StrictMode>
       <Provider store={store}>
         <div className={`${isPreventSelect ? "select-none" : ""}`}>{pages}</div>
         <div
@@ -61,7 +61,7 @@ function App() {
         </div>
         <Toaster />
       </Provider>
-    </StrictMode>
+    // </StrictMode>
   );
 }
 

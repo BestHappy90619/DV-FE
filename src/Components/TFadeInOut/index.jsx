@@ -79,13 +79,22 @@ class TFadeInOut extends Component {
       return null;
     }
 
-    const { children, duration, className, style } = this.props;
+    const { children, duration, className, style, onKeyDown, onPaste, onCut } = this.props;
     return (
       <div
         id="editableSection"
         contentEditable
         suppressContentEditableWarning
         className={className}
+        onKeyDown={onKeyDown}
+        onPaste={onPaste}
+        onCut={onCut}
+        // onKeyDown={(e) => { console.log("onBeforeInputCapture>>>>>>>", document.getElementById('2557748c-0755-4056-a5c7-01151dfcea94').textContent)}}
+        // onBeforeInputCapture={(e) => { console.log("onBeforeInputCapture>>>>>>>", document.getElementById('2557748c-0755-4056-a5c7-01151dfcea94').textContent)}}
+        // onBeforeInput={(e) => {console.log('onBeforeInput>>>>>>>', document.getElementById('2557748c-0755-4056-a5c7-01151dfcea94').textContent)}}
+        // onInput={(e) => {e.preventDefault();e.stopPropagation();console.log('onInput>>>>>>>', document.getElementById('2557748c-0755-4056-a5c7-01151dfcea94').textContent)}}
+        // onKeyUp={(e) => {console.log('onKeyUp>>>>>>>', document.getElementById('2557748c-0755-4056-a5c7-01151dfcea94').textContent)}}
+        // onPaste={(e) => { e.preventDefault(); }}
         style={{
           ...style,
           transition: `opacity ${duration}ms ease-in-out`,

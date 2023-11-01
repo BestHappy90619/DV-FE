@@ -14,8 +14,8 @@ import { BiSolidVolume, BiSolidVolumeFull, BiFolder } from "react-icons/bi";
 import { FaListUl } from "react-icons/fa";
 
 // constant
-import { EventBus, getIndexFromArr, getItemFromArr, msToTime, setMinimumFractionFormat } from "@/utils/function";
-import { TIME_SLIDE_DRAG, TIME_UPDATE_OUTSIDE } from "@/utils/constant";
+import { EventBus, getIndexFromArr, getItemFromArr, msToTime, setMinimumFractionFormat } from "@/utils/Functions";
+import { TIME_SLIDE_DRAG, TIME_UPDATE_OUTSIDE } from "@/utils/Constant";
 
 const TMediaController = () => {
   const dispatch = useDispatch();

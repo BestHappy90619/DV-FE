@@ -1,11 +1,11 @@
-import { DEBUG_MODE } from "@/utils/constant";
-import http from "@/utils/http";
+import { DEBUG_MODE } from "@/utils/Constant";
+import http from "@/utils/Http";
 
 const MEDIA_API = "";
 
 const getAllMedias = () => {
     return http
-        .get(MEDIA_API + "/allfiles")
+        .get(MEDIA_API + "preview/allfiles")
         .then(
             (res) => {
                 return res;
@@ -22,7 +22,24 @@ const getAllMedias = () => {
 
 const getTranscriptionByFileId = (fileId) => {
     return http
-        .get(MEDIA_API + "?fileName=" + fileId)
+        .get(MEDIA_API + "preview?fileName=" + fileId)
+        .then(
+            (res) => {
+                return res;
+            },
+            (err) => {
+                if (!DEBUG_MODE) console.clear();
+                return err.response;
+            }
+        )
+        .catch((err) => {
+            return err;
+        });
+}
+
+const updateTranscriptionByFileId = (fileId, transcription) => {
+    return http
+        .post(MEDIA_API + "transcripts/update", { fileId, transcription })
         .then(
             (res) => {
                 return res;
@@ -39,7 +56,8 @@ const getTranscriptionByFileId = (fileId) => {
 
 const MediaService = {
     getAllMedias,
-    getTranscriptionByFileId
+    getTranscriptionByFileId,
+    updateTranscriptionByFileId
 };
 
 export default MediaService;
