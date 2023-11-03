@@ -1,9 +1,9 @@
-import NavBar from "@/Layouts/NavBar";
+import DVNavbar from "@/Components/DVNavbar";
 
 const Error404 = () => {
   return (
     <>
-      <NavBar />      
+      <DVNavbar />
     </>
   );
 };
