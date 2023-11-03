@@ -1,4 +1,4 @@
-import { KEY_ALT, KEY_CAPSLOCK, KEY_CTRL, KEY_META, KEY_NUMLOCK, KEY_SCROLL, KEY_SCROLL_LOCK, KEY_SHIFT } from "./Constant";
+import { KEY_ALT, KEY_CTRL, KEY_SHIFT } from "@/utils/Constant";
 
 // ms to time, "00:00:00"
 export const msToTime = (milliseconds, isShowMMSS = false) => {
@@ -20,9 +20,9 @@ export const msToTime = (milliseconds, isShowMMSS = false) => {
 
 // check if object is empty
 export const isEmpty = (obj) => {
-  if (obj == null || obj == undefined) return !obj;
-  else if (typeof obj == 'string' || Array.isArray(obj)) return obj.length === 0;
-  else if (typeof obj == 'object') return Object.keys(obj).length === 0;
+  if (obj === null || obj === undefined || (typeof obj === 'number' && obj === NaN)) return !obj;
+  else if (typeof obj === 'string' || Array.isArray(obj)) return obj.length === 0;
+  else if (typeof obj === 'object') return Object.keys(obj).length === 0;
   else return !obj;
 }
 
