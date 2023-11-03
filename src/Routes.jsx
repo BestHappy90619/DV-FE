@@ -1,10 +1,11 @@
 // layouts
-import MainLyt from "./Layouts";
+import MainLyt from "@/Layouts";
+import FileManageLyt from "@/Layouts/FileManageLyt";
 
 // pages
-import Error404 from "./pages/Error/404";
-import FileManager from "./pages/FileManager";
-import Home from "./pages/Home";
+import Error404 from "@/pages/Error/404";
+import MyFiles from "@/pages/Transcribatron/FileManager/MyFiles";
+import TBEditor from "@/pages/Transcribatron/TBEditor";
 
 // define routes
 const Routes = [
@@ -14,17 +15,19 @@ const Routes = [
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <TBEditor />,
+      },
+      {
+        path: "/filemanage/",
+        element: <FileManageLyt />,
+        children: [
+          {
+            path: '/filemanage/mines',
+            element: <MyFiles />
+          }
+        ]
       },
     ],
-  },
-  {
-    path: "/filemanage",
-    element: <FileManager />,
-  },
-  {
-    path: "/filemanage/mines",
-    element: <FileManager />,
   },
   {
     path: "*",

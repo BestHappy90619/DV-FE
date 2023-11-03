@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import mediaReducer from "./reducers/Media";
-import SidebarReducer from "./reducers/Sidebar";
-import EditorReducer from "./reducers/Editor";
+import mediaReducer from "@/redux-toolkit/reducers/Media";
+import SidebarReducer from "@/redux-toolkit/reducers/Sidebar";
+import EditorReducer from "@/redux-toolkit/reducers/Editor";
 
 const reducer = {
   media: mediaReducer,
