@@ -3,8 +3,7 @@ import { Outlet } from "react-router-dom";
 // Navbar
 import DVNavbar from "@/Components/DVNavbar";
 
-const MainLyt = () => {
-
+const TBMainLyt = () => {
 
   return (
     <>
@@ -15,4 +14,4 @@ const MainLyt = () => {
   );
 };
 
-export default MainLyt;
+export default TBMainLyt;

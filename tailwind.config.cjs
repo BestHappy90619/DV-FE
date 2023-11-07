@@ -29,6 +29,11 @@ module.exports = withMT({
       "custom-black": "#212121",
       "custom-sky": "#4489FE",
       "custom-sky-gray": "#F8FAFF",
+      "custom-light-green": "#7adaa8",
+      "custom-medium-green": "#20C26D",
+      "custom-green": "#0FAA58",
+      'custom-light-yellow': "#E9B80C",
+      'custom-light-red': '#FF8477'
     },
   },
   plugins: [],
