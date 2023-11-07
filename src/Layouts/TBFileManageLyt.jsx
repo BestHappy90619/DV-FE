@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 
-import DVBreadcrumbs from "../Components/DVBreadcrumbs";
+import DVBreadcrumbs from "@/Components/DVBreadcrumbs";
 
-const FileManageLyt = () => {
+const TBFileManageLyt = () => {
     return (
         <>
             <DVBreadcrumbs />
@@ -11,4 +11,4 @@ const FileManageLyt = () => {
     )
 }
 
-export default FileManageLyt;
+export default TBFileManageLyt;

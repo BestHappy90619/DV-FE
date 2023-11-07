@@ -1,11 +1,19 @@
 // layouts
-import MainLyt from "@/Layouts";
-import FileManageLyt from "@/Layouts/FileManageLyt";
+import MainLyt from "@/Layouts/MainLyt";
+import TBFileManageLyt from "@/Layouts/TBFileManageLyt";
+import CTMainLyt from "@/Layouts/CTMainLyt";
 
 // pages
+/// Error
 import Error404 from "@/pages/Error/404";
-import MyFiles from "@/pages/Transcribatron/FileManager/MyFiles";
+
+/// Transcribatron
 import TBEditor from "@/pages/Transcribatron/TBEditor";
+import MyFiles from "@/pages/Transcribatron/FileManager/MyFiles";
+
+/// Ordering
+import Ordering from "@/pages/Ordering";
+import EditOrdering from "@/pages/Ordering/Edit";
 
 // define routes
 const Routes = [
@@ -19,7 +27,7 @@ const Routes = [
       },
       {
         path: "/filemanage/",
-        element: <FileManageLyt />,
+        element: <TBFileManageLyt />,
         children: [
           {
             path: '/filemanage/mines',
@@ -27,6 +35,20 @@ const Routes = [
           }
         ]
       },
+      {
+        path: "/",
+        element: <CTMainLyt />,
+        children: [
+          {
+            path: "/ordering",
+            element: <Ordering />
+          },
+          {
+            path: "/ordering/edit",
+            element: <EditOrdering />
+          }
+        ]
+      }
     ],
   },
   {
