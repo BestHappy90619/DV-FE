@@ -87,7 +87,7 @@ const DVMediaController = (props) => {
     <div className={className}>
       <PrettoSlider
         valueLabelDisplay="auto"
-        style={{ position: 'absolute', padding: '0 0 12px 0'}}
+        style={{ position: 'absolute', padding: '0'}}
         value={currentTimePercent}
         getAriaValueText={() => msToTime(currentTime, true)}
         valueLabelFormat={() => msToTime(currentTime, true)}

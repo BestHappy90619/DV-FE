@@ -62,6 +62,7 @@ const TEditor = (props) => {
     const [redo, setRedo] = useState(false);
     const [enableUndo, setEnableUndo] = useState(false);
     const [enableRedo, setEnableRedo] = useState(false);
+    const [clickedInsertSection, setClickedInsertSection] = useState(false);
 
     const onKeyDownZoomTranscriptInput = (e) => {
         if (e.key !== 'Enter') return;
@@ -215,7 +216,7 @@ const TEditor = (props) => {
                                 <MenuItem><p className="w-[100px]">Bullets</p></MenuItem>
                                 <MenuItem><p className="w-[100px]">Numbering</p></MenuItem>
                                 <MenuItem onClick={toggleNote}><p className="w-[100px]">Notes</p></MenuItem>
-                                <MenuItem><p className="w-[100px]">Section</p></MenuItem>
+                                <MenuItem onClick={() => setClickedInsertSection(!clickedInsertSection)}><p className="w-[100px]">Section</p></MenuItem>
                             </MenuList>
                         </Menu>
                         <Menu open={openViewMenu} handler={setOpenViewMenu}>
@@ -308,9 +309,18 @@ const TEditor = (props) => {
             <div className={`${showMedia ? "pl-10" : ""}`}>
                 <hr style={{ "width": showMedia ? ((functionBarWidth - 40) + "px") : functionBarWidth == 0 ? "100%" : functionBarWidth+"px" }} className={`fixed z-30 mt-24 bg-white w-full pb-8 border-blue-gray-50 ${openFunctionBar ? "" : "hidden"}`} />
             </div>
-            
             <div className={`grid gap-8 px-10 ${openFunctionBar ? "pt-[129px]" : ""}`}>
-                <TBody actionStyle={actionStyle} changeStyle={changeStyle} changedFontClr={changedFontClr} changedHighlightClr={changedHighlightClr} undo={undo} redo={redo} setEnableUndo={setEnableUndo} setEnableRedo={setEnableRedo} />
+                <TBody
+                    actionStyle={actionStyle}
+                    changeStyle={changeStyle}
+                    changedFontClr={changedFontClr}
+                    changedHighlightClr={changedHighlightClr}
+                    undo={undo}
+                    redo={redo}
+                    setEnableUndo={setEnableUndo}
+                    setEnableRedo={setEnableRedo}
+                    clickedInsertSection={clickedInsertSection}
+                />
             </div>
         </>
     )

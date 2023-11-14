@@ -295,7 +295,7 @@ const TBEditor = () => {
         sidebarMinWidth={minWidth}
         sidebarMaxWidth={maxWidth}
         sidebarDefaultWidth={defaultWidth}
-        className="pt-[84px] pb-[90px] h-[100vh]"
+        className="pt-[84px]"
       >
         <div className={`flex ${mediaSide ? "" : "flex-row-reverse"} select-none`}>
           <video ref={videoRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`fixed ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} w-96 h-72 ${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}/>

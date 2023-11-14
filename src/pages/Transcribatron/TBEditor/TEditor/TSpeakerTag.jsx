@@ -157,7 +157,7 @@ const TSpeakerTag = (props) => {
                     </PopoverContent>
                 </Popover>
                 <div className={`flex gap-2 items-center ${speakerMethod ? "mt-2" : ""}`}>
-                    <p>{ msToTime(getItemFromArr(transcription.words, 'id', speakerTag.range[0]).startTime, true) }</p>
+                    <p>{ msToTime(getItemFromArr(transcription.words, 'id', speakerTag.range[0]).startTime) }</p>
                     <div className="cursor-pointer w-12" onClick={() => onToggleSpeakerTagPlay(getItemFromArr(transcription.words, 'id', speakerTag.range[0]).startTime, speakerTagPlayBtnId, speakerTagPauseBtnId)}>
                         <div id={speakerTagPlayBtnId} className="flex items-center allSpeakerTagPlayBtn"><BiPlay /><p className=" self-center">Play</p></div>
                         <div id={speakerTagPauseBtnId} className="flex items-center allSpeakerTagPauseBtn" style={{display: "none"}}><BiPause /><p>Pause</p></div>

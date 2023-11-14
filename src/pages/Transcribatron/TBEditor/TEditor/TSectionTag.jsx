@@ -57,38 +57,13 @@ const TSectionTag = (props) => {
     }
     
     return (
-        <div key={sectionTag.id} className={`flex gap-8 ${sectionTag.nextId === "" ? "" : "mb-8"} justify-between`}>
-            <div>
-                <div contentEditable={false}>
-                    <input contentEditable={false} className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base mb-2 ${sectionTag.showHeading ? "" : "hidden"}`} value={sectionTag.label} onChange={(e) => updateSectionHeading(sectionTag.id, e.target.value)} />
-                </div>
-                <div className="grid gap-4 outline-none" contentEditable={true} suppressContentEditableWarning={true}>
-                    {
-                        sectionTag.isWordGroup ?
-                            <div><p className="text-custom-gray w-full h-auto text-justify">{getWords(sectionTag.range)}</p></div>
-                            :
-                            transcription.speakerTags !== undefined && transcription.speakers !== undefined && sectionTag.range.map(item => {
-                                let speakerTag = getItemFromArr(transcription.speakerTags, "id", item);
-                                return !isEmpty(speakerTag) &&
-                                    <TSpeakerTag
-                                        key={speakerTag.id}
-                                        speakerTag={speakerTag}
-                                        getWords={getWords}
-                                        transcription={transcription}
-                                        setTranscription={setTranscription}
-                                    />
-                            })
-                    }
-                </div>
-                <p contentEditable={false} className={`text-custom-black text-xs mt-2 ${sectionTag.showHeading ? "" : "hidden"}`} >- End of {sectionTag.label} -</p>
-            </div>
-            <div contentEditable={false} className="flex gap-4 select-none">
-                <div className=" bg-custom-light-gray h-full w-0.5 "></div>
-                <div>
+        <div className={`gap-8 ${sectionTag.nextId === "" ? "" : "mb-8"}`}>
+            <div contentEditable={false} className={`flex ${sectionTag.showHeading ? "" : "hidden"} mb-2 justify-between`}>
+                <input contentEditable={false} className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base`} value={sectionTag.label} onChange={(e) => updateSectionHeading(sectionTag.id, e.target.value)} />
                     <Popover placement="bottom-end">
                         <PopoverHandler>
                             <div>
-                                <BsThreeDots className=" text-custom-gray cursor-pointer" />
+                                <BsThreeDots className="text-custom-gray cursor-pointer" />
                             </div>
                         </PopoverHandler>
                         <PopoverContent>
@@ -98,8 +73,26 @@ const TSectionTag = (props) => {
                             </div>
                         </PopoverContent>
                     </Popover>
-                </div>
             </div>
+            <div className="grid gap-4 outline-none" contentEditable={true} suppressContentEditableWarning={true}>
+                {
+                    sectionTag.isWordGroup ?
+                        <div><p className="text-custom-gray w-full h-auto text-justify">{getWords(sectionTag.range)}</p></div>
+                        :
+                        transcription.speakerTags !== undefined && transcription.speakers !== undefined && sectionTag.range.map(item => {
+                            let speakerTag = getItemFromArr(transcription.speakerTags, "id", item);
+                            return !isEmpty(speakerTag) &&
+                                <TSpeakerTag
+                                    key={speakerTag.id}
+                                    speakerTag={speakerTag}
+                                    getWords={getWords}
+                                    transcription={transcription}
+                                    setTranscription={setTranscription}
+                                />
+                        })
+                }
+            </div>
+            <p contentEditable={false} className={`text-custom-black text-xs mt-2 ${sectionTag.showHeading ? "" : "hidden"}`} >- End of {sectionTag.label} -</p>
         </div>
     );
 }
