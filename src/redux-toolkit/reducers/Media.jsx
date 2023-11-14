@@ -9,7 +9,7 @@ const initialState = {
   autoPlay: false,
   frameSpeed: "1.0",
   volume: 100,
-  currentTime: 0.000001,  // unit is 'second'
+  currentTime: 0,  // unit is 'second'
 };
 
 const mediaSlice = createSlice({
@@ -20,13 +20,13 @@ const mediaSlice = createSlice({
       return { ...state, medias: action.payload };
     },
     setSelectedMediaId: (state, action) => {
-      return { ...state, selectedMediaId: action.payload, isPlaying: false, frameSpeed: "1.0", volume: 100, currentTime: 0.000001};
+      return { ...state, selectedMediaId: action.payload, isPlaying: false, frameSpeed: "1.0", volume: 100, currentTime: 0};
     },
     setShowMedia: (state, action) => {
       return { ...state, showMedia: action.payload };
     },
     clearSelectedMediaId: (state, action) => {
-      return { ...state, selectedMediaId: "", isPlaying: false, frameSpeed: "1.0", volume: 100, currentTime: 0.000001 };
+      return { ...state, selectedMediaId: "", isPlaying: false, frameSpeed: "1.0", volume: 100, currentTime: 0 };
     },
     toggleMediaSide: (state, action) => {
       return { ...state, mediaSide: !state.mediaSide };

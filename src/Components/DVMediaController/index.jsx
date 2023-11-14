@@ -4,8 +4,24 @@ import { useEffect, useState } from "react";
 import {useSelector, useDispatch } from "react-redux";
 import { setIsPlaying, setSelectedMediaId, setFrameSpeed, setVolume } from "@/redux-toolkit/reducers/Media";
 
-// material
-import { Slider } from "@material-tailwind/react";
+import Slider from '@mui/material/Slider';
+import { styled } from '@mui/material/styles';
+const PrettoSlider = styled(Slider)({
+  color: '#4489FE',
+  height: 4,
+  '& .MuiSlider-track': {
+    border: 'none',
+  },
+  '& .MuiSlider-thumb': {
+    height: 12,
+    width: 12,
+  },
+  '& .MuiSlider-valueLabel': {
+    color: '#000000',
+    backgroundColor: '#FFFFFF',
+    boxShadow: "0 0 4px #d9d9d9",
+  },
+});
 
 // icons
 import { BsPlayCircleFill, BsPauseCircleFill } from "react-icons/bs";
@@ -19,11 +35,11 @@ import { TIME_SLIDE_DRAG, TIME_UPDATE_OUTSIDE } from "@/utils/Constant";
 
 const DVMediaController = (props) => {
   const dispatch = useDispatch();
-  const { togglePlaylist } = props;
+  const { togglePlaylist, className } = props;
 
   const { selectedMediaId, medias, isPlaying, frameSpeed, volume, currentTime } = useSelector((state) => state.media);
 
-  const [currentTimePercent, setCurrentTimePercent] = useState(0.000001); // timeslide's percent, 0 ~ 100
+  const [currentTimePercent, setCurrentTimePercent] = useState(0); // timeslide's percent, 0 ~ 100
   
   const onClickMinusFrameSpeed = () => {
     let frameSpeedNum = frameSpeed * 1;
@@ -51,26 +67,32 @@ const DVMediaController = (props) => {
     dispatch(setSelectedMediaId(medias[selMIndex + 1].fileId));
   }
 
-  const onChangeCurrentTimePercent = (e) => {
+  const onChangeCurrentTimePercent = (e, val) => {
     if (selectedMediaId == "") return;
-    let percent = e.target.value == 0 ? 0.000001 : e.target.value;
-    setCurrentTimePercent(percent);
-    EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time: percent / 100 * getItemFromArr(medias, "fileId", selectedMediaId)?.duration, mediaId: selectedMediaId });
+    setCurrentTimePercent(val);
+    EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time: val / 100 * getItemFromArr(medias, "fileId", selectedMediaId)?.duration });
     EventBus.dispatch(TIME_SLIDE_DRAG);
   }
 
   useEffect(() => {
     if (!medias.length) return;
     if (selectedMediaId == "") {
-      setCurrentTimePercent(0.000001);
+      setCurrentTimePercent(0);
       return;
     }
     setCurrentTimePercent(currentTime / getItemFromArr(medias, "fileId", selectedMediaId)?.duration * 100);
   }, [currentTime]);
 
   return (
-    <div className="h-[90px] w-[100%] fixed bottom-0 z-50 bg-custom-white">
-      <Slider value={currentTimePercent} onChange={onChangeCurrentTimePercent} className="h-1 w-full text-custom-sky" thumbClassName={`[&::-webkit-slider-thumb]:bg-custom-sky [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3`} />
+    <div className={className}>
+      <PrettoSlider
+        valueLabelDisplay="auto"
+        style={{ position: 'absolute', padding: '0 0 12px 0'}}
+        value={currentTimePercent}
+        getAriaValueText={() => msToTime(currentTime, true)}
+        valueLabelFormat={() => msToTime(currentTime, true)}
+        onChange={onChangeCurrentTimePercent}
+      />
       <div className="flex gap-6 h-full w-full justify-between px-10">
         <div className="flex self-center w-[400px]">
           <FaListUl variant="gradient" className="text-custom-sky cursor-pointer rounded-lg text-3xl p-1.5 bg-custom-sky bg-opacity-20" onClick={togglePlaylist} />
@@ -79,8 +101,12 @@ const DVMediaController = (props) => {
         </div>
         <div className="flex justify-between">
           <div className="flex items-center gap-1.5 w-[260px]">
-            <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => dispatch(setVolume(1))}/>
-            <Slider value={volume} onChange={(e) => dispatch(setVolume(e.target.value))} className="h-0.5 w-36 text-custom-sky" thumbClassName="[&::-webkit-slider-thumb]:bg-custom-sky [&::-webkit-slider-thumb]:h-2 [&::-webkit-slider-thumb]:w-2" />
+            <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => dispatch(setVolume(0))}/>
+            <PrettoSlider
+              valueLabelDisplay="auto"
+              value={volume}
+              onChange={(e, val) => dispatch(setVolume(val))}
+            />
             <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => dispatch(setVolume(100))}/>
           </div>
           <div className="flex items-center gap-10 mr-[46px] ml-[42px]">

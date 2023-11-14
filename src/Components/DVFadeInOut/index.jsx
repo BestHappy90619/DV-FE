@@ -79,12 +79,12 @@ class DVFadeInOut extends Component {
       return null;
     }
 
-    const { children, duration, className, style, onKeyDown, onPaste, onCut } = this.props;
+    const { id, contentEditable, suppressContentEditableWarning, children, duration, className, style, onKeyDown, onPaste, onCut } = this.props;
     return (
       <div
-        id="editableSection"
-        contentEditable
-        suppressContentEditableWarning
+        id={id}
+        contentEditable={contentEditable}
+        suppressContentEditableWarning={suppressContentEditableWarning}
         className={className}
         onKeyDown={onKeyDown}
         onPaste={onPaste}
