@@ -60,7 +60,7 @@ const DVResizeablePanel = (props) => {
 
             <div
                 ref={rightSidebarRef}
-                className={`flex fixed z-40 bg-white right-0 h-full ${props.className} ${showRightSidebar ? '' : 'hidden'}`}
+                className={`flex fixed z-40 bg-white right-0 ${props.className} ${showRightSidebar ? '' : 'hidden'}`}
             >
                 <div className="w-1 border-l-2 cursor-col-resize border-blue-gray-50" onMouseDown={startRightResizing} />
                 <div style={{ width: rightSidebarWidth }}>{ props.rightSidebar }</div>

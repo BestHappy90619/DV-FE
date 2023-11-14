@@ -23,7 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 
 var track;
 
-const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo}) => {
+const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, clickedInsertSection}) => {
     const lastSelectedWordRange = useRef();
     const willChangedSelection = useRef({});
     const trackIndex = useRef();
@@ -826,6 +826,10 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
     useEffect(() => {
         doRedo();
     }, [redo])
+
+    useEffect(() => {
+        console.log('clicked_insert_section');
+    }, [clickedInsertSection])
 
     const handleKeyDownTBody = async (e) => {
         let selection = document.getSelection();
