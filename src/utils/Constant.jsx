@@ -40,7 +40,6 @@ export const HIGHLIGHT_BG = "highlightBg";
 // Color
 export const MEDIUM_GRAY = "#C4C4C4";
 export const GRAY = "#757575";
-export const ACTIVE_WORD_COLOR = "#4489FE";
 
 // Default Font Size
 export const DEFAULT_FONT_SIZE = 13;

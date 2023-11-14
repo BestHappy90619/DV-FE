@@ -119,27 +119,28 @@ textarea:focus, input:focus{
   margin-left: var(--t);
   place-self: end;
 }
+
 .MuiDataGrid-footerContainer {
-display: none !important;
+  display: none !important;
 }
 
 .MuiDataGrid-cell:focus, .MuiDataGrid-columnHeader, .MuiDataGrid-cell:focus-within {
-outline: none !important;
+  outline: none !important;
 }
 
-
 .MuiDataGrid-iconSeparator{
-display: none !important;
+  display: none !important;
 }
 
 .MuiDataGrid-columnHeaderDraggableContainer .MuiDataGrid-menuIcon {
-display: none !important;
+  display: none !important;
 }
 
 .MuiCheckbox-root>svg{
-width:19px; height: 19px;
+  width:19px; height: 19px;
 }
+
 .MuiCheckbox-root>svg>path {
-stroke: #dee0e4;
-stroke-width: 1px;
+  stroke: #dee0e4;
+  stroke-width: 1px;
 }

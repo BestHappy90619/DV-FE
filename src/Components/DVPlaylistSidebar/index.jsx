@@ -31,7 +31,7 @@ const DVPlaylistSidebar = ({ close }) => {
       <div className="h-[calc(100%-124px)] overflow-auto scrollbar scrollPaddingRight ml-5 mr-[10px]">
         {medias.map((media, index) => {
           let selected = selectedMediaId === media.fileId;
-          return media.status == STATUS_TRANSCRIBED && (
+          return (
             <div key={media.fileId} className={`flex justify-between cursor-pointer ${index == 0 ? "" : "mt-3"}`} onClick={() => onClickMedia(media.fileId)}>
               <div className="flex gap-3 overflow-hidden">
                 {selected && isPlaying ? <CgPlayPause className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} /> : <CgPlayButtonO className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} />}
