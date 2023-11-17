@@ -120,3 +120,31 @@ export const getModifierState = (event) => {
 
   return modifier.trim();
 }
+
+export const strToBool = (str) => {
+  if (str.toUpperCase() === "TRUE") return true;
+  else if (str.toUpperCase() === "FALSE") return false;
+  else return undefined;
+}
+
+export const timestampToDate = (timestamp) => {
+  // Assuming timestamp is in milliseconds
+
+  const date = new Date(timestamp);
+  const now = new Date(); // Get current date and time
+
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+
+  let formattedDate = '';
+
+  if (diffDays === 0) {
+    formattedDate = `today at ${(date.getHours() % 12 || 12).toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')} ${(date.getHours() >= 12) ? 'pm' : 'am'}`;
+  } else if (diffDays === 1) {
+    formattedDate = `yesterday at ${(date.getHours() % 12 || 12).toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')} ${(date.getHours() >= 12) ? 'pm' : 'am'}`;
+  } else {
+    formattedDate = `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()} ${(date.getHours() % 12 || 12).toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')} ${(date.getHours() >= 12) ? 'pm' : 'am'}`;
+  }
+
+  return formattedDate;
+}
