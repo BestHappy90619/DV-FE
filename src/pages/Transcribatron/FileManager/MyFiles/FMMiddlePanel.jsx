@@ -300,7 +300,7 @@ const FMMiddlePanel = () => {
           </div>
         </div>
       </div>
-      <div className={`w-full px-4 flex justify-center  font-roboto mt-[60px]`}>
+      <div className={`w-full px-4 flex justify-center  mt-[60px]`}>
         <DataGrid
           rows={rows}
           columns={columns}

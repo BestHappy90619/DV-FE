@@ -68,7 +68,7 @@ const DVFileUploader = (props) => {
     return (
         <div className="border-2 border-dashed flex flex-col justify-center rounded w-[490px] h-[699px] bg-[#F9FBFF] gap-6">
             <div className="text-[#4489FE] mx-auto"><FaCloudUploadAlt className="w-16 h-11"/></div>
-            <label id="countries" className="text-[#212121] font-roboto text-center text-[18px] font-normal">Drag and drop Files Here to Upload </label>
+            <label id="countries" className="text-[#212121] text-center text-[18px] font-normal">Drag and drop Files Here to Upload </label>
             <Button variant="outlined" className="bg-[#4489FE] border-[#4489FE] w-52 h-12 text-white mx-auto rounded" onClick={()=>handleIsUploading(false)}>Upload File</Button>
         </div>
     )

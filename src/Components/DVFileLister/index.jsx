@@ -87,12 +87,12 @@ const fileLists = [
 const DVFileLister = () => {
     return (
         <div className="border-[1px] flex flex-col rounded py-7">
-            <select id="countries" defaultValue="AF" className="!border-0 mx-8 outline-none font-roboto text-[#212121] text-center text-[24px] font-normal mb-[2px]">
+            <select id="countries" defaultValue="AF" className="!border-0 mx-8 outline-none text-[#212121] text-center text-[24px] font-normal mb-[2px]">
                   <option value="AF">All Files</option>
                 <option value="US">United States</option>
             </select>
 
-            <label className="flex w-full justify-center text-[#757575] font-roboto text-[12px] font-normal mb-[25px]">Please config all files</label>
+            <label className="flex w-full justify-center text-[#757575] text-[12px] font-normal mb-[25px]">Please config all files</label>
 
             <div className="mb-[25px] flex flex-row gap-2 px-8">
                 <Button variant="outlined" color="blue" className="w-52 h-12 rounded">Mark as Resource</Button>
@@ -107,12 +107,12 @@ const DVFileLister = () => {
                             <div className="flex w-full justify-between m-3 mr-[23px]">
                                 <div className="flex w-2/3">
                                     <input type="checkbox" className="w-[18px] h-[18px] text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                                    <label className="ml-2 font-roboto text-[14px] font-normal text-[#212121]">{fileList.label}</label>
+                                    <label className="ml-2 text-[14px] font-normal text-[#212121]">{fileList.label}</label>
                                 </div>
                                 <div className="flex w-1/3 justify-between gap-4">                                    
                                     {pro === 1 ? (
                                             <>
-                                                <label className="ml-2 font-roboto text-[14px] font-normal text-[#212121]">{fileList.totalSize}KB</label>
+                                                <label className="ml-2 text-[14px] font-normal text-[#212121]">{fileList.totalSize}KB</label>
                                                 <span className=" bg-custom-sky text-custom-white px-1 rounded text-sm">Res</span>
                                                 <BsThreeDots />
                                             </>

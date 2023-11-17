@@ -7,7 +7,7 @@ import { BiChevronDown } from "react-icons/bi";
 
 import { Checkbox } from 'rsuite';
 import { Button, IconButton } from "@material-tailwind/react";
-import "rsuite/dist/rsuite.css";
+import "@/assests/css/rsuite.css";
 
 import DVSearchBox from '@/Components/DVSearchBox';
 
