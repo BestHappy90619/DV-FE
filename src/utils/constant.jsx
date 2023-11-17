@@ -1,6 +1,8 @@
+import { strToBool } from "./Functions";
+
 // import env
 export const BASE_API = import.meta.env.VITE_BASE_API;
-export const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE;
+export const DEBUG_MODE = strToBool(import.meta.env.VITE_DEBUG_MODE);
 
 // Media Type
 export const MEDIA_TYPE_VIDEO = 'video';
@@ -40,7 +42,6 @@ export const HIGHLIGHT_BG = "highlightBg";
 // Color
 export const MEDIUM_GRAY = "#C4C4C4";
 export const GRAY = "#757575";
-export const ACTIVE_WORD_COLOR = "#4489FE";
 
 // Default Font Size
 export const DEFAULT_FONT_SIZE = 13;
@@ -68,3 +69,8 @@ export const KEY_CAPSLOCK = "CapsLock";
 
 // New Line Sign
 export const NEW_LINE_SIGN = "LxG8M5fJk3rWHztDQ2i7T9nGw4bR6oAe";
+
+// Saving Status
+export const SAVING = 'saving';
+export const LISTENING_CHANGES = 'listening_changes'
+export const SAVED = 'saved';

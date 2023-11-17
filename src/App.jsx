@@ -40,7 +40,7 @@ function App() {
   }, [])
 
   return (
-    <StrictMode>
+    // <StrictMode>
       <Provider store={store}>
         <div className={`${isPreventSelect ? "select-none" : ""}`}>{pages}</div>
         <div
@@ -61,7 +61,7 @@ function App() {
         </div>
         <Toaster />
       </Provider>
-    </StrictMode>
+    // </StrictMode>
   );
 }
 

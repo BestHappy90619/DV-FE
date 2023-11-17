@@ -19,7 +19,7 @@ import DVMediaController from "@/Components/DVMediaController";
 import { toast } from "react-hot-toast";
 
 // utils
-import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING, NOTE_SIDEBAR, PLAYLIST_SIDEBAR, SEARCH_SIDEBAR, PREVENT_SELECT, KEY_DOWN, MOUSE_MOVE, MOUSE_UP } from "@/utils/Constant";
+import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING, NOTE_SIDEBAR, PLAYLIST_SIDEBAR, SEARCH_SIDEBAR, KEY_DOWN, STATUS_TRANSCRIBED } from "@/utils/Constant";
 import { EventBus, getItemFromArr } from "@/utils/Functions";
 
 // services
@@ -38,8 +38,8 @@ const TBEditor = () => {
 
   const [videoWidth, setVideoWidth] = useState(0);
   // show sidebar as per order(+: left sidebar order, -: right sidebar order 1/-1: hidden)
-  const [playlistOrder, setPlaylistOrder] = useState(1);
-  const [noteOrder, setNoteOrder] = useState(1);
+  const [playlistOrder, setPlaylistOrder] = useState(2);
+  const [noteOrder, setNoteOrder] = useState(-2);
   const [searchOrder, setSearchOrder] = useState(1);
 
   
@@ -158,8 +158,13 @@ const TBEditor = () => {
     MediaService.getAllMedias()
       .then((res) => {
         if (res.status == 200) {
-          dispatch(setMedias(res.data.data))
-          dispatch(setSelectedMediaId(res.data.data[0].fileId));
+          let data = res.data.data;
+          let totalRes = [];
+          data.map(item => {
+            if (item?.status === STATUS_TRANSCRIBED) totalRes.push(item)
+          })
+          dispatch(setMedias(totalRes))
+          dispatch(setSelectedMediaId(totalRes[0].fileId));
         } else {
           toast.error("Sorry, but an error has been ocurred while getting media list!");
         }
@@ -195,9 +200,9 @@ const TBEditor = () => {
     // handle video/audio timeupdate event
     function onVideoTimeUpdate() {
       if (!isUpdatedFromOutside.current) {
-        let time = videoRef.current.currentTime == 0 ? 0.000001 : videoRef.current.currentTime
+        let time = videoRef.current.currentTime
         if (time == videoRef.current.duration) {
-          dispatch(setCurrentTime(0.000001))
+          dispatch(setCurrentTime(0))
           dispatch(setIsPlaying(false));
           return;
         }
@@ -210,9 +215,9 @@ const TBEditor = () => {
 
     function onAudioTimeUpdate() {
       if (!isUpdatedFromOutside.current) {
-        let time = audioRef.current.currentTime == 0 ? 0.000001 : audioRef.current.currentTime
+        let time = audioRef.current.currentTime
         if (time == audioRef.current.duration) {
-          dispatch(setCurrentTime(0.000001))
+          dispatch(setCurrentTime(0))
           dispatch(setIsPlaying(false));
           return;
         }
@@ -224,9 +229,9 @@ const TBEditor = () => {
     audioRef.current.addEventListener(MEDIA_TIME_UPDATE, onAudioTimeUpdate);
 
     function onTimeUpdateOutside(data) {
-      let { time, mediaId } = data;
-      if (mediaId == "") return;
-      let mediaRef = getItemFromArr(medias, "fileId", mediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef : audioRef;
+      let { time } = data;
+      if (selectedMediaId == "") return;
+      let mediaRef = getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? videoRef : audioRef;
       if (!mediaRef.current) return;
       isUpdatedFromOutside.current = true;
       mediaRef.current.currentTime = time;
@@ -273,16 +278,16 @@ const TBEditor = () => {
       <DVResizeablePanel
         leftSidebar={
           <>
-            <div className={`${getLeftSidebar() === PLAYLIST_SIDEBAR ? "" : "hidden"}`}><DVPlaylistSidebar close={togglePlaylist} /></div>
-            <div className={`${getLeftSidebar() === NOTE_SIDEBAR ? "" : "hidden"}`}><DVNoteSideBar close={toggleNote} /></div>
-            <div className={`${getLeftSidebar() === SEARCH_SIDEBAR ? "" : "hidden"}`}><DVSearchSideBar close={toggleSearch} /></div>
+            <div className={`${getLeftSidebar() === PLAYLIST_SIDEBAR ? "" : "hidden"} select-none`}><DVPlaylistSidebar close={togglePlaylist} /></div>
+            <div className={`${getLeftSidebar() === NOTE_SIDEBAR ? "" : "hidden"} select-none`}><DVNoteSideBar close={toggleNote} /></div>
+            <div className={`${getLeftSidebar() === SEARCH_SIDEBAR ? "" : "hidden"} select-none`}><DVSearchSideBar close={toggleSearch} /></div>
           </>
         }
         rightSidebar={
           <>
-            <div className={`${getRightSidebar() === PLAYLIST_SIDEBAR ? "" : "hidden"}`}><DVPlaylistSidebar close={togglePlaylist} /></div>
-            <div className={`${getRightSidebar() === NOTE_SIDEBAR ? "" : "hidden"}`}><DVNoteSideBar close={toggleNote} /></div>
-            <div className={`${getRightSidebar() === SEARCH_SIDEBAR ? "" : "hidden"}`}><DVSearchSideBar close={toggleSearch} /></div>
+            <div className={`${getRightSidebar() === PLAYLIST_SIDEBAR ? "" : "hidden"} select-none`}><DVPlaylistSidebar close={togglePlaylist} /></div>
+            <div className={`${getRightSidebar() === NOTE_SIDEBAR ? "" : "hidden"} select-none`}><DVNoteSideBar close={toggleNote} /></div>
+            <div className={`${getRightSidebar() === SEARCH_SIDEBAR ? "" : "hidden"} select-none`}><DVSearchSideBar close={toggleSearch} /></div>
           </>
         }
         showLeftSidebar={(playlistOrder > 1 || noteOrder > 1 || searchOrder > 1)}
@@ -290,12 +295,12 @@ const TBEditor = () => {
         sidebarMinWidth={minWidth}
         sidebarMaxWidth={maxWidth}
         sidebarDefaultWidth={defaultWidth}
-        className="pt-[84px] pb-[90px] h-[100vh]"
+        className="pt-[84px] pb-[122px]"
       >
-        <div className={`flex ${mediaSide ? "" : "flex-row-reverse"}`}>
+        <div className={`flex ${mediaSide ? "" : "flex-row-reverse"} select-none`}>
           <video ref={videoRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`fixed ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} w-96 h-72 ${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}/>
           <audio ref={audioRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_AUDIO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`hidden`} />
-          <div ref={editorRef} style={{padding: showMedia ? mediaSide ? "0 0 0 " + videoWidth + "px" : "0 " + videoWidth + "px 0 0" : ""}}>
+          <div ref={editorRef} style={{padding: showMedia ? mediaSide ? "0 0 0 " + videoWidth + "px" : "0 " + videoWidth + "px 0 0" : ""}} className="">
             <TEditor
               toggleNote={toggleNote}
               toggleSearch={toggleSearch}
@@ -309,7 +314,7 @@ const TBEditor = () => {
         </div>
       </DVResizeablePanel>
 
-      <DVMediaController togglePlaylist={togglePlaylist} />
+      <DVMediaController togglePlaylist={togglePlaylist} className="h-[90px] w-[100%] fixed bottom-0 z-50 bg-custom-white select-none"/>
     </>
   );
 };

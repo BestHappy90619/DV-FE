@@ -86,13 +86,13 @@ if (window.getSelection && document.createRange) {
 
 var savedSelection;
 
-const doSave = () => {
-    let ele = document.getElementById("editableSection");
+const doSave = (elementId) => {
+    let ele = document.getElementById(elementId);
     if(ele) savedSelection = saveSelection(ele);
 }
 
-const doRestore = () => {
-    let ele = document.getElementById("editableSection");
+const doRestore = (elementId) => {
+    let ele = document.getElementById(elementId);
     if (savedSelection && ele) {
         restoreSelection(ele, savedSelection);
     }
