@@ -6,8 +6,6 @@ import TSectionTag from "./TSectionTag";
 
 // Components
 import DVFadeInOut from "@/Components/DVFadeInOut";
-
-// Toast
 import { toast } from "react-hot-toast";
 
 // services
@@ -15,19 +13,25 @@ import MediaService from "@/services/media";
 
 // utils
 import { EventBus, getIndexFromArr, getItemFromArr, isEmpty, getModifierState } from "@/utils/Functions";
-import { SET_LOADING, BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, GRAY, SPEAKER_TAG, WORD, TIME_SLIDE_DRAG } from "@/utils/Constant";
+import { SET_LOADING, BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, GRAY, SPEAKER_TAG, WORD, TIME_SLIDE_DRAG, DEBUG_MODE, KEY_CTRL, KEY_SHIFT, NEW_LINE_SIGN, SELECTION_CHANGE } from "@/utils/Constant";
 import { Caret } from "@/utils/Caret";
-import { DEBUG_MODE, KEY_CTRL, KEY_SHIFT, NEW_LINE_SIGN, SELECTION_CHANGE } from "@/utils/Constant";
 
 import { v4 as uuidv4 } from "uuid";
+import { LISTENING_CHANGES, SAVED, SAVING } from "../../../../utils/Constant";
 
 var track;
+var trackIndex;
 
-const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, clickedInsertSection}) => {
+var lastSavedTime;
+var typingTimer;
+const SAVING_DUR = 3000;
+const UNTYPING_DUR = 1000;
+
+var pendingUploading;
+
+const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime}) => {
     const lastSelectedWordRange = useRef();
     const willChangedSelection = useRef({});
-    const trackIndex = useRef();
-    const willTrackSave = useRef();
     const wasTimeSlideDrag = useRef(false);
 
     const { zoomTranscriptNum } = useSelector((state) => state.editor);
@@ -62,7 +66,6 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             .then((res) => {
                 if (res.status === 200) {
                     let data = res.data;
-                    console.log(data);
                     if (!("sectionTags" in data) || (('sectionTags' in data) && data.sectionTags.length === 0)) {
                         let sectionTags = [];
                         let wordCurrentId = "", speakerTagCurrentIndex = -1, previewTag = "", newSectionTagRange = "", prevSectionTagId = "", curTag = "";
@@ -186,13 +189,24 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                             data.speakers.splice(delIndex - i, 1);
                         })
                     }
-                    let transcription = {
+                    let newTrans = {
                         words: data.words,
                         speakers: data.speakers,
                         speakerTags: data.speakerTags,
-                        sectionTags: data.sectionTags
+                        sectionTags: data.sectionTags,
+                        lastSavedTime: data?.lastSavedTime || new Date().getTime()
                     }
-                    setTranscription(transcription);
+                    track = { transcriptions: [JSON.parse(JSON.stringify(newTrans))] };
+                    trackIndex = 0;
+                    pendingUploading = [];
+
+                    setSavingStatus(SAVED);
+                    setLastSavedTime(newTrans.lastSavedTime);
+
+                    setEnableUndo(false);
+                    setEnableRedo(false);
+
+                    setTranscription(newTrans);
                 } else if (res.status === 400) {
                     toast.error("The selected media has not transcribed yet!");
                     setTranscription({});
@@ -210,39 +224,11 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                 EventBus.dispatch(SET_LOADING, false);
                 setShowFade(true);
             })
-        track = { transcriptions: [] };
-        trackIndex.current = -1;
-        willTrackSave.current = true;
-        setEnableUndo(false);
-        setEnableRedo(false);
     }, [selectedMediaId, medias]);
 
     useEffect(() => {
-        if (DEBUG_MODE) console.log("transcriptionUpdate>>>>", transcription);
-        if (isEmpty(transcription) || isEmpty(track)) {
-            track = { transcriptions: [] };
-            trackIndex.current = -1;
-            willTrackSave.current = true;
-            setEnableUndo(false);
-            setEnableRedo(false);
-        } else {
-            if (willTrackSave.current) {
-                track.transcriptions.push(JSON.parse(JSON.stringify(transcription)));
-                trackIndex.current += 1;
-                // MediaService.updateTranscriptionByFileId(getItemFromArr(medias, "fileId", selectedMediaId).fileId, transcription)
-                //     .then((res) => {
-                //         if (res.status === 200) {
-                //             if(DEBUG_MODE) console.log(res);
-                //         } else {
-                //             if(DEBUG_MODE) console.log(res);
-                //         }
-                //     })
-                //     .catch((err) => {
-                //         if (DEBUG_MODE) console.log(err);
-                //     });
-            } else willTrackSave.current = true;
-            setEnableUndo(trackIndex.current > 0);
-            setEnableRedo(trackIndex.current < (track.transcriptions.length - 1));
+        if (DEBUG_MODE) {
+            console.log("transcriptionUpdate>>>>", transcription);
         }
         if (!isEmpty(willChangedSelection.current)) {
             let range = willChangedSelection.current;
@@ -757,66 +743,83 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
 
     const doBSDel = async (updatedTranscription, selection, isBS, isCtrl) => {
         let { startId, startOffset, endId, endOffset } = getWordRange(selection);
+        let instSave;
         if (startId === endId && startOffset === endOffset) {
             let word = getItemFromArr(updatedTranscription.words, 'id', startId);
             if (startOffset === 1) {
                 if (isBS) {
                     if (isCtrl) {
                         await delWord(updatedTranscription, word.prevId);
+                        instSave = true;
                     } else {
                         await mergeWord(updatedTranscription, word.prevId, word.id);
+                        if(word.prevId !== '') instSave = true;
                     }
                 } else {
                     if (isCtrl) {
                         await delWord(updatedTranscription, word.id);
+                        instSave = true;
                     } else {
                         await delWordRange(updatedTranscription, { startId: word.id, startOffset: 1, endId: word.id, endOffset: 2 });
+                        instSave = false;
                     }
                 }
             } else if (startOffset === (word.word.length + 1)) {
                 if (isBS) {
                     if (isCtrl) {
                         await delWord(updatedTranscription, word.id);
+                        instSave = true;
                     } else {
                         await delWordRange(updatedTranscription, { startId: word.id, startOffset: startOffset - 1, endId: word.id, endOffset });
+                        instSave = false;
                     }
                 } else {
                     if (isCtrl) {
+                        instSave = true;
                         await delWord(updatedTranscription, word.nextId);
                     } else {
                         await mergeWord(updatedTranscription, word.id, word.nextId);
+                        if(word.nextId !== '') instSave = true;
                     }
                 }
             } else {
                 if (isBS) {
                     if (isCtrl) {
                         await delWordRange(updatedTranscription, { startId: word.id, startOffset: 1, endId: word.id, endOffset });
+                        instSave = true;
                     } else {
                         await delWordRange(updatedTranscription, { startId: word.id, startOffset: startOffset - 1, endId: word.id, endOffset });
+                        instSave = false;
                     }
                 } else {
                     if (isCtrl) {
                         await delWordRange(updatedTranscription, { startId: word.id, startOffset, endId: word.id, endOffset: word.word.length + 1 });
+                        instSave = true;
                     } else {
                         await delWordRange(updatedTranscription, { startId: word.id, startOffset, endId: word.id, endOffset: endOffset + 1 });
+                        instSave = false;
                     }
                 }
             }
-        } else await delWordRange(updatedTranscription, { startId, startOffset, endId, endOffset });
+        } else {
+            await delWordRange(updatedTranscription, { startId, startOffset, endId, endOffset });
+            instSave = true;
+        }
+        return instSave;
     }
 
-    const doUndo = () => {        
-        if (trackIndex.current < 1) return;
-        trackIndex.current -= 1;
-        willTrackSave.current = false;
-        setTranscription(track.transcriptions[trackIndex.current]);
+    const doUndo = () => {
+        if (isEmpty(track) || trackIndex < 1) return;
+        trackIndex -= 1;
+        setTranscription(track.transcriptions[trackIndex]);
+        saveData(track.transcriptions[trackIndex], false);
     }
 
     const doRedo = () => {
-        if (trackIndex.current > (track.transcriptions.length - 2) ) return;
-        trackIndex.current += 1;
-        willTrackSave.current = false;
-        setTranscription(track.transcriptions[trackIndex.current]);
+        if (isEmpty(track) || trackIndex > (track.transcriptions.length - 2) ) return;
+        trackIndex += 1;
+        setTranscription(track.transcriptions[trackIndex]);
+        saveData(track.transcriptions[trackIndex], false);
     }
 
     useEffect(() => {
@@ -827,15 +830,42 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
         doRedo();
     }, [redo])
 
-    useEffect(() => {
-        console.log('clicked_insert_section');
-    }, [clickedInsertSection])
+    const saveData = (trans, pushTrack = true) => {
+        console.log("saved_data");
+        let updatedTranscription = JSON.parse(JSON.stringify(trans));
+        updatedTranscription.lastSavedTime = updatedTranscription?.lastSavedTime || new Date().getTime();
+        if (pushTrack) {
+            trackIndex += 1;
+            track.transcriptions.splice(trackIndex, track.transcriptions.length - trackIndex, updatedTranscription);
+            // track.transcriptions = track.transcriptions.slice(0, trackIndex);
+            // track.transcriptions.push(updatedTranscription);
+        }
+        setSavingStatus(SAVING);
+        MediaService.updateTranscriptionByFileId(getItemFromArr(medias, "fileId", selectedMediaId).fileId, updatedTranscription)
+            .then((res) => {
+                if (res.status === 200) {
+                    if(DEBUG_MODE) console.log(res);
+                    setSavingStatus(SAVED);
+                    setLastSavedTime(updatedTranscription.lastSavedTime);
+                } else {
+                    if(DEBUG_MODE) console.log(res);
+                }
+            })
+            .catch((err) => {
+                if (DEBUG_MODE) console.log(err);
+            });
+        DEBUG_MODE && console.log("track>>>>", track, trackIndex);
+        setEnableUndo(trackIndex > 0);
+        setEnableRedo(trackIndex < (track.transcriptions.length - 1));
+    };
 
     const handleKeyDownTBody = async (e) => {
         let selection = document.getSelection();
         if (!isCaretInEditor(selection)) return true;
 
+        let instSave;
         let modifier = getModifierState(e);
+        let updatedTranscription = { ...transcription };
         if (modifier === KEY_CTRL && e.keyCode === 90) {
             // ctrl + z
             e.preventDefault();
@@ -852,19 +882,14 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                 // ctrl + backspace
                 e.preventDefault();
                 if (DEBUG_MODE) console.log('remove word: ctrl + backspace');
-                let updatedTranscription = { ...transcription };
-                console.log('start', new Date().getTime());
-                await doBSDel(updatedTranscription, selection, true, true);
-                console.log('end', new Date().getTime());
+                instSave = await doBSDel(updatedTranscription, selection, true, true);
                 setTranscription(updatedTranscription);
             } else if(modifier === '') {
                 // only backspace
                 e.preventDefault();
                 if(DEBUG_MODE) console.log('remove letter: backspace');
                 let updatedTranscription = { ...transcription };
-                console.log('start', new Date().getTime());
-                await doBSDel(updatedTranscription, selection, true, false);
-                console.log('end', new Date().getTime());
+                instSave = await doBSDel(updatedTranscription, selection, true, false);
                 setTranscription(updatedTranscription);
             }
         } else if (e.keyCode === 46) {
@@ -874,18 +899,14 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                 e.preventDefault();
                 if(DEBUG_MODE) console.log('remove word: ctrl + del');
                 let updatedTranscription = { ...transcription };
-                console.log('start', new Date().getTime());
-                await doBSDel(updatedTranscription, selection, false, true);
-                console.log('end', new Date().getTime());
+                instSave = await doBSDel(updatedTranscription, selection, false, true);
                 setTranscription(updatedTranscription);
             } else if(modifier === '') {
                 // only del
                 e.preventDefault();
                 if(DEBUG_MODE) console.log('remove letter: del');
                 let updatedTranscription = { ...transcription };
-                console.log('start', new Date().getTime());
-                await doBSDel(updatedTranscription, selection, false, false);
-                console.log('end', new Date().getTime());
+                instSave = await doBSDel(updatedTranscription, selection, false, false);
                 setTranscription(updatedTranscription);
             }
         } else if (e.keyCode === 32 && (modifier === "" || modifier === KEY_SHIFT)) {
@@ -893,10 +914,9 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             e.preventDefault();
             if (DEBUG_MODE) console.log('split word: space');
             let updatedTranscription = { ...transcription };
-            console.log('start', new Date().getTime());
             await insertTextToEditor(updatedTranscription, ' ', selection);
-            console.log('end', new Date().getTime());
             setTranscription(updatedTranscription);
+            instSave = true;
         } else if (e.keyCode === 13) {
             // enter
             if (modifier === KEY_SHIFT) {
@@ -904,19 +924,17 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                 e.preventDefault();
                 if(DEBUG_MODE) console.log('create paragraph: shift + enter');
                 let updatedTranscription = { ...transcription };
-                console.log('start', new Date().getTime());
                 await insertTextToEditor(updatedTranscription, '\n', selection);
-                console.log('end', new Date().getTime());
                 setTranscription(updatedTranscription);
+                instSave = true;
             } else if (modifier === '') {
                 // only enter
                 e.preventDefault();
                 if(DEBUG_MODE) console.log('create speaker: enter');
                 let updatedTranscription = { ...transcription };
-                console.log('start', new Date().getTime());
                 await splitTag(updatedTranscription, selection);
-                console.log('end', new Date().getTime());
                 setTranscription(updatedTranscription);
+                instSave = true;
             }
         } else if (e.keycode === 27 || e.keyCode === 9) {
             // Esc || Tab
@@ -926,10 +944,30 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             e.preventDefault();
             if(DEBUG_MODE) console.log('insert letter: ', e.key);
             let updatedTranscription = { ...transcription };
-            console.log('start', new Date().getTime());
             await insertTextToEditor(updatedTranscription, e.key, selection);
-            console.log('end', new Date().getTime());
             setTranscription(updatedTranscription);
+            instSave = false;
+        }
+        if (instSave !== undefined) {
+            clearTimeout(typingTimer);
+            if (instSave) {
+                lastSavedTime = new Date().getTime();
+                saveData(updatedTranscription);
+            } else {
+                let curTime = new Date().getTime();
+                lastSavedTime ||= new Date().getTime();
+                let diff = curTime - lastSavedTime;
+                if (diff >= SAVING_DUR) {
+                    saveData(updatedTranscription);
+                    lastSavedTime = curTime;
+                } else {
+                    setSavingStatus(LISTENING_CHANGES);
+                    typingTimer = setTimeout(() => {
+                        saveData(updatedTranscription);
+                        lastSavedTime = new Date().getTime();
+                    }, UNTYPING_DUR);
+                }
+            }
         }
     }
     

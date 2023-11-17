@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 //redux
 import { useSelector, useDispatch } from "react-redux";
 import { setZoomTranscriptNum, toggleSpeaker } from "@/redux-toolkit/reducers/Editor";
-import { toggleMediaSide } from "@/redux-toolkit/reducers/Media";
+import { toggleMediaSide, setShowMedia } from "@/redux-toolkit/reducers/Media";
 
 // components
 import TBody from "./TBody";
@@ -18,6 +18,7 @@ import {
     Popover,
     PopoverHandler,
     PopoverContent,
+    Spinner
 } from "@material-tailwind/react";
 
 import { Github } from '@uiw/react-color';
@@ -30,11 +31,11 @@ import { AiOutlineCheck } from "react-icons/ai";
 import { LuUndo2, LuRedo2 } from "react-icons/lu";
 import { TbSettingsCode } from "react-icons/tb";
 import { BiChevronDown } from "react-icons/bi";
+import { IoIosCheckmark } from "react-icons/io";
 
 // constant
-import { EventBus } from "@/utils/Functions";
-import { BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, RESIZED_FUNCTION_BAR, MEDIUM_GRAY } from "@/utils/Constant";
-import { setShowMedia } from "@/redux-toolkit/reducers/Media";
+import { EventBus, timestampToDate } from "@/utils/Functions";
+import { BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, RESIZED_FUNCTION_BAR, MEDIUM_GRAY, LISTENING_CHANGES, SAVED, SAVING } from "@/utils/Constant";
 
 const TEditor = (props) => {
     const dispatch = useDispatch();
@@ -62,7 +63,8 @@ const TEditor = (props) => {
     const [redo, setRedo] = useState(false);
     const [enableUndo, setEnableUndo] = useState(false);
     const [enableRedo, setEnableRedo] = useState(false);
-    const [clickedInsertSection, setClickedInsertSection] = useState(false);
+    const [savingStatus, setSavingStatus] = useState();
+    const [lastSavedTime, setLastSavedTime] = useState(0);
 
     const onKeyDownZoomTranscriptInput = (e) => {
         if (e.key !== 'Enter') return;
@@ -124,7 +126,7 @@ const TEditor = (props) => {
             <div className={`px-10 justify-items-end self-center grid w-full ${!openFunctionBar ? "" : "hidden"} h-8`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
                 <MdKeyboardArrowDown onClick={() => setOpenFunctionBar(!openFunctionBar)} className={`self-center transition-transform w-[30px] h-[30px] text-custom-gray cursor-pointer`} />
             </div>
-            <div className={`${openFunctionBar ? "" : "hidden"} fixed z-30 bg-white flex pb-5 pt-8 px-10`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
+            <div className={`${openFunctionBar ? "" : "hidden"} fixed z-30 bg-white flex justify-between pb-5 pt-8 px-10`} style={{"width" : functionBarWidth == 0 ? "100%" : functionBarWidth+"px"}}>
                 <div className={`flex gap-2 `}>
                     <div className="flex gap-4 self-center select-none">
                         <LuUndo2 className={`${enableUndo ? "text-custom-black" : "text-custom-medium-gray"} cursor-pointer`} onClick={() => enableUndo && setUndo(!undo)}/>
@@ -216,7 +218,6 @@ const TEditor = (props) => {
                                 <MenuItem><p className="w-[100px]">Bullets</p></MenuItem>
                                 <MenuItem><p className="w-[100px]">Numbering</p></MenuItem>
                                 <MenuItem onClick={toggleNote}><p className="w-[100px]">Notes</p></MenuItem>
-                                <MenuItem onClick={() => setClickedInsertSection(!clickedInsertSection)}><p className="w-[100px]">Section</p></MenuItem>
                             </MenuList>
                         </Menu>
                         <Menu open={openViewMenu} handler={setOpenViewMenu}>
@@ -301,6 +302,21 @@ const TEditor = (props) => {
                             </MenuList>
                         </Menu>
                     </div>
+                    <RxDividerVertical className="text-custom-medium-gray self-center" />
+                    <div className="flex self-center w-60">
+                        <div className={`${ savingStatus === SAVING ? 'flex gap-1 self-center' : 'hidden'}`}>
+                            <Spinner className="h-3.5 w-3.5 self-center" />
+                            <span className="text-sm">Saving...</span>
+                        </div>
+                        <div className={`${ savingStatus === LISTENING_CHANGES ? 'flex gap-1 self-center' : 'hidden'}`}>
+                            <Spinner className="h-3.5 w-3.5 self-center" />
+                            <span className="text-sm">Listening your change...</span>
+                        </div>
+                        <div className={`${ savingStatus === SAVED ? 'flex gap-1 self-center' : 'hidden'}`}>
+                            <IoIosCheckmark className="h-3.5 w-3.5 self-center"/>
+                            <span className="text-sm">{ timestampToDate(lastSavedTime) }</span>
+                        </div>
+                    </div>
                 </div>
                 <div className="w-full justify-items-end self-center grid">
                     <MdKeyboardArrowUp onClick={() => setOpenFunctionBar(!openFunctionBar)} className={`self-center w-[30px] h-[30px] text-custom-gray cursor-pointer`} />
@@ -319,7 +335,8 @@ const TEditor = (props) => {
                     redo={redo}
                     setEnableUndo={setEnableUndo}
                     setEnableRedo={setEnableRedo}
-                    clickedInsertSection={clickedInsertSection}
+                    setSavingStatus={setSavingStatus}
+                    setLastSavedTime={setLastSavedTime}
                 />
             </div>
         </>
