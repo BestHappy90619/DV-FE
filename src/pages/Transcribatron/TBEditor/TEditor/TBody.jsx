@@ -119,7 +119,6 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                                         prevId: prevSectionTagId,
                                         range,
                                         isWordGroup: previewTag === WORD,
-                                        showHeading: false
                                     })
                                     let prevSectionTag = getItemFromArr(sectionTags, "id", prevSectionTagId);
                                     if (!isEmpty(prevSectionTag)) prevSectionTag.nextId = newSectionTagId;
@@ -138,7 +137,6 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                             let delThisTag = false;
                             if (!('label' in sectionTag)) sectionTag.label = 'Untitled Section';
                             if (!('isWordGroup' in sectionTag)) delThisTag = true;
-                            if (!('showHeading' in sectionTag)) sectionTag.showHeading = true;
                             if (!('range' in sectionTag)) delThisTag = true;
                             else if (sectionTag.range.length === 0) delThisTag = true;
                             else {
@@ -417,7 +415,6 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             prevId,
             range,
             isWordGroup,
-            showHeading: true
         }
         if (!isEmpty(prevSectionTag)) prevSectionTag.nextId = newSectionTag.id;
         if (!isEmpty(nextSectionTag)) nextSectionTag.prevId = newSectionTag.id;

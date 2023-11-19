@@ -42,12 +42,11 @@ const TSectionTag = (props) => {
         setTranscription(updatedTranscription);
     }
 
-    const toggleTitle = (sectionTagId) => {
-        let updatedTranscription = { ...transcription };
-        let sectionTag = getItemFromArr(updatedTranscription.sectionTags, 'id', sectionTagId);
-        sectionTag.showHeading = !sectionTag.showHeading;
-        setTranscription(updatedTranscription);
-    }
+    // const onClickDelSectionTag = (sectionTagId) => {
+    //     let updatedTranscription = { ...transcription };
+    //     let sectionTag = getItemFromArr(updatedTranscription.sectionTags, 'id', sectionTagId);
+    //     setTranscription(updatedTranscription);
+    // }
 
     const updateSectionHeading = (sectionTagId, newHeading) => {
         let updatedTranscription = { ...transcription };
@@ -58,7 +57,7 @@ const TSectionTag = (props) => {
     
     return (
         <div className={`gap-8 ${sectionTag.nextId === "" ? "" : "mb-8"}`}>
-            <div contentEditable={false} className={`flex ${sectionTag.showHeading ? "" : "hidden"} mb-2 justify-between`}>
+            <div contentEditable={false} className={`flex mb-2 justify-between`}>
                 <input contentEditable={false} className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base`} value={sectionTag.label} onChange={(e) => updateSectionHeading(sectionTag.id, e.target.value)} />
                     <Popover placement="bottom-end">
                         <PopoverHandler>
@@ -68,8 +67,8 @@ const TSectionTag = (props) => {
                         </PopoverHandler>
                         <PopoverContent>
                             <div className={`select-none py-1`}>
-                                <p className="text-custom-black justify-end flex text-sm cursor-pointer mb-2" onClick={() => switchSectionTagMode(sectionTag.id)}>Switch to { sectionTag.isWordGroup ? 'speaker' : 'dictation' } mode</p>
-                                <p className="text-custom-black justify-end flex text-sm cursor-pointer" onClick={() => toggleTitle(sectionTag.id)}>{ sectionTag.showHeading ? 'Hide' : 'Show' } title</p>
+                                <p className="text-custom-black justify-end flex text-sm cursor-pointer" onClick={() => switchSectionTagMode(sectionTag.id)}>Switch to { sectionTag.isWordGroup ? 'speaker' : 'dictation' } mode</p>
+                                {/* <p className="text-custom-black justify-end flex text-sm cursor-pointer" onClick={() => onClickDelSectionTag(sectionTag.id)}>Delete</p> */}
                             </div>
                         </PopoverContent>
                     </Popover>
@@ -92,7 +91,7 @@ const TSectionTag = (props) => {
                         })
                 }
             </div>
-            <p contentEditable={false} className={`text-custom-black text-xs mt-2 ${sectionTag.showHeading ? "" : "hidden"}`} >- End of {sectionTag.label} -</p>
+            <p contentEditable={false} className={`text-custom-black text-xs mt-2`} >- End of {sectionTag.label} -</p>
         </div>
     );
 }
