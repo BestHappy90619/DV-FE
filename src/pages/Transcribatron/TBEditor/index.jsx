@@ -189,7 +189,6 @@ const TBEditor = () => {
   const handleResize = () => {
     let isFlex = (window.innerWidth - rSdebarWidth - lSdebarWidth - (getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? 384 : 0)) > mainMin;
     setIsFlex(isFlex);
-    console.log("<<<>>>", mainMin, rSdebarWidth, lSdebarWidth, (getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? isFlex ? 384 : 0 : 0));
     setWindowMinWidth(mainMin + rSdebarWidth + lSdebarWidth + (getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? isFlex ? 384 : 0 : 0));
     setEditorResized(new Date().getTime());
   }
