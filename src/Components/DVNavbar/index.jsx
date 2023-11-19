@@ -148,7 +148,7 @@ export default function DVNavbar() {
   };
 
   useEffect(() => {
-    if (window && window.innerWidth <= 800) {
+    if (window && window.innerWidth <= 600) {
       setIsTablet(true);
     } else {
       setIsTablet(false);
@@ -156,7 +156,7 @@ export default function DVNavbar() {
 
     function onResizedWindow() {
       if (window) {
-        if (window.innerWidth <= 800) {
+        if (window.innerWidth <= 600) {
           setIsTablet(true);
         } else {
           setIsTablet(false);
@@ -257,12 +257,12 @@ export default function DVNavbar() {
             </ul>
           ) : (
             <div
-              className="relative w-[50px] h-[50px] rounded-[8px] bg-[#E9F0FD] border-[2px] border-[#E9F0FD] flex justify-center items-center cursor-pointer"
+              className="relative w-[40px] h-[40px] rounded-[8px] bg-[#E9F0FD] border-[2px] border-[#E9F0FD] flex justify-center items-center cursor-pointer"
               onClick={() => setShowNavMenu(!showNavMenu)}
             >
               <img
                 src="/image/MobilemenuIcon.svg"
-                className="w-6 h-6 "
+                className="w-5 h-5 "
                 alt="menu icon"
               />
               {showNavMenu === true && (

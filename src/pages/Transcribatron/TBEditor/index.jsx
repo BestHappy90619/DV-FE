@@ -19,7 +19,7 @@ import DVMediaController from "@/Components/DVMediaController";
 import { toast } from "react-hot-toast";
 
 // utils
-import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, RESIZED_FUNCTION_BAR, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING, NOTE_SIDEBAR, PLAYLIST_SIDEBAR, SEARCH_SIDEBAR, KEY_DOWN, STATUS_TRANSCRIBED } from "@/utils/Constant";
+import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING, NOTE_SIDEBAR, PLAYLIST_SIDEBAR, SEARCH_SIDEBAR, KEY_DOWN, STATUS_TRANSCRIBED } from "@/utils/Constant";
 import { EventBus, getItemFromArr } from "@/utils/Functions";
 
 // services
@@ -30,18 +30,20 @@ const TBEditor = () => {
 
   const videoRef = useRef();
   const audioRef = useRef();
-  const editorRef = useRef();
   const isUpdatedFromOutside = useRef(false);
 
-  const {  minWidth, maxWidth, defaultWidth } = useSelector((state) => state.sidebar);
+  const {  minWidth, maxWidth, defaultWidth, mainMax, mainMin } = useSelector((state) => state.sidebar);
   const { selectedMediaId, showMedia, mediaSide, medias, isPlaying, frameSpeed, volume, autoPlay } = useSelector((state) => state.media);
 
-  const [videoWidth, setVideoWidth] = useState(0);
   // show sidebar as per order(+: left sidebar order, -: right sidebar order 1/-1: hidden)
   const [playlistOrder, setPlaylistOrder] = useState(2);
   const [noteOrder, setNoteOrder] = useState(-2);
   const [searchOrder, setSearchOrder] = useState(1);
-
+  const [editorResized, setEditorResized] = useState();
+  const [rSdebarWidth, setRSdebarWidth] = useState();
+  const [lSdebarWidth, setLSdebarWidth] = useState();
+  const [isFlex, setIsFlex] = useState();
+  const [windowMinWidth, setWindowMinWidth] = useState();
   
   const getMaxOrder = (playlistOrder, noteOrder, searchOrder) => {
     return playlistOrder > noteOrder ?
@@ -185,10 +187,11 @@ const TBEditor = () => {
   }
 
   const handleResize = () => {
-    let videoTagWidth = videoRef.current?.clientWidth == undefined ? 0 : videoRef.current.clientWidth;
-    let editorWidth = editorRef.current?.clientWidth == undefined ? 0 : editorRef.current.clientWidth;
-    setVideoWidth(videoTagWidth);
-    EventBus.dispatch(RESIZED_FUNCTION_BAR, editorWidth == 80 ? 0 : editorWidth);
+    let isFlex = (window.innerWidth - rSdebarWidth - lSdebarWidth - (getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? 384 : 0)) > mainMin;
+    setIsFlex(isFlex);
+    console.log("<<<>>>", mainMin, rSdebarWidth, lSdebarWidth, (getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? isFlex ? 384 : 0 : 0));
+    setWindowMinWidth(mainMin + rSdebarWidth + lSdebarWidth + (getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? isFlex ? 384 : 0 : 0));
+    setEditorResized(new Date().getTime());
   }
 
   // handle event
@@ -251,7 +254,7 @@ const TBEditor = () => {
 
   useEffect(() => {
     handleResize();
-  }, [showMedia]);
+  }, [showMedia, rSdebarWidth, lSdebarWidth]);
 
   useEffect(() => {
     handleResize();
@@ -295,22 +298,37 @@ const TBEditor = () => {
         sidebarMinWidth={minWidth}
         sidebarMaxWidth={maxWidth}
         sidebarDefaultWidth={defaultWidth}
-        className="pt-[84px] pb-[122px]"
+        getRSdebarWidth={setRSdebarWidth}
+        getLSdebarWidth={setLSdebarWidth}
+        className="pt-[82px] pb-[122px]"
+        minWidth={windowMinWidth}
       >
-        <div className={`flex ${mediaSide ? "" : "flex-row-reverse"} select-none`}>
-          <video ref={videoRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`fixed ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} w-96 h-72 ${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}/>
-          <audio ref={audioRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_AUDIO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`hidden`} />
-          <div ref={editorRef} style={{padding: showMedia ? mediaSide ? "0 0 0 " + videoWidth + "px" : "0 " + videoWidth + "px 0 0" : ""}} className="">
-            <TEditor
-              toggleNote={toggleNote}
-              toggleSearch={toggleSearch}
-              playlistOrder={playlistOrder}
-              noteOrder={noteOrder}
-              searchOrder={searchOrder}
-              togglePlaylistSidebarPosition={togglePlaylistSidebarPosition}
-              toggleNoteSidebarPosition={toggleNoteSidebarPosition}
-              toggleSearchSidebarPosition={toggleSearchSidebarPosition} />
+        <div className={` ${isFlex ? "flex" : ""} ${mediaSide ? "" : "flex-row-reverse"} select-none justify-center`}>
+          <div
+            className={`sticky top-[82px] self-start pt-8 bg-white ${isFlex ? "" : "flex justify-center"} ${mediaSide ? "pl-10 pr-6" : "pl-6 pr-10"} ${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"}`}
+            style={{position: '-webkit-sticky'}}
+          >
+            <video
+              ref={videoRef}
+              src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""}
+              className="w-[380px] h-[180px]"
+            />
           </div>
+          <audio ref={audioRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_AUDIO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`hidden`} />
+          {/* <div className={`${getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? mediaSide ? "pl-[384px]" : "pr-[384px]" : ""}`}> */}
+          <TEditor
+            toggleNote={toggleNote}
+            toggleSearch={toggleSearch}
+            playlistOrder={playlistOrder}
+            noteOrder={noteOrder}
+            searchOrder={searchOrder}
+            togglePlaylistSidebarPosition={togglePlaylistSidebarPosition}
+            toggleNoteSidebarPosition={toggleNoteSidebarPosition}
+            toggleSearchSidebarPosition={toggleSearchSidebarPosition}
+            editorResized={editorResized}
+            setEditorResized={setEditorResized}
+            isFlex={isFlex}
+          />
         </div>
       </DVResizeablePanel>
 

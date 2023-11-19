@@ -4,6 +4,8 @@ const initialState = {
   minWidth: 250,
   maxWidth: 400,
   defaultWidth: 250,
+  mainMax: 1200,
+  mainMin: 500
 };
 
 const sidebarSlice = createSlice({

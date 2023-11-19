@@ -2,11 +2,14 @@
 import { setSelectedMediaId } from "@/redux-toolkit/reducers/Media";
 import { useSelector, useDispatch } from "react-redux";
 
+import { Tooltip } from "@material-tailwind/react";
+
 // icons
 import { AiOutlineClose } from "react-icons/ai";
 import { CgPlayButtonO, CgPlayPause } from "react-icons/cg";
+
+// utils
 import { msToTime } from "@/utils/Functions";
-import { STATUS_TRANSCRIBED } from "@/utils/Constant";
 
 const DVPlaylistSidebar = ({ close }) => {
   const dispatch = useDispatch();
@@ -36,7 +39,13 @@ const DVPlaylistSidebar = ({ close }) => {
               <div className="flex gap-3 overflow-hidden">
                 {selected && isPlaying ? <CgPlayPause className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} /> : <CgPlayButtonO className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} />}
                 <p className={selected ? "text-custom-sky" : "text-custom-black"}>{index + 1}</p>
-                <p className={`${selected ? "text-custom-sky" : "text-custom-black"} overflow-hidden text-ellipsis whitespace-nowrap`}>{ media.fileName }</p>
+                {/* <Tooltip
+                  placement="bottom"
+                  className="border border-blue-gray-50 bg-white px-4 py-3 shadow-xl shadow-black/10"
+                  content={<span className=" text-custom-gray">{ media.fileName }</span>}
+                > */}
+                  <p className={`${selected ? "text-custom-sky" : "text-custom-black"} overflow-hidden text-ellipsis whitespace-nowrap`}>{ media.fileName }</p>
+                {/* </Tooltip> */}
               </div>
               <p className="text-custom-gray ml-3">{ msToTime(media.duration) }</p>
             </div>

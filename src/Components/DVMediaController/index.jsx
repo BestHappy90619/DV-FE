@@ -93,14 +93,14 @@ const DVMediaController = (props) => {
         valueLabelFormat={() => msToTime(currentTime, true)}
         onChange={onChangeCurrentTimePercent}
       />
-      <div className="flex gap-6 h-full w-full justify-between px-10">
-        <div className="flex self-center w-[400px]">
-          <FaListUl variant="gradient" className="text-custom-sky cursor-pointer rounded-lg text-3xl p-1.5 bg-custom-sky bg-opacity-20" onClick={togglePlaylist} />
-          <BiFolder className={`self-center ml-6 ${ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName?.length ? "" : "hidden"}`} />
+      <div className="gap-6 h-full w-full grid grid-flow-col justify-stretch px-10 laptop:grid miniPhone:hidden">
+        <div className="flex self-center">
+          <FaListUl variant="gradient" className="self-center text-custom-sky cursor-pointer rounded-lg w-[30px] h-[30px] p-1.5 bg-custom-sky bg-opacity-20" onClick={togglePlaylist} />
+          <BiFolder className={`w-[20px] h-[20px] self-center ml-6 ${ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName?.length ? "" : "hidden"}`} />
           <p className="self-center ml-3 text-sm">{ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName }</p>
         </div>
-        <div className="flex justify-between">
-          <div className="flex items-center gap-1.5 w-[260px]">
+        <div className="flex gap-10 ">
+          <div className="flex items-center gap-1.5 w-48">
             <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => dispatch(setVolume(0))}/>
             <PrettoSlider
               valueLabelDisplay="auto"
@@ -109,20 +109,54 @@ const DVMediaController = (props) => {
             />
             <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => dispatch(setVolume(100))}/>
           </div>
-          <div className="flex items-center gap-10 mr-[46px] ml-[42px]">
+          <div className="flex items-center gap-6">
             <AiFillBackward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickPrevMedia} />
             {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(false))} /> : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(true))}/>}
             <AiFillForward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-[13px] self-center w-[260px]">{msToTime(currentTime, true)}/{ selectedMediaId == "" ? "00:00" : msToTime(getItemFromArr(medias, "fileId", selectedMediaId)?.duration, true) }</p>
+          <p className="text-custom-black text-[13px] self-center">{msToTime(currentTime, true)}/{ selectedMediaId == "" ? "00:00" : msToTime(getItemFromArr(medias, "fileId", selectedMediaId)?.duration, true) }</p>
         </div>
-        <div className="flex gap-2 items-center w-[400px] justify-end">
+        <div className="flex gap-2 items-center justify-end">
           <p className=" text-sm">Frames Speed</p>
           <div className="flex items-center border-[1px] rounded border-custom-light-gray select-none">
             <p onClick={onClickMinusFrameSpeed} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">-</p>
-            <p className="w-8 items-center justify-center flex">{ frameSpeed }</p>
+            <p className="w-8 items-center justify-center flex text-sm">{ frameSpeed }</p>
             <p onClick={onClickPlusFrameSpeed} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">+</p>
           </div>
+        </div>
+      </div>
+      <div className="py-4 gap-6 h-full w-full laptop:hidden">
+        <div className="flex justify-between px-10 gap-2">
+          <div className="flex self-center overflow-hidden">
+            <FaListUl variant="gradient" className="self-center text-custom-sky cursor-pointer rounded-lg w-[30px] h-[30px] p-1.5 bg-custom-sky bg-opacity-20" onClick={togglePlaylist} />
+            <BiFolder className={`w-[20px] h-[20px] self-center ml-6 ${ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName?.length ? "" : "hidden"}`} />
+            <p className="self-center ml-3 text-xs md:text-sm overflow-hidden text-ellipsis whitespace-nowrap">{ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName }</p>
+          </div>
+          <div className="flex gap-2 items-center justify-end">
+            <p className=" text-xs md:text-sm">Frames Speed</p>
+            <div className="flex items-center border-[1px] rounded border-custom-light-gray select-none">
+              <p onClick={onClickMinusFrameSpeed} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">-</p>
+              <p className="w-8 items-center justify-center flex text-xs md:text-sm">{ frameSpeed }</p>
+              <p onClick={onClickPlusFrameSpeed} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">+</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-between px-10">
+          <div className="flex items-center gap-1.5 w-40">
+            <BiSolidVolume className="text-custom-medium-gray text-sm cursor-pointer"  onClick={() => dispatch(setVolume(0))}/>
+            <PrettoSlider
+              valueLabelDisplay="auto"
+              value={volume}
+              onChange={(e, val) => dispatch(setVolume(val))}
+            />
+            <BiSolidVolumeFull className="text-custom-medium-gray text-sm cursor-pointer" onClick={() => dispatch(setVolume(100))}/>
+          </div>
+          <div className="flex items-center gap-6">
+            <AiFillBackward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickPrevMedia} />
+            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(false))} /> : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(true))}/>}
+            <AiFillForward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickNextMedia}/>
+          </div>
+          <p className="text-custom-black text-xs self-center md:text-sm">{msToTime(currentTime, true)}/{ selectedMediaId == "" ? "00:00" : msToTime(getItemFromArr(medias, "fileId", selectedMediaId)?.duration, true) }</p>
         </div>
       </div>
     </div>
