@@ -96,7 +96,6 @@ const TEditor = (props) => {
     }
 
     useEffect(() => {
-        console.log('tBodyRef_width>>>>>>>>>', tBodyRef.current.offsetWidth - 80);
         setFunctionBarWidth(tBodyRef.current.offsetWidth - 80)
     }, [editorResized])
 
@@ -124,7 +123,6 @@ const TEditor = (props) => {
     }
 
     useEffect(() => {
-        console.log("funcBarRef>>>>>>>>>>>>>>>", funcBarRef.current.offsetHeight);
         setFuncBarHeight(funcBarRef.current.offsetHeight);
     }, [openFunctionBar])
 

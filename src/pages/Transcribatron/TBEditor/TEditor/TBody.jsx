@@ -227,9 +227,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
     }, [selectedMediaId, medias]);
 
     useEffect(() => {
-        if (DEBUG_MODE) {
-            console.log("transcriptionUpdate>>>>", transcription);
-        }
+        if (DEBUG_MODE) console.log("transcriptionUpdate>>>>", transcription);
         if (!isEmpty(willChangedSelection.current)) {
             let range = willChangedSelection.current;
             let startEle, endEle;
@@ -836,7 +834,6 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
     }, [redo])
 
     const saveData = (trans, pushTrack = true) => {
-        console.log("saved_data");
         let updatedTranscription = JSON.parse(JSON.stringify(trans));
         updatedTranscription.lastSavedTime = updatedTranscription?.lastSavedTime || new Date().getTime();
         if (pushTrack) {
