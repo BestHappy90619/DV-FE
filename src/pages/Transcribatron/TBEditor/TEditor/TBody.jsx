@@ -29,7 +29,7 @@ const UNTYPING_DUR = 1000;
 
 var pendingUploading;
 
-const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime}) => {
+const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime, setEditorResized}) => {
     const lastSelectedWordRange = useRef();
     const willChangedSelection = useRef({});
     const wasTimeSlideDrag = useRef(false);
@@ -240,6 +240,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             if(startEle != undefined && endEle != undefined && range.startOffset >= 0 && range.endOffset >= 0) Caret.doChange(startEle, range.startOffset, endEle, range.endOffset);
             willChangedSelection.current = {};
         }
+        setEditorResized(new Date().getTime());
     }, [transcription])
 
     const getBelongedTag = (updatedTranscription, wordId) => {
@@ -335,17 +336,21 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
     // get the first sectionTag from the given range
     const getFirstSectionTag = (trans) => {
         let arr = [];
-        trans.sectionTags.map(sectionTag => {
-            arr.push({
-                id: sectionTag.id,
-                prevId: sectionTag.prevId,
-                nextId: sectionTag.nextId,
-                startTime: sectionTag.isWordGroup
-                    ? getItemFromArr(trans.words, 'id', sectionTag.range[0]).startTime
-                    : getItemFromArr(trans.words, 'id', getItemFromArr(trans.speakerTags, 'id', sectionTag.range[0] || '').range[0] || '').startTime || 0
-            });
-        })
-            
+        try {
+            trans.sectionTags.map(sectionTag => {
+                arr.push({
+                    id: sectionTag.id,
+                    prevId: sectionTag.prevId,
+                    nextId: sectionTag.nextId,
+                    startTime: sectionTag.isWordGroup
+                        ? getItemFromArr(trans.words, 'id', sectionTag.range[0]).startTime
+                        : getItemFromArr(trans.words, 'id', getItemFromArr(trans.speakerTags, 'id', sectionTag.range[0] || '').range[0] || '').startTime || 0
+                });
+            })
+        } catch (e) {
+            DEBUG_MODE && console.log(e);
+        }
+
         return getFirstItem(arr);
     }
 
@@ -1124,7 +1129,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
 
     const getSectionTags = () => {
         let element = [];
-        let sectionTagCurrentId = getFirstSectionTag(transcription).id;
+        let sectionTagCurrentId = getFirstSectionTag(transcription).id || '';
         while (true) {
             let sectionTag = getItemFromArr(transcription.sectionTags, "id", sectionTagCurrentId);
             if (isEmpty(sectionTag)) break;

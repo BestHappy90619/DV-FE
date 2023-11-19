@@ -24,7 +24,6 @@ export const SELECTION_CHANGE = 'selectionchange';
 
 // Custom Event
 export const RESIZED_SIDEBAR = 'resizedSidebar';
-export const RESIZED_FUNCTION_BAR = 'resizedFunctionBar';
 
 export const TIME_UPDATE_OUTSIDE = "timeUpdatedOutside";
 export const TIME_SLIDE_DRAG = 'timeSlideDrag';
