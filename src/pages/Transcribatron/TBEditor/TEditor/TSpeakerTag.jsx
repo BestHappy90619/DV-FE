@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { setIsPlaying } from "@/redux-toolkit/reducers/Media";
@@ -9,32 +9,69 @@ import { HiMiniUser } from "react-icons/hi2";
 import { AiFillCaretDown, AiOutlineDelete } from "react-icons/ai";
 import { BiPlay, BiPencil, BiPause } from "react-icons/bi";
 
-import { EventBus, getIndexFromArr, getItemFromArr, msToTime } from "@/utils/Functions";
-import { TIME_UPDATE_OUTSIDE } from "@/utils/Constant";
+import { EventBus, getIndexFromArr, getItemFromArr, getModifierState, msToTime } from "@/utils/Functions";
+import { KEY_DOWN, TIME_UPDATE_OUTSIDE } from "@/utils/Constant";
 
 import { v4 as uuidv4 } from "uuid";
 
 const TSpeakerTag = (props) => {
     const dispatch = useDispatch();
 
-    const { speakerTag, getWords, transcription, setTranscription } = props;
+    const { speakerTag, getWords, transcription, setTranscription, newSpkTgId, setNewSpkTgId } = props;
     const { speakerMethod } = useSelector((state) => state.editor);
 
     const [showAddSpeaker, setShowAddSpeaker] = useState(false);
     const [selectedEditSpeakerId, setSelectedEditSpeakerId] = useState("");
     const [newSpeaker, setNewSpeaker] = useState("");
     const [updatedSpeaker, setUpdatedSpeaker] = useState("");
+    const [tagOpen, setTagOpen] = useState(newSpkTgId === speakerTag.id);
+    const [fcsdSpk, setFcsdSpk] = useState(0);
     
     const curSpeaker = getItemFromArr(transcription.speakers, "id", speakerTag.speakerId);
     const speakerTagAddSpeakerInputId = speakerTag.id + "-addInputId";
     const speakerTagPlayBtnId = speakerTag.id + "-playBtnId";
     const speakerTagPauseBtnId = speakerTag.id + "-pauseBtnId";
+    const ADD_SPEAKER_P = -1;
+
+    useEffect(() => {
+        setTagOpen(newSpkTgId === speakerTag.id);
+    }, [newSpkTgId])
+
+    const onKeyDown = (e) => {
+        let modifier = getModifierState(e);
+        if (newSpkTgId.length === 0) return true;
+        if (e.keyCode === 9 && modifier === "") {
+            e.preventDefault();
+            if (fcsdSpk === (transcription.speakers.length - 1)) setFcsdSpk(ADD_SPEAKER_P);
+            else if (fcsdSpk !== ADD_SPEAKER_P) setFcsdSpk(fcsdSpk + 1);
+        } else if (e.keyCode === 13 && modifier === '') {
+            e.preventDefault();
+            if (fcsdSpk !== ADD_SPEAKER_P) {
+                changeSpeakerId(speakerTag.id, transcription.speakers[fcsdSpk]?.id)
+            } else {
+                document.getElementsByClassName("focusSpeaker")[0].click();
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (newSpkTgId.length > 0) {
+            if (tagOpen) {
+                setFcsdSpk(transcription.speakers.length === 0 ? ADD_SPEAKER_P : 0);
+            } else {
+                setNewSpkTgId('');
+                setFcsdSpk(-2);
+            }
+        }
+    }, [tagOpen])
 
     const addNewSpeaker = () => {
         setShowAddSpeaker(false);
         if (newSpeaker.length) {
             let updatedTranscription = { ...transcription };
-            updatedTranscription.speakers.push({ id: uuidv4(), label: newSpeaker });
+            let newTagId = uuidv4()
+            updatedTranscription.speakers.push({ id: newTagId, label: newSpeaker });
+            changeSpeakerId(speakerTag.id, newTagId)
             setTranscription(updatedTranscription);
         }
     }
@@ -49,6 +86,7 @@ const TSpeakerTag = (props) => {
     }
 
     const onClickAddSpeaker = (id) => {
+        // debugger
         setSelectedEditSpeakerId("");
         setShowAddSpeaker(true);
         setNewSpeaker("");
@@ -66,12 +104,12 @@ const TSpeakerTag = (props) => {
         }, 10)
     }
 
-    const onEditKeyUp = (e) => {
+    const onEditKeyDown = (e) => {
         const keyCode = e.which || e.keyCode;
         if (keyCode === 13) editSpeakerById();
     }
 
-    const onAddKeyUp = (e) => {
+    const onAddKeyDown = (e) => {
         const keyCode = e.which || e.keyCode;
         if (keyCode === 13) addNewSpeaker();
     }
@@ -81,6 +119,8 @@ const TSpeakerTag = (props) => {
         let updatedSpeakerTag = getItemFromArr(updatedTranscription.speakerTags, 'id', speakerTagId);
         updatedSpeakerTag.speakerId = newSpeakerId;
         setTranscription(updatedTranscription);
+        setNewSpkTgId('');
+        setFcsdSpk(-2);
     }
 
     const onToggleSpeakerTagPlay = (speakerTagStartTime, playBtnId, pauseBtnId) => {
@@ -106,7 +146,7 @@ const TSpeakerTag = (props) => {
     return (
         <div className={`${speakerMethod ? "flex" : ""} `}>
             <div contentEditable={false} className={`select-none text-custom-sky text-sm ${speakerMethod ? "w-40" : "flex gap-2"}`}>
-                <Popover placement="bottom">
+                <Popover placement="bottom" open={tagOpen} handler={setTagOpen}>
                     <PopoverHandler onClick={() => { setSelectedEditSpeakerId("");  setShowAddSpeaker(false)}}>
                         <div className="flex items-center gap-2 cursor-pointer">
                             <HiMiniUser />
@@ -114,20 +154,24 @@ const TSpeakerTag = (props) => {
                             <AiFillCaretDown />
                         </div>
                     </PopoverHandler>
-                    <PopoverContent className="w-52 z-50 select-none">
+                    <PopoverContent className="w-52 z-50 select-none" onKeyDown={onKeyDown}>
                         {
-                            transcription.speakers.map(speaker => {
+                            transcription.speakers.map((speaker, index) => {
                                 const editSpeakerLabelInputId = speakerTag.id + "-" + speaker.id + "-editInputId";
                                 return (
                                     <div key={speakerTag.id + "-" + speaker.id} >
                                         <div className={`${selectedEditSpeakerId === speaker.id ? "hidden" : ""} w-full justify-between flex py-1`}>
-                                            <p className={`${curSpeaker.id === speaker.id ? "text-custom-sky" : "text-custom-black"} text-sm cursor-pointer`} onClick={() => changeSpeakerId(speakerTag.id, speaker.id)}>{ speaker.label }</p>
+                                            <p className={`${fcsdSpk === index ? "focusSpeaker" : ""} ${curSpeaker.id === speaker.id ? "text-custom-sky" : "text-custom-black"} text-sm cursor-pointer`}
+                                                onClick={() => changeSpeakerId(speakerTag.id, speaker.id)}
+                                            >
+                                                {speaker.label}
+                                            </p>
                                             <BiPencil className="text-xs self-center text-custom-sky cursor-pointer" onClick={() => onClickEditSpeaker(speaker, editSpeakerLabelInputId)} />
                                         </div>
                                         <div className={`w-full py-1 flex h-9 gap-1 ${selectedEditSpeakerId === speaker.id ? "" : "hidden"}`}>
                                             <input
                                                 id={editSpeakerLabelInputId}
-                                                onKeyUp={onEditKeyUp}
+                                                onKeyDown={onEditKeyDown}
                                                 value={updatedSpeaker}
                                                 onChange={(e) => setUpdatedSpeaker(e.target.value)}
                                                 className="h-full w-full rounded border border-custom-sky pl-3 bg-transparent text-sm font-normal text-blue-gray-700 outline outline-0 transition-all"
@@ -140,13 +184,13 @@ const TSpeakerTag = (props) => {
                         }
                         <div>
                             <div className={`${showAddSpeaker ? "hidden" : ""} py-1 flex items-center justify-between`}>
-                                <p className="text-custom-sky text-sm cursor-pointer" onClick={() => onClickAddSpeaker(speakerTagAddSpeakerInputId)}>+ Add new speaker</p>
+                                <p className={`${fcsdSpk === -1 ? "focusSpeaker" : ""} text-custom-sky text-sm cursor-pointer`} onClick={() => onClickAddSpeaker(speakerTagAddSpeakerInputId)}>+ Add new speaker</p>
                                 <AiOutlineDelete className="cursor-pointer text-red-400" onClick={() => changeSpeakerId(speakerTag.id, "")} />
                             </div>
                             <div className={`w-full py-1 flex h-9 gap-1 ${showAddSpeaker ? "" : "hidden"}`}>
                                 <input
                                     id={speakerTagAddSpeakerInputId}
-                                    onKeyUp={onAddKeyUp}
+                                    onKeyDown={onAddKeyDown}
                                     value={newSpeaker}
                                     onChange={(e) => setNewSpeaker(e.target.value)}
                                     className="h-full w-full rounded border border-custom-sky pl-3 bg-transparenttext-sm font-normal text-blue-gray-700 outline outline-0 transition-all"

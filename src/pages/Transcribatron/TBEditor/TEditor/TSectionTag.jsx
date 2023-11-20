@@ -8,7 +8,7 @@ import { getItemFromArr, isEmpty } from "@/utils/Functions";
 import { DEFAULT_FONT_SIZE } from "@/utils/Constant";
 
 const TSectionTag = (props) => {
-    const { sectionTag, transcription, setTranscription, zoomTranscriptNum, activeWordId, createSpeakerTag, delSpeakerTag } = props;
+    const { sectionTag, transcription, setTranscription, zoomTranscriptNum, activeWordId, createSpeakerTag, delSpeakerTag, newSpkTgId, setNewSpkTgId } = props;
 
     const getWords = (range) => {
         let startId = range[0];
@@ -88,6 +88,8 @@ const TSectionTag = (props) => {
                                     getWords={getWords}
                                     transcription={transcription}
                                     setTranscription={setTranscription}
+                                    newSpkTgId={newSpkTgId}
+                                    setNewSpkTgId={setNewSpkTgId}
                                 />
                         })
                 }

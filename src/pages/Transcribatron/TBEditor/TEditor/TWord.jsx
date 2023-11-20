@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux';
-
 import { EventBus } from "@/utils/Functions";
 import { TIME_UPDATE_OUTSIDE } from "@/utils/Constant";
 

@@ -310,7 +310,7 @@ const TBEditor = () => {
             <video
               ref={videoRef}
               src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_VIDEO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""}
-              className="w-[380px] h-[180px]"
+              className="min-w-[380px] min-h-[180px] max-w-[380px] max-h-[180px]"
             />
           </div>
           <audio ref={audioRef} src={getItemFromArr(medias, "fileId", selectedMediaId)?.mediaType == MEDIA_TYPE_AUDIO ? getItemFromArr(medias, "fileId", selectedMediaId)?.previewURL : ""} className={`hidden`} />
