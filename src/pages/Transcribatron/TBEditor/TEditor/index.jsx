@@ -72,6 +72,7 @@ const TEditor = (props) => {
     const [savingStatus, setSavingStatus] = useState();
     const [lastSavedTime, setLastSavedTime] = useState(0);
     const [funcBarHeight, setFuncBarHeight] = useState();
+    const [clickedInsSection, setClickedInsSection] = useState(false);
 
     const onKeyDownZoomTranscriptInput = (e) => {
         if (e.key !== 'Enter') return;
@@ -120,6 +121,10 @@ const TEditor = (props) => {
         setActionStyle(HIGHLIGHT_BG);
         setChangedHighlightClr(clr.hex);
         setChangeStyle(!changeStyle);
+    }
+
+    const onClickInsertSection = () => {
+        setClickedInsSection(!clickedInsSection);
     }
 
     useEffect(() => {
@@ -230,6 +235,7 @@ const TEditor = (props) => {
                                     <MenuItem><p className="w-[100px]">Bullets</p></MenuItem>
                                     <MenuItem><p className="w-[100px]">Numbering</p></MenuItem>
                                     <MenuItem onClick={toggleNote}><p className="w-[100px]">Notes</p></MenuItem>
+                                    <MenuItem onClick={onClickInsertSection}><p className="w-[100px]">Section</p></MenuItem>
                                 </MenuList>
                             </Menu>
                             <Menu open={openViewMenu} handler={setOpenViewMenu}>
@@ -351,6 +357,7 @@ const TEditor = (props) => {
                     setSavingStatus={setSavingStatus}
                     setLastSavedTime={setLastSavedTime}
                     setEditorResized={setEditorResized}
+                    clickedInsSection={clickedInsSection}
                 />
             </div>
         </div>

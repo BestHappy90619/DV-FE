@@ -8,7 +8,7 @@ import { getItemFromArr, isEmpty } from "@/utils/Functions";
 import { DEFAULT_FONT_SIZE } from "@/utils/Constant";
 
 const TSectionTag = (props) => {
-    const { sectionTag, transcription, setTranscription, zoomTranscriptNum, activeWordId, createSpeakerTag, delSpeakerTag } = props;
+    const { sectionTag, transcription, setTranscription, zoomTranscriptNum, activeWordId, createSpeakerTag, delSpeakerTag, newSpkTgId, setNewSpkTgId } = props;
 
     const getWords = (range) => {
         let startId = range[0];
@@ -42,11 +42,12 @@ const TSectionTag = (props) => {
         setTranscription(updatedTranscription);
     }
 
-    // const onClickDelSectionTag = (sectionTagId) => {
-    //     let updatedTranscription = { ...transcription };
-    //     let sectionTag = getItemFromArr(updatedTranscription.sectionTags, 'id', sectionTagId);
-    //     setTranscription(updatedTranscription);
-    // }
+    const toggleTitle = (sectionTagId) => {
+        let updatedTranscription = { ...transcription };
+        let sectionTag = getItemFromArr(updatedTranscription.sectionTags, 'id', sectionTagId);
+        sectionTag.showHeading = !sectionTag.showHeading;
+        setTranscription(updatedTranscription);
+    }
 
     const updateSectionHeading = (sectionTagId, newHeading) => {
         let updatedTranscription = { ...transcription };
@@ -58,25 +59,25 @@ const TSectionTag = (props) => {
     return (
         <div className={`gap-8 ${sectionTag.nextId === "" ? "" : "mb-8"}`}>
             <div contentEditable={false} className={`flex mb-2 justify-between`}>
-                <input contentEditable={false} className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base`} value={sectionTag.label} onChange={(e) => updateSectionHeading(sectionTag.id, e.target.value)} />
-                    <Popover placement="bottom-end">
-                        <PopoverHandler>
-                            <div>
-                                <BsThreeDots className="text-custom-gray cursor-pointer" />
-                            </div>
-                        </PopoverHandler>
-                        <PopoverContent>
-                            <div className={`select-none py-1`}>
-                                <p className="text-custom-black justify-end flex text-sm cursor-pointer" onClick={() => switchSectionTagMode(sectionTag.id)}>Switch to { sectionTag.isWordGroup ? 'speaker' : 'dictation' } mode</p>
-                                {/* <p className="text-custom-black justify-end flex text-sm cursor-pointer" onClick={() => onClickDelSectionTag(sectionTag.id)}>Delete</p> */}
-                            </div>
-                        </PopoverContent>
-                    </Popover>
+                <input contentEditable={false} className={`text-black outline-none focus:border-2 focus:border-custom-medium-gray text-base ${sectionTag.showHeading ? "" : "invisible"}`} value={sectionTag.label} onChange={(e) => updateSectionHeading(sectionTag.id, e.target.value)} />
+                <Popover placement="bottom-end">
+                    <PopoverHandler>
+                        <div>
+                            <BsThreeDots className="text-custom-gray cursor-pointer" />
+                        </div>
+                    </PopoverHandler>
+                    <PopoverContent>
+                        <div className={`select-none py-1`}>
+                            <p className="text-custom-black justify-end flex text-sm cursor-pointer mb-2" onClick={() => switchSectionTagMode(sectionTag.id)}>Switch to { sectionTag.isWordGroup ? 'speaker' : 'dictation' } mode</p>
+                            <p className="text-custom-black justify-end flex text-sm cursor-pointer" onClick={() => toggleTitle(sectionTag.id)}>{ sectionTag.showHeading ? 'Hide' : 'Show' } title</p>
+                        </div>
+                    </PopoverContent>
+                </Popover>
             </div>
             <div className="grid gap-4 outline-none" contentEditable={true} suppressContentEditableWarning={true}>
                 {
                     sectionTag.isWordGroup ?
-                        <div><p className="text-custom-gray w-full h-auto text-justify">{getWords(sectionTag.range)}</p></div>
+                        <div><p className="text-custom-gray w-full h-auto text-left">{getWords(sectionTag.range)}</p></div>
                         :
                         transcription.speakerTags !== undefined && transcription.speakers !== undefined && sectionTag.range.map(item => {
                             let speakerTag = getItemFromArr(transcription.speakerTags, "id", item);
@@ -87,11 +88,13 @@ const TSectionTag = (props) => {
                                     getWords={getWords}
                                     transcription={transcription}
                                     setTranscription={setTranscription}
+                                    newSpkTgId={newSpkTgId}
+                                    setNewSpkTgId={setNewSpkTgId}
                                 />
                         })
                 }
             </div>
-            <p contentEditable={false} className={`text-custom-black text-xs mt-2`} >- End of {sectionTag.label} -</p>
+            <p contentEditable={false} className={`text-custom-black text-xs mt-2 ${sectionTag.showHeading ? "" : "hidden"}`} >- End of {sectionTag.label} -</p>
         </div>
     );
 }

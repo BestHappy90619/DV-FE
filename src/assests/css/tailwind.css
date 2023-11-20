@@ -144,3 +144,7 @@ textarea:focus, input:focus{
   stroke: #dee0e4;
   stroke-width: 1px;
 }
+
+.focusSpeaker {
+  font-weight: bold;
+}

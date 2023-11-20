@@ -27,9 +27,11 @@ var typingTimer;
 const SAVING_DUR = 3000;
 const UNTYPING_DUR = 1000;
 
+var newSpkerTagId = '';
+
 var pendingUploading;
 
-const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime, setEditorResized}) => {
+const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime, setEditorResized, clickedInsSection}) => {
     const lastSelectedWordRange = useRef();
     const willChangedSelection = useRef({});
     const wasTimeSlideDrag = useRef(false);
@@ -39,6 +41,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
     const [showFade, setShowFade] = useState(false);
     const [transcription, setTranscription] = useState({});
     const [activeWordId, setActiveWordId] = useState();
+    const [newSpkTgId, setNewSpkTgId] = useState();
 
     useEffect(() => {
         const onTimeSlideDrag = () => {
@@ -119,6 +122,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                                         prevId: prevSectionTagId,
                                         range,
                                         isWordGroup: previewTag === WORD,
+                                        showHeading: false
                                     })
                                     let prevSectionTag = getItemFromArr(sectionTags, "id", prevSectionTagId);
                                     if (!isEmpty(prevSectionTag)) prevSectionTag.nextId = newSectionTagId;
@@ -137,6 +141,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                             let delThisTag = false;
                             if (!('label' in sectionTag)) sectionTag.label = 'Untitled Section';
                             if (!('isWordGroup' in sectionTag)) delThisTag = true;
+                            if (!('showHeading' in sectionTag)) sectionTag.showHeading = false;
                             if (!('range' in sectionTag)) delThisTag = true;
                             else if (sectionTag.range.length === 0) delThisTag = true;
                             else {
@@ -234,10 +239,17 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             if (getItemFromArr(transcription.words, 'id', range.endWordId).hasBr) endEle = document.getElementById(range.endWordId)?.childNodes[1];
             else endEle = document.getElementById(range.endWordId)?.childNodes[0];
             if(startEle != undefined && endEle != undefined && range.startOffset >= 0 && range.endOffset >= 0) Caret.doChange(startEle, range.startOffset, endEle, range.endOffset);
-            willChangedSelection.current = {};
+            // willChangedSelection.current = {};
         }
+
+        setNewSpkTgId(newSpkerTagId);
+
         setEditorResized(new Date().getTime());
     }, [transcription])
+
+    useEffect(() => {
+        newSpkerTagId = newSpkTgId;
+    }, [newSpkTgId])
 
     const getBelongedTag = (updatedTranscription, wordId) => {
         let searchingWord = getItemFromArr(updatedTranscription.words, 'id', wordId);
@@ -393,14 +405,14 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
         if (isEmpty(belongedSectionTag)) return;
         if (belongedSectionTag.isWordGroup) {
             if ((belongedTag.sectionTagRangeIndex === 0 && offset === 1) || (belongedTag.sectionTagRangeIndex === 1 && offset === (word.word.length + 1))) return;
-            await splitSectionTag(updatedTranscription, belongedSectionTag.id);
+            // await split SectionTag(updatedTranscription, belongedSectionTag.id);
         } else {
             let belongedSpeakerTag = getItemFromArr(updatedTranscription.speakerTags, 'id', belongedTag.speakerTagId);
             if ((belongedSectionTag.range[0] === belongedSpeakerTag.id && belongedTag.speakerTagRangeIndex === 0 && offset === 1) ||
                 (belongedSectionTag.range[belongedSectionTag.range.length - 1] === belongedSpeakerTag.id && belongedTag.speakerTagRangeIndex === 1 && offset === (word.word.length + 1)))
                 return;
             else if (belongedTag.speakerTagRangeIndex === 0 || belongedTag.speakerTagRangeIndex === 1) {
-                await splitSectionTag(updatedTranscription, belongedSectionTag.id);
+                // await split SectionTag(updatedTranscription, belongedSectionTag.id);
             } else await splitSpeakerTag(updatedTranscription, belongedSpeakerTag.id, belongedSectionTag.id);
         }
     }
@@ -415,6 +427,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             prevId,
             range,
             isWordGroup,
+            showHeading: true
         }
         if (!isEmpty(prevSectionTag)) prevSectionTag.nextId = newSectionTag.id;
         if (!isEmpty(nextSectionTag)) nextSectionTag.prevId = newSectionTag.id;
@@ -450,14 +463,19 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             newRange.push(willChangedSelection.current.startWordId);
             newRange.push(splittedSectionTag.range[1]);
             splittedSectionTag.range[1] = getItemFromArr(updatedTranscription.words, 'id', willChangedSelection.current.startWordId).prevId;
-            createSectionTag(updatedTranscription, newRange, true, splittedSectionTag.nextId, splittedSectionTag.id);
+            await createSectionTag(updatedTranscription, newRange, true, splittedSectionTag.nextId, splittedSectionTag.id);
         } else {
-            let splitIndex = 0;
-            for (; splitIndex < splittedSectionTag.range.length; splitIndex++) if (splittedSectionTag.range[splitIndex] === belongedTag.speakerTagId) break;
-            if (belongedTag.speakerTagRangeIndex === 1) splitIndex += 1;
-            let newRange = splittedSectionTag.range.slice(splitIndex);
-            splittedSectionTag.range = splittedSectionTag.range.slice(0, splitIndex);
-            createSectionTag(updatedTranscription, newRange, false, splittedSectionTag.nextId, splittedSectionTag.id);
+            if (belongedTag.speakerTagRangeIndex !== 0 && belongedTag.speakerTagRangeIndex !== 1) {
+                await splitSpeakerTag(updatedTranscription, belongedTag.speakerTagId, belongedTag.sectionTagId)
+                await splitSectionTag(updatedTranscription);
+            } else {
+                let splitIndex = 0;
+                for (; splitIndex < splittedSectionTag.range.length; splitIndex++) if (splittedSectionTag.range[splitIndex] === belongedTag.speakerTagId) break;
+                if (belongedTag.speakerTagRangeIndex === 1) splitIndex += 1;
+                let newRange = splittedSectionTag.range.slice(splitIndex);
+                splittedSectionTag.range = splittedSectionTag.range.slice(0, splitIndex);
+                await createSectionTag(updatedTranscription, newRange, false, splittedSectionTag.nextId, splittedSectionTag.id);
+            }
         }
     }
 
@@ -479,7 +497,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
         let newSpeakerTagId = uuidv4();
         updatedTranscription.speakerTags.push({
             id: newSpeakerTagId,
-            speakerId: "",
+            speakerId: updatedTranscription.speakers[0]?.id || "",
             range,
         })
         if (belongedSectionTag.isWordGroup) {
@@ -488,6 +506,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
         } else {
             belongedSectionTag.range.splice(insertIndex, 0, newSpeakerTagId);
         }
+        newSpkerTagId = newSpeakerTagId;
     }
 
     const mergeSpeakerTag = async (updatedTranscription, firstSpeakerTag, secondSpeakerTag, firstBelongedSectionTag, secondBelongedSectionTag) => {
@@ -735,7 +754,13 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             let { startWordId, startOffset } = willChangedSelection.current;
             let startWord = getItemFromArr(updatedTranscription.words, 'id', startWordId);
             startWord.word = startWord.word.substring(0, startOffset - 1) + txt + startWord.word.substring(startOffset - 1);
-            if (i != 0) startWord.hasBr = hasBr && !isCaretInTagPole(updatedTranscription, startWordId, startOffset);
+            if (i != 0) {
+                if (!startWord.hasBr) startWord.hasBr = hasBr && !isCaretInTagPole(updatedTranscription, startWordId, startOffset);
+                else if (startWord.hasBr && hasBr) {
+                    startWord.hasBr = false;
+                    await splitTag(updatedTranscription, selection);
+                }
+            }
             willChangedSelection.current.startOffset += txt.length;
             willChangedSelection.current.endOffset = willChangedSelection.current.startOffset;
         }
@@ -830,9 +855,42 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
         doRedo();
     }, [redo])
 
+    const doInsertSection = async () => {
+        let selection = document.getSelection();
+        if (!isCaretInEditor(selection)) return;
+        let updatedTranscription = { ...transcription };
+
+        let wordRange = getWordRange(selection);
+        delWordRange(updatedTranscription, wordRange);
+        let offset = willChangedSelection.current.startOffset;
+        let word = getItemFromArr(updatedTranscription.words, 'id', willChangedSelection.current.startWordId);
+        if (isEmpty(word)) return;
+        let belongedTag = getBelongedTag(updatedTranscription, word.id);
+        let belongedSectionTag = getItemFromArr(updatedTranscription.sectionTags, 'id', belongedTag.sectionTagId);
+        if (isEmpty(belongedSectionTag)) return;
+        if (belongedSectionTag.isWordGroup) {
+            if ((belongedTag.sectionTagRangeIndex === 0 && offset === 1) || (belongedTag.sectionTagRangeIndex === 1 && offset === (word.word.length + 1))) return;
+            await splitSectionTag(updatedTranscription);
+        } else {
+            let belongedSpeakerTag = getItemFromArr(updatedTranscription.speakerTags, 'id', belongedTag.speakerTagId);
+            if ((belongedSectionTag.range[0] === belongedSpeakerTag.id && belongedTag.speakerTagRangeIndex === 0 && offset === 1) ||
+                (belongedSectionTag.range[belongedSectionTag.range.length - 1] === belongedSpeakerTag.id && belongedTag.speakerTagRangeIndex === 1 && offset === (word.word.length + 1)))
+                return;
+            else await splitSectionTag(updatedTranscription);
+        }
+        
+        setTranscription(updatedTranscription);
+        lastSavedTime = new Date().getTime();
+        saveData(updatedTranscription);
+    }
+
+    useEffect(() => {
+        doInsertSection();
+    }, [clickedInsSection])
+
     const saveData = (trans, pushTrack = true) => {
+        trans.lastSavedTime = new Date().getTime();
         let updatedTranscription = JSON.parse(JSON.stringify(trans));
-        updatedTranscription.lastSavedTime = updatedTranscription?.lastSavedTime || new Date().getTime();
         if (pushTrack) {
             trackIndex += 1;
             track.transcriptions.splice(trackIndex, track.transcriptions.length - trackIndex, updatedTranscription);
@@ -916,28 +974,31 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             await insertTextToEditor(updatedTranscription, ' ', selection);
             setTranscription(updatedTranscription);
             instSave = true;
-        } else if (e.keyCode === 13) {
+        } else if (e.keyCode === 13 && modifier === '') {
             // enter
-            if (modifier === KEY_SHIFT) {
-                // shift + enter
+            // if (modifier === KEY_SHIFT) {
+            //     // shift + enter
+            //     e.preventDefault();
+            //     if(DEBUG_MODE) console.log('create paragraph: shift + enter');
+            //     let updatedTranscription = { ...transcription };
+            //     await insertTextToEditor(updatedTranscription, '\n', selection);
+            //     setTranscription(updatedTranscription);
+            //     instSave = true;
+            // } else if (modifier === '') {
+                // only enter
                 e.preventDefault();
-                if(DEBUG_MODE) console.log('create paragraph: shift + enter');
+                if (newSpkTgId.length !== 0) return true;
+                if(DEBUG_MODE) console.log('create speaker: enter');
                 let updatedTranscription = { ...transcription };
+                // await splitTag(updatedTranscription, selection);
                 await insertTextToEditor(updatedTranscription, '\n', selection);
                 setTranscription(updatedTranscription);
                 instSave = true;
-            } else if (modifier === '') {
-                // only enter
-                e.preventDefault();
-                if(DEBUG_MODE) console.log('create speaker: enter');
-                let updatedTranscription = { ...transcription };
-                await splitTag(updatedTranscription, selection);
-                setTranscription(updatedTranscription);
-                instSave = true;
-            }
+            // }
         } else if (e.keycode === 27 || e.keyCode === 9) {
             // Esc || Tab
             e.preventDefault();
+            if (newSpkTgId.length !== 0) return true;
             if(DEBUG_MODE) console.log('prevent default: Esc || Tab');
         } else if (e.key.length === 1 && (modifier === "" || modifier === KEY_SHIFT)) {
             e.preventDefault();
@@ -1137,6 +1198,8 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                     activeWordId={activeWordId}
                     createSpeakerTag={createSpeakerTag}
                     delSpeakerTag={delSpeakerTag}
+                    newSpkTgId={newSpkTgId}
+                    setNewSpkTgId={setNewSpkTgId}
                 />
             )
             if (sectionTag.nextId === "") break;
