@@ -164,7 +164,7 @@ const TSpeakerTag = (props) => {
                     </div>
                 </div>
             </div>
-            <p className="text-custom-gray w-full h-auto text-justify">
+            <p className="text-custom-gray w-full h-auto text-left">
                 {getWords(speakerTag.range)}
             </p>
         </div>

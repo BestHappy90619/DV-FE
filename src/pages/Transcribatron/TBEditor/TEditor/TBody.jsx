@@ -119,6 +119,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                                         prevId: prevSectionTagId,
                                         range,
                                         isWordGroup: previewTag === WORD,
+                                        showHeading: false
                                     })
                                     let prevSectionTag = getItemFromArr(sectionTags, "id", prevSectionTagId);
                                     if (!isEmpty(prevSectionTag)) prevSectionTag.nextId = newSectionTagId;
@@ -137,6 +138,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                             let delThisTag = false;
                             if (!('label' in sectionTag)) sectionTag.label = 'Untitled Section';
                             if (!('isWordGroup' in sectionTag)) delThisTag = true;
+                            if (!('showHeading' in sectionTag)) sectionTag.showHeading = false;
                             if (!('range' in sectionTag)) delThisTag = true;
                             else if (sectionTag.range.length === 0) delThisTag = true;
                             else {
@@ -415,6 +417,7 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             prevId,
             range,
             isWordGroup,
+            showHeading: true
         }
         if (!isEmpty(prevSectionTag)) prevSectionTag.nextId = newSectionTag.id;
         if (!isEmpty(nextSectionTag)) nextSectionTag.prevId = newSectionTag.id;
@@ -831,8 +834,8 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
     }, [redo])
 
     const saveData = (trans, pushTrack = true) => {
+        trans.lastSavedTime = new Date().getTime();
         let updatedTranscription = JSON.parse(JSON.stringify(trans));
-        updatedTranscription.lastSavedTime = updatedTranscription?.lastSavedTime || new Date().getTime();
         if (pushTrack) {
             trackIndex += 1;
             track.transcriptions.splice(trackIndex, track.transcriptions.length - trackIndex, updatedTranscription);
