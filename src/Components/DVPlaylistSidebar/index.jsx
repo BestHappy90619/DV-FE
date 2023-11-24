@@ -1,8 +1,7 @@
-// redux
-import { setSelectedMediaId } from "@/redux-toolkit/reducers/Media";
-import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 
-import { Tooltip } from "@material-tailwind/react";
+// redux
+import { useSelector } from "react-redux";
 
 // icons
 import { AiOutlineClose } from "react-icons/ai";
@@ -11,14 +10,14 @@ import { CgPlayButtonO, CgPlayPause } from "react-icons/cg";
 // utils
 import { msToTime } from "@/utils/Functions";
 
-const DVPlaylistSidebar = ({ close }) => {
-  const dispatch = useDispatch();
+const DVPlaylistSidebar = ({ close, medias, selMediaIndex }) => {
+  const navigate = useNavigate();
+  
+  const { isPlaying } = useSelector((state) => state.media); //true: left, false: right
 
-  const { selectedMediaId, medias, isPlaying } = useSelector((state) => state.media); //true: left, false: right
-
-  const onClickMedia = (id) => {
-    if (id === selectedMediaId) return;
-    dispatch(setSelectedMediaId(id))
+  const onClickMedia = (index) => {
+    if (index === selMediaIndex) return;
+    navigate('/' + medias[index].fileId);
   }
 
   return (
@@ -33,9 +32,9 @@ const DVPlaylistSidebar = ({ close }) => {
       <hr className="border-blue-gray-50 mb-6" /> 
       <div className="h-[calc(100%-124px)] overflow-auto scrollbar scrollPaddingRight ml-5 mr-[10px]">
         {medias.map((media, index) => {
-          let selected = selectedMediaId === media.fileId;
+          let selected = selMediaIndex === index;
           return (
-            <div key={media.fileId} className={`flex justify-between cursor-pointer ${index == 0 ? "" : "mt-3"}`} onClick={() => onClickMedia(media.fileId)}>
+            <div key={media.fileId} className={`flex justify-between cursor-pointer ${index == 0 ? "" : "mt-3"}`} onClick={() => onClickMedia(index)}>
               <div className="flex gap-3 overflow-hidden">
                 {selected && isPlaying ? <CgPlayPause className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} /> : <CgPlayButtonO className={`min-w-[20px] min-h-[20px] self-center ${selected ? "text-custom-sky" : "text-custom-gray"}`} />}
                 <p className={selected ? "text-custom-sky" : "text-custom-black"}>{index + 1}</p>

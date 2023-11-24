@@ -22,6 +22,10 @@ const Routes = [
     element: <MainLyt />,
     children: [
       {
+        path: "/:fileId",
+        element: <TBEditor />,
+      },
+      {
         path: "/",
         element: <TBEditor />,
       },

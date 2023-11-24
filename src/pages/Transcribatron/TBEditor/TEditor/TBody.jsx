@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router";
 // redux
 import { useSelector } from "react-redux";
 
@@ -32,40 +33,24 @@ var newSpkerTagId = '';
 var pendingUploading;
 
 const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime, setEditorResized, clickedInsSection}) => {
+    const { fileId } = useParams();
+
     const lastSelectedWordRange = useRef();
     const willChangedSelection = useRef({});
     const wasTimeSlideDrag = useRef(false);
 
     const { zoomTranscriptNum } = useSelector((state) => state.editor);
-    const { selectedMediaId, medias, isPlaying, currentTime } = useSelector((state) => state.media);
+    const { isPlaying, currentTime } = useSelector((state) => state.media);
     const [showFade, setShowFade] = useState(false);
     const [transcription, setTranscription] = useState({});
     const [activeWordId, setActiveWordId] = useState();
     const [newSpkTgId, setNewSpkTgId] = useState();
 
     useEffect(() => {
-        const onTimeSlideDrag = () => {
-            wasTimeSlideDrag.current = true;
-        }
-        EventBus.on(TIME_SLIDE_DRAG, onTimeSlideDrag);
-
-        const onSelectionChange = (e) => {
-            let selection = document.getSelection();
-            if (isCaretInEditor(selection)) lastSelectedWordRange.current = selection.getRangeAt(0);
-        }
-        document.addEventListener(SELECTION_CHANGE, onSelectionChange);
-
-        return () => {
-            EventBus.remove(TIME_SLIDE_DRAG, onTimeSlideDrag);
-            document.removeEventListener(SELECTION_CHANGE, onSelectionChange);
-        }
-    }, [])
-    
-    useEffect(() => {
-        if (medias.length === 0 || selectedMediaId === "") return;
+        if (fileId === undefined) return;
         EventBus.dispatch(SET_LOADING, true);
         setShowFade(false);
-        MediaService.getTranscriptionByFileId(getItemFromArr(medias, "fileId", selectedMediaId).fileId) // get transcription data
+        MediaService.getTranscriptionByFileId(fileId) // get transcription data
             .then((res) => {
                 if (res.status === 200) {
                     let data = res.data;
@@ -227,7 +212,23 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
                 EventBus.dispatch(SET_LOADING, false);
                 setShowFade(true);
             })
-    }, [selectedMediaId, medias]);
+        
+        const onTimeSlideDrag = () => {
+            wasTimeSlideDrag.current = true;
+        }
+        EventBus.on(TIME_SLIDE_DRAG, onTimeSlideDrag);
+
+        const onSelectionChange = (e) => {
+            let selection = document.getSelection();
+            if (isCaretInEditor(selection)) lastSelectedWordRange.current = selection.getRangeAt(0);
+        }
+        document.addEventListener(SELECTION_CHANGE, onSelectionChange);
+
+        return () => {
+            EventBus.remove(TIME_SLIDE_DRAG, onTimeSlideDrag);
+            document.removeEventListener(SELECTION_CHANGE, onSelectionChange);
+        }
+    }, [fileId])
 
     useEffect(() => {
         if (DEBUG_MODE) console.log("transcriptionUpdate>>>>", transcription);
@@ -898,19 +899,19 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             // track.transcriptions.push(updatedTranscription);
         }
         setSavingStatus(SAVING);
-        MediaService.updateTranscriptionByFileId(getItemFromArr(medias, "fileId", selectedMediaId).fileId, updatedTranscription)
-            .then((res) => {
-                if (res.status === 200) {
-                    if(DEBUG_MODE) console.log(res);
+        // MediaService.updateTranscriptionByFileId(fileId, updatedTranscription)
+        //     .then((res) => {
+        //         if (res.status === 200) {
+        //             if(DEBUG_MODE) console.log(res);
                     setSavingStatus(SAVED);
                     setLastSavedTime(updatedTranscription.lastSavedTime);
-                } else {
-                    if(DEBUG_MODE) console.log(res);
-                }
-            })
-            .catch((err) => {
-                if (DEBUG_MODE) console.log(err);
-            });
+            //     } else {
+            //         if(DEBUG_MODE) console.log(res);
+            //     }
+            // })
+            // .catch((err) => {
+            //     if (DEBUG_MODE) console.log(err);
+            // });
         DEBUG_MODE && console.log("track>>>>", track, trackIndex);
         setEnableUndo(trackIndex > 0);
         setEnableRedo(trackIndex < (track.transcriptions.length - 1));

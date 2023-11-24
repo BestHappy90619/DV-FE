@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
 
-// redux
-import {useSelector, useDispatch } from "react-redux";
-import { setIsPlaying, setSelectedMediaId, setFrameSpeed, setVolume } from "@/redux-toolkit/reducers/Media";
-
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 const PrettoSlider = styled(Slider)({
@@ -30,58 +26,47 @@ import { BiSolidVolume, BiSolidVolumeFull, BiFolder } from "react-icons/bi";
 import { FaListUl } from "react-icons/fa";
 
 // constant
-import { EventBus, getIndexFromArr, getItemFromArr, msToTime, setMinimumFractionFormat } from "@/utils/Functions";
-import { TIME_SLIDE_DRAG, TIME_UPDATE_OUTSIDE } from "@/utils/Constant";
+import { msToTime, setMinimumFractionFormat, isEmpty } from "@/utils/Functions";
 
 const DVMediaController = (props) => {
-  const dispatch = useDispatch();
-  const { togglePlaylist, className } = props;
-
-  const { selectedMediaId, medias, isPlaying, frameSpeed, volume, currentTime } = useSelector((state) => state.media);
+  const { togglePlaylist, className, mediaRef, onClickPrevMedia, onClickNextMedia, mediaName, onChangeTSlider, currentTime, play, onChangePlay, mediaDur } = props;
 
   const [currentTimePercent, setCurrentTimePercent] = useState(0); // timeslide's percent, 0 ~ 100
+  const [frameSpeed, setFrameSpeed] = useState("1.0");
+  const [volume, setVolume] = useState(100);
+  const [isPlaying, setIsPlaying] = useState(play);
+
+  useEffect(() => {
+    if(mediaRef.current) mediaRef.current.playbackRate = frameSpeed;
+  }, [frameSpeed]);
+
+  useEffect(() => {
+    if (mediaRef.current) mediaRef.current.volume = volume / 100;
+  }, [volume]);
   
   const onClickMinusFrameSpeed = () => {
-    let frameSpeedNum = frameSpeed * 1;
-    frameSpeedNum -= 0.2;
-    if (frameSpeedNum < 0.4) frameSpeedNum = 0.4;
-    dispatch(setFrameSpeed(setMinimumFractionFormat(frameSpeedNum)));
+    let spdNum = frameSpeed * 1;
+    spdNum -= 0.2;
+    if (spdNum < 0.4) spdNum = 0.4;
+    setFrameSpeed(setMinimumFractionFormat(spdNum));
   }
 
   const onClickPlusFrameSpeed = () => {
-    let frameSpeedNum = frameSpeed * 1;
-    frameSpeedNum += 0.2;
-    if (frameSpeedNum > 4) frameSpeedNum = 4;
-    dispatch(setFrameSpeed(setMinimumFractionFormat(frameSpeedNum)));
-  }
-
-  const onClickPrevMedia = () => {
-    let selMIndex = getIndexFromArr(medias, "fileId", selectedMediaId);
-    if (selMIndex < 1) return;
-    dispatch(setSelectedMediaId(medias[selMIndex - 1].fileId));
-  }
-
-  const onClickNextMedia = () => {
-    let selMIndex = getIndexFromArr(medias, "fileId", selectedMediaId);
-    if (selMIndex == medias.length - 1 || selMIndex == -1) return;
-    dispatch(setSelectedMediaId(medias[selMIndex + 1].fileId));
+    let spdNum = frameSpeed * 1;
+    spdNum += 0.2;
+    if (spdNum > 4) spdNum = 4;
+    setFrameSpeed(setMinimumFractionFormat(spdNum));
   }
 
   const onChangeCurrentTimePercent = (e, val) => {
-    if (selectedMediaId == "") return;
     setCurrentTimePercent(val);
-    EventBus.dispatch(TIME_UPDATE_OUTSIDE, { time: val / 100 * getItemFromArr(medias, "fileId", selectedMediaId)?.duration });
-    EventBus.dispatch(TIME_SLIDE_DRAG);
+    onChangeTSlider(val / 100 * mediaDur)
   }
 
   useEffect(() => {
-    if (!medias.length) return;
-    if (selectedMediaId == "") {
-      setCurrentTimePercent(0);
-      return;
-    }
-    setCurrentTimePercent(currentTime / getItemFromArr(medias, "fileId", selectedMediaId)?.duration * 100);
-  }, [currentTime]);
+    if (isEmpty(mediaDur) || isEmpty(currentTime)) return;    
+    setCurrentTimePercent(currentTime / mediaDur * 100);
+  }, [currentTime, mediaDur]);
 
   return (
     <div className={className}>
@@ -96,25 +81,25 @@ const DVMediaController = (props) => {
       <div className="gap-6 h-full w-full grid grid-flow-col justify-stretch px-10 laptop:grid miniPhone:hidden">
         <div className="flex self-center">
           <FaListUl variant="gradient" className="self-center text-custom-sky cursor-pointer rounded-lg w-[30px] h-[30px] p-1.5 bg-custom-sky bg-opacity-20" onClick={togglePlaylist} />
-          <BiFolder className={`w-[20px] h-[20px] self-center ml-6 ${ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName?.length ? "" : "hidden"}`} />
-          <p className="self-center ml-3 text-sm">{ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName }</p>
+          <BiFolder className={`w-[20px] h-[20px] self-center ml-6 ${ mediaName?.length ? "" : "hidden"}`} />
+          <p className="self-center ml-3 text-sm">{ mediaName }</p>
         </div>
         <div className="flex gap-10 ">
           <div className="flex items-center gap-1.5 w-48">
-            <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => dispatch(setVolume(0))}/>
+            <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => setVolume(0)}/>
             <PrettoSlider
               valueLabelDisplay="auto"
               value={volume}
-              onChange={(e, val) => dispatch(setVolume(val))}
+              onChange={(e, val) => setVolume(val)}
             />
-            <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => dispatch(setVolume(100))}/>
+            <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => setVolume(100)}/>
           </div>
           <div className="flex items-center gap-6">
             <AiFillBackward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickPrevMedia} />
-            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(false))} /> : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(true))}/>}
+            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(false); onChangePlay(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(true); onChangePlay(true); }} />}
             <AiFillForward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-[13px] self-center">{msToTime(currentTime, true)}/{ selectedMediaId == "" ? "00:00" : msToTime(getItemFromArr(medias, "fileId", selectedMediaId)?.duration, true) }</p>
+          <p className="text-custom-black text-[13px] self-center">{msToTime(currentTime, true)}/{ msToTime(mediaDur, true) }</p>
         </div>
         <div className="flex gap-2 items-center justify-end">
           <p className=" text-sm">Frames Speed</p>
@@ -129,8 +114,8 @@ const DVMediaController = (props) => {
         <div className="flex justify-between px-10 gap-2">
           <div className="flex self-center overflow-hidden">
             <FaListUl variant="gradient" className="self-center text-custom-sky cursor-pointer rounded-lg w-[30px] h-[30px] p-1.5 bg-custom-sky bg-opacity-20" onClick={togglePlaylist} />
-            <BiFolder className={`w-[20px] h-[20px] self-center ml-6 ${ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName?.length ? "" : "hidden"}`} />
-            <p className="self-center ml-3 text-xs md:text-sm overflow-hidden text-ellipsis whitespace-nowrap">{ getItemFromArr(medias, "fileId", selectedMediaId)?.fileName }</p>
+            <BiFolder className={`w-[20px] h-[20px] self-center ml-6 ${ mediaName?.length ? "" : "hidden"}`} />
+            <p className="self-center ml-3 text-xs md:text-sm overflow-hidden text-ellipsis whitespace-nowrap">{ mediaName }</p>
           </div>
           <div className="flex gap-2 items-center justify-end">
             <p className=" text-xs md:text-sm">Frames Speed</p>
@@ -143,20 +128,20 @@ const DVMediaController = (props) => {
         </div>
         <div className="flex justify-between px-10">
           <div className="flex items-center gap-1.5 w-40">
-            <BiSolidVolume className="text-custom-medium-gray text-sm cursor-pointer"  onClick={() => dispatch(setVolume(0))}/>
+            <BiSolidVolume className="text-custom-medium-gray text-sm cursor-pointer"  onClick={() => setVolume(0)}/>
             <PrettoSlider
               valueLabelDisplay="auto"
               value={volume}
-              onChange={(e, val) => dispatch(setVolume(val))}
+              onChange={(e, val) => setVolume(val)}
             />
-            <BiSolidVolumeFull className="text-custom-medium-gray text-sm cursor-pointer" onClick={() => dispatch(setVolume(100))}/>
+            <BiSolidVolumeFull className="text-custom-medium-gray text-sm cursor-pointer" onClick={() => setVolume(100)}/>
           </div>
           <div className="flex items-center gap-6">
             <AiFillBackward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickPrevMedia} />
-            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(false))} /> : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => selectedMediaId == "" ? "" : dispatch(setIsPlaying(true))}/>}
+            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(false); onChangePlay(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(true); onChangePlay(true); }} />}
             <AiFillForward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-xs self-center md:text-sm">{msToTime(currentTime, true)}/{ selectedMediaId == "" ? "00:00" : msToTime(getItemFromArr(medias, "fileId", selectedMediaId)?.duration, true) }</p>
+          <p className="text-custom-black text-xs self-center md:text-sm">{msToTime(currentTime, true)}/{ msToTime(mediaDur, true) }</p>
         </div>
       </div>
     </div>
