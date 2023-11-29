@@ -1,14 +1,14 @@
 import { KEY_ALT, KEY_CTRL, KEY_SHIFT } from "@/utils/Constant";
 
-// ms to time, "00:00:00"
-export const msToTime = (milliseconds, isShowMMSS = false) => {
-  let seconds = Math.floor((milliseconds) % 60);
+// sec to time, "00:00:00"
+export const secToTimeFormat = (dur, isShowMMSS = false) => {
+  let seconds = Math.floor((dur) % 60);
   let minutes = "";
   if(isShowMMSS)
-    minutes = Math.floor(milliseconds / 60);
+    minutes = Math.floor(dur / 60);
   else
-    minutes = Math.floor((milliseconds / 60) % 60);
-  let hours = Math.floor((milliseconds / (60 * 60)) % 24);
+    minutes = Math.floor((dur / 60) % 60);
+  let hours = Math.floor((dur / (60 * 60)) % 24);
 
   return (
     (isShowMMSS ? "" : ("0" + hours).slice(-2) + ":") +

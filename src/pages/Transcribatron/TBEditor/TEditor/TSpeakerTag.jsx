@@ -9,7 +9,7 @@ import { HiMiniUser } from "react-icons/hi2";
 import { AiFillCaretDown, AiOutlineDelete } from "react-icons/ai";
 import { BiPlay, BiPencil, BiPause } from "react-icons/bi";
 
-import { EventBus, getIndexFromArr, getItemFromArr, getModifierState, msToTime } from "@/utils/Functions";
+import { EventBus, getIndexFromArr, getItemFromArr, getModifierState, secToTimeFormat } from "@/utils/Functions";
 import { KEY_DOWN, TIME_UPDATE_OUTSIDE } from "@/utils/Constant";
 
 import { v4 as uuidv4 } from "uuid";
@@ -201,7 +201,7 @@ const TSpeakerTag = (props) => {
                     </PopoverContent>
                 </Popover>
                 <div className={`flex gap-2 items-center ${speakerMethod ? "mt-2" : ""}`}>
-                    <p>{ msToTime(getItemFromArr(transcription.words, 'id', speakerTag.range[0]).startTime) }</p>
+                    <p>{ secToTimeFormat(getItemFromArr(transcription.words, 'id', speakerTag.range[0]).startTime) }</p>
                     <div className="cursor-pointer w-12" onClick={() => onToggleSpeakerTagPlay(getItemFromArr(transcription.words, 'id', speakerTag.range[0]).startTime, speakerTagPlayBtnId, speakerTagPauseBtnId)}>
                         <div id={speakerTagPlayBtnId} className="flex items-center allSpeakerTagPlayBtn"><BiPlay /><p className=" self-center">Play</p></div>
                         <div id={speakerTagPauseBtnId} className="flex items-center allSpeakerTagPauseBtn" style={{display: "none"}}><BiPause /><p>Pause</p></div>

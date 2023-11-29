@@ -20,20 +20,21 @@ import DVMediaController from "@/Components/DVMediaController";
 import { toast } from "react-hot-toast";
 
 // utils
-import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING, NOTE_SIDEBAR, PLAYLIST_SIDEBAR, SEARCH_SIDEBAR, KEY_DOWN, STATUS_TRANSCRIBED, TIME_SLIDE_DRAG } from "@/utils/Constant";
+import { MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO, RESIZED_WINDOW, TIME_UPDATE_OUTSIDE, MEDIA_TIME_UPDATE, SET_LOADING, NOTE_SIDEBAR, PLAYLIST_SIDEBAR, SEARCH_SIDEBAR, KEY_DOWN, STATUS_TRANSCRIBED, TIME_SLIDE_DRAG, DEBUG_MODE } from "@/utils/Constant";
 import { EventBus, getIndexFromArr, getItemFromArr } from "@/utils/Functions";
 
 // services
 import MediaService from "@/services/media";
+import ReactPlayer from "react-player";
+import { progress } from "@material-tailwind/react";
 
 const TBEditor = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { fileId } = useParams();
 
-  const videoRef = useRef();
-  const audioRef = useRef();
-  const isUpdatedFromOutside = useRef(false);
+  const mediaRef = useRef();
+  var isUpdatedFromOutside;
 
   const { minWidth, maxWidth, defaultWidth, mainMax, mainMin } = useSelector((state) => state.sidebar);
   const { showMedia, mediaSide, isPlaying, autoPlay, currentTime } = useSelector((state) => state.media);
@@ -202,68 +203,33 @@ const TBEditor = () => {
   }, [fileId])
 
   const handleResize = () => {
-    let isFlex = (window.innerWidth - rSdebarWidth - lSdebarWidth - 80 - (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? videoRef.current.offsetWidth : 0)) > mainMin;
+    let isFlex = (window.innerWidth - rSdebarWidth - lSdebarWidth - 80 - (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? mediaRef.current.offsetWidth : 0)) > mainMin;
     setIsFlex(isFlex);
-    console.log("minW>>>>>>", mainMin, rSdebarWidth, lSdebarWidth, (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? isFlex ? videoRef.current.offsetWidth : 0 : 0));
-    setWindowMinWidth(mainMin + rSdebarWidth + lSdebarWidth + 200 + (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? isFlex ? videoRef.current.offsetWidth : 0 : 0));
+    // console.log("minW>>>>>>", mainMin, rSdebarWidth, lSdebarWidth, (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? isFlex ? mediaRef.current.offsetWidth : 0 : 0));
+    setWindowMinWidth(mainMin + rSdebarWidth + lSdebarWidth + 200 + (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? isFlex ? mediaRef.current.offsetWidth : 0 : 0));
     setEditorResized(new Date().getTime());
   }
-  
-  const onVideoTimeUpdate = () => {
-    if (!isUpdatedFromOutside.current) {
-      let time = videoRef.current.currentTime
-      if (time == videoRef.current.duration) {
-        dispatch(setCurrentTime(0))
-        dispatch(setIsPlaying(false));
-        return;
-      }
-      dispatch(setCurrentTime(time));
-    } else {
-      isUpdatedFromOutside.current = false;
-    }
-  }
 
-  const onAudioTimeUpdate = () => {
-    if (!isUpdatedFromOutside.current) {
-      let time = audioRef.current.currentTime
-      if (time == audioRef.current.duration) {
-        dispatch(setCurrentTime(0))
-        dispatch(setIsPlaying(false));
-        return;
-      }
-      dispatch(setCurrentTime(time));
-    } else {
-      isUpdatedFromOutside.current = false;
-    }
+  function seekTime(data) {
+    mediaRef.current.seekTo(data.time);
   }
 
   // handle event
   useEffect(() => {
     handleResize();
     if (selMediaIndex === -1) return;
+    console.log("object>>>", medias[selMediaIndex], mediaRef);
     
     dispatch(setIsPlaying(autoPlay));
     dispatch(setCurrentTime(0));
 
-    // Attach the resized event listener to the window object
     window.addEventListener(RESIZED_WINDOW, handleResize);
-
-    function onTimeUpdateOutside(data) {
-      if (selMediaIndex === -1) return;
-      let { time } = data;
-      let mediaRef = medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef : audioRef;
-      if (!mediaRef.current) return;
-      isUpdatedFromOutside.current = true;
-      mediaRef.current.currentTime = time;
-      dispatch(setCurrentTime(time));
-      if (time == mediaRef?.current.duration) dispatch(setIsPlaying(false));
-    }
-    EventBus.on(TIME_UPDATE_OUTSIDE, onTimeUpdateOutside);
+    EventBus.on(TIME_UPDATE_OUTSIDE, seekTime);
     
     // Remove the event listeners when the component unmounts
     return () => {
       window.removeEventListener(RESIZED_WINDOW, handleResize);
-      EventBus.remove(TIME_UPDATE_OUTSIDE, onTimeUpdateOutside);
+      EventBus.remove(TIME_UPDATE_OUTSIDE, seekTime);
     };
   }, [selMediaIndex]);
 
@@ -273,7 +239,7 @@ const TBEditor = () => {
 
   useEffect(() => {
     if (selMediaIndex == -1) return;
-    isPlaying ? medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.play() : audioRef.current.play() : medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.pause() : audioRef.current.pause();
+    // isPlaying ? medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.play() : audioRef.current.play() : medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.pause() : audioRef.current.pause();
   }, [isPlaying]);
 
   const onClickPrevMedia = () => {
@@ -286,9 +252,30 @@ const TBEditor = () => {
     navigate('/' + medias[selMediaIndex + 1].fileId);
   }
 
+  const [playbackRate, setPlaybackRate] = useState();
+  const [volume, setVolume] = useState(1);
+  const [seeking, setSeeking] = useState(false);
+
+  const onSeekMouseDown = e => {
+    setSeeking(true)
+  }
+
   const onChangeTSlider = (time) => {
-    EventBus.dispatch(TIME_UPDATE_OUTSIDE, {time});
+    // dispatch(setCurrentTime(time));
+    seekTime({time});
     EventBus.dispatch(TIME_SLIDE_DRAG);
+  }
+
+  const onSeekMouseUp = e => {
+    setSeeking(false);
+  }
+
+  const handleProgress = state => {
+    console.log('onProgress', state)
+    // We only want to update time slider if we are not currently seeking
+    if (!seeking) {
+      dispatch(setCurrentTime(state.playedSeconds));
+    }
   }
 
   return (
@@ -323,19 +310,24 @@ const TBEditor = () => {
             className={`sticky top-[82px] self-start bg-white ${isFlex ? "" : "flex justify-center"}  pt-8 pb-4`}
             style={{position: '-webkit-sticky'}}
           >
-            <video
-              ref={videoRef}
-              src={medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? medias[selMediaIndex]?.previewURL : ""}
-              onTimeUpdate={onVideoTimeUpdate}
-              className={`min-w-[380px] min-h-[180px] max-w-[380px] max-h-[180px] ${medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? isFlex ? mediaSide ? "pl-10 " : " pr-10" : "" : "hidden"}`}
+            <ReactPlayer
+              ref={mediaRef}
+              className={`react-player min-w-[380px] min-h-[180px] max-w-[380px] max-h-[180px]`}
+              width='100%'
+              height='100%'
+              url='https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
+              // url={medias[selMediaIndex]?.previewURL}
+              playing={isPlaying}
+              onPlay={() => dispatch(setIsPlaying(true))}
+              onPause={() => dispatch(setIsPlaying(false))}
+              playbackRate={playbackRate}
+              onPlaybackRateChange={(rate) => setPlaybackRate(rate)}
+              volume={volume}
+              onProgress={handleProgress}
+              onReady={() => DEBUG_MODE && console.log('onReady')}
+              onError={e => DEBUG_MODE && console.log('onError', e)}
             />
           </div>
-          <audio
-            ref={audioRef}
-            src={medias[selMediaIndex]?.mediaType == MEDIA_TYPE_AUDIO ? medias[selMediaIndex]?.previewURL : ""}
-            onTimeUpdate={onAudioTimeUpdate}
-            className={`hidden`}
-          />
           <TEditor
             toggleNote={toggleNote}
             toggleSearch={toggleSearch}
@@ -354,15 +346,21 @@ const TBEditor = () => {
 
       <DVMediaController
         mediaName={medias[selMediaIndex]?.fileName}
-        mediaRef={medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO ? videoRef : audioRef}
+        mediaRef={mediaRef}
         mediaDur={medias[selMediaIndex]?.duration}
         togglePlaylist={togglePlaylist}
         onClickPrevMedia={onClickPrevMedia}
         onClickNextMedia={onClickNextMedia}
         onChangeTSlider={onChangeTSlider}
         currentTime={currentTime}
-        play={isPlaying}
-        onChangePlay={(status) => dispatch(setIsPlaying(status))}
+        isPlaying={isPlaying}
+        setIsPlaying={(status) => dispatch(setIsPlaying(status))}
+        playbackRate={playbackRate}
+        setPlaybackRate={setPlaybackRate}
+        volume={volume}
+        setVolume={setVolume}
+        onSeekMouseDown={onSeekMouseDown}
+        onSeekMouseUp={onSeekMouseUp}
         className="h-[90px] w-[100%] fixed bottom-0 z-50 bg-custom-white select-none"
       />
     </>

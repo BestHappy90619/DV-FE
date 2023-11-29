@@ -8,7 +8,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { CgPlayButtonO, CgPlayPause } from "react-icons/cg";
 
 // utils
-import { msToTime } from "@/utils/Functions";
+import { secToTimeFormat } from "@/utils/Functions";
 
 const DVPlaylistSidebar = ({ close, medias, selMediaIndex }) => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const DVPlaylistSidebar = ({ close, medias, selMediaIndex }) => {
                   <p className={`${selected ? "text-custom-sky" : "text-custom-black"} overflow-hidden text-ellipsis whitespace-nowrap`}>{ media.fileName }</p>
                 {/* </Tooltip> */}
               </div>
-              <p className="text-custom-gray ml-3">{ msToTime(media.duration) }</p>
+              <p className="text-custom-gray ml-3">{ secToTimeFormat(media.duration) }</p>
             </div>
           )
         })}

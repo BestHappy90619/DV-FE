@@ -26,45 +26,48 @@ import { BiSolidVolume, BiSolidVolumeFull, BiFolder } from "react-icons/bi";
 import { FaListUl } from "react-icons/fa";
 
 // constant
-import { msToTime, setMinimumFractionFormat, isEmpty } from "@/utils/Functions";
+import { secToTimeFormat, setMinimumFractionFormat, isEmpty } from "@/utils/Functions";
 
 const DVMediaController = (props) => {
-  const { togglePlaylist, className, mediaRef, onClickPrevMedia, onClickNextMedia, mediaName, onChangeTSlider, currentTime, play, onChangePlay, mediaDur } = props;
+  const {
+    togglePlaylist,
+    className,
+    mediaRef,
+    onClickPrevMedia,
+    onClickNextMedia,
+    mediaName,
+    onChangeTSlider,
+    currentTime,
+    isPlaying,
+    setIsPlaying,
+    mediaDur,
+    playbackRate,
+    setPlaybackRate,
+    volume,
+    setVolume,
+    onSeekMouseDown,
+    onSeekMouseUp
+  } = props;
 
   const [currentTimePercent, setCurrentTimePercent] = useState(0); // timeslide's percent, 0 ~ 100
-  const [frameSpeed, setFrameSpeed] = useState("1.0");
-  const [volume, setVolume] = useState(100);
-  const [isPlaying, setIsPlaying] = useState(play);
-
-  useEffect(() => {
-    if(mediaRef.current) mediaRef.current.playbackRate = frameSpeed;
-  }, [frameSpeed]);
-
-  useEffect(() => {
-    if (mediaRef.current) mediaRef.current.volume = volume / 100;
-  }, [volume]);
   
-  const onClickMinusFrameSpeed = () => {
-    let spdNum = frameSpeed * 1;
-    spdNum -= 0.2;
-    if (spdNum < 0.4) spdNum = 0.4;
-    setFrameSpeed(setMinimumFractionFormat(spdNum));
+  const onClickMinusPlaybackRate = () => {
+    if (playbackRate <= 0.4) return;
+    setPlaybackRate(playbackRate - 0.2);
   }
 
-  const onClickPlusFrameSpeed = () => {
-    let spdNum = frameSpeed * 1;
-    spdNum += 0.2;
-    if (spdNum > 4) spdNum = 4;
-    setFrameSpeed(setMinimumFractionFormat(spdNum));
+  const onClickPlusPlaybackRate = () => {
+    if (playbackRate >= 4) return;
+    setPlaybackRate(playbackRate + 0.2);
   }
 
   const onChangeCurrentTimePercent = (e, val) => {
     setCurrentTimePercent(val);
     onChangeTSlider(val / 100 * mediaDur)
   }
-
+ 
   useEffect(() => {
-    if (isEmpty(mediaDur) || isEmpty(currentTime)) return;    
+    if (isEmpty(mediaDur) || isEmpty(currentTime)) return;
     setCurrentTimePercent(currentTime / mediaDur * 100);
   }, [currentTime, mediaDur]);
 
@@ -74,9 +77,11 @@ const DVMediaController = (props) => {
         valueLabelDisplay="auto"
         style={{ position: 'absolute', padding: '0'}}
         value={currentTimePercent}
-        getAriaValueText={() => msToTime(currentTime, true)}
-        valueLabelFormat={() => msToTime(currentTime, true)}
         onChange={onChangeCurrentTimePercent}
+        onMouseDown={onSeekMouseDown}
+        onMouseUp={onSeekMouseUp}
+        getAriaValueText={() => secToTimeFormat(currentTime, true)}
+        valueLabelFormat={() => secToTimeFormat(currentTime, true)}
       />
       <div className="gap-6 h-full w-full grid grid-flow-col justify-stretch px-10 laptop:grid miniPhone:hidden">
         <div className="flex self-center">
@@ -89,24 +94,24 @@ const DVMediaController = (props) => {
             <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => setVolume(0)}/>
             <PrettoSlider
               valueLabelDisplay="auto"
-              value={volume}
-              onChange={(e, val) => setVolume(val)}
+              value={Math.ceil(volume * 100)}
+              onChange={(e, val) => setVolume(val / 100)}
             />
-            <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => setVolume(100)}/>
+            <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => setVolume(1)}/>
           </div>
           <div className="flex items-center gap-6">
             <AiFillBackward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickPrevMedia} />
-            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(false); onChangePlay(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(true); onChangePlay(true); }} />}
+            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(true); }} />}
             <AiFillForward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-[13px] self-center">{msToTime(currentTime, true)}/{ msToTime(mediaDur, true) }</p>
+          <p className="text-custom-black text-[13px] self-center">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaDur, true) }</p>
         </div>
         <div className="flex gap-2 items-center justify-end">
           <p className=" text-sm">Frames Speed</p>
           <div className="flex items-center border-[1px] rounded border-custom-light-gray select-none">
-            <p onClick={onClickMinusFrameSpeed} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">-</p>
-            <p className="w-8 items-center justify-center flex text-sm">{ frameSpeed }</p>
-            <p onClick={onClickPlusFrameSpeed} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">+</p>
+            <p onClick={onClickMinusPlaybackRate} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">-</p>
+            <p className="w-8 items-center justify-center flex text-sm">{ setMinimumFractionFormat(playbackRate) }</p>
+            <p onClick={onClickPlusPlaybackRate} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">+</p>
           </div>
         </div>
       </div>
@@ -120,9 +125,9 @@ const DVMediaController = (props) => {
           <div className="flex gap-2 items-center justify-end">
             <p className=" text-xs md:text-sm">Frames Speed</p>
             <div className="flex items-center border-[1px] rounded border-custom-light-gray select-none">
-              <p onClick={onClickMinusFrameSpeed} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">-</p>
-              <p className="w-8 items-center justify-center flex text-xs md:text-sm">{ frameSpeed }</p>
-              <p onClick={onClickPlusFrameSpeed} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">+</p>
+              <p onClick={onClickMinusPlaybackRate} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">-</p>
+              <p className="w-8 items-center justify-center flex text-xs md:text-sm">{ setMinimumFractionFormat(playbackRate) }</p>
+              <p onClick={onClickPlusPlaybackRate} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">+</p>
             </div>
           </div>
         </div>
@@ -138,10 +143,10 @@ const DVMediaController = (props) => {
           </div>
           <div className="flex items-center gap-6">
             <AiFillBackward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickPrevMedia} />
-            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(false); onChangePlay(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(true); onChangePlay(true); }} />}
+            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(true); }} />}
             <AiFillForward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-xs self-center md:text-sm">{msToTime(currentTime, true)}/{ msToTime(mediaDur, true) }</p>
+          <p className="text-custom-black text-xs self-center md:text-sm">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaDur, true) }</p>
         </div>
       </div>
     </div>
