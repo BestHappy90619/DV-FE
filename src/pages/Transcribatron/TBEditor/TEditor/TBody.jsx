@@ -14,11 +14,10 @@ import MediaService from "@/services/media";
 
 // utils
 import { EventBus, getIndexFromArr, getItemFromArr, isEmpty, getModifierState } from "@/utils/Functions";
-import { SET_LOADING, BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, GRAY, SPEAKER_TAG, WORD, TIME_SLIDE_DRAG, DEBUG_MODE, KEY_CTRL, KEY_SHIFT, NEW_LINE_SIGN, SELECTION_CHANGE } from "@/utils/Constant";
+import { SET_LOADING, BOLD, FONT_COLOR, HIGHLIGHT_BG, ITALIC, UNDERLINE, GRAY, SPEAKER_TAG, WORD, TIME_SLIDE_DRAG, DEBUG_MODE, KEY_CTRL, KEY_SHIFT, NEW_LINE_SIGN, SELECTION_CHANGE, LISTENING_CHANGES, SAVED, SAVING } from "@/utils/Constant";
 import { Caret } from "@/utils/Caret";
 
 import { v4 as uuidv4 } from "uuid";
-import { LISTENING_CHANGES, SAVED, SAVING } from "../../../../utils/Constant";
 
 var track;
 var trackIndex;
@@ -899,20 +898,19 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             // track.transcriptions.push(updatedTranscription);
         }
         setSavingStatus(SAVING);
-        // MediaService.updateTranscriptionByFileId(fileId, updatedTranscription)
-        //     .then((res) => {
-        //         if (res.status === 200) {
-        //             if(DEBUG_MODE) console.log(res);
+        MediaService.updateTranscriptionByFileId(fileId, updatedTranscription)
+            .then((res) => {
+                if (res.status === 200) {
+                    if(DEBUG_MODE) console.log(res);
                     setSavingStatus(SAVED);
                     setLastSavedTime(updatedTranscription.lastSavedTime);
-            //     } else {
-            //         if(DEBUG_MODE) console.log(res);
-            //     }
-            // })
-            // .catch((err) => {
-            //     if (DEBUG_MODE) console.log(err);
-            // });
-        DEBUG_MODE && console.log("track>>>>", track, trackIndex);
+                } else {
+                    if(DEBUG_MODE) console.log(res);
+                }
+            })
+            .catch((err) => {
+                if (DEBUG_MODE) console.log(err);
+            });
         setEnableUndo(trackIndex > 0);
         setEnableRedo(trackIndex < (track.transcriptions.length - 1));
     };

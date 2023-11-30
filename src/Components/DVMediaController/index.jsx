@@ -31,45 +31,92 @@ import { secToTimeFormat, setMinimumFractionFormat, isEmpty } from "@/utils/Func
 const DVMediaController = (props) => {
   const {
     togglePlaylist,
-    className,
     mediaRef,
-    onClickPrevMedia,
-    onClickNextMedia,
     mediaName,
-    onChangeTSlider,
     currentTime,
     isPlaying,
     setIsPlaying,
-    mediaDur,
-    playbackRate,
-    setPlaybackRate,
-    volume,
-    setVolume,
-    onSeekMouseDown,
-    onSeekMouseUp
+    onClickPrevMedia,
+    onClickNextMedia,
+    onChangeTSlider,
+    className,
   } = props;
 
   const [currentTimePercent, setCurrentTimePercent] = useState(0); // timeslide's percent, 0 ~ 100
+  const [frameSpeed, setFrameSpeed] = useState(1);
+  const [volume, setVolume] = useState(1);
+
+  const onPlay = () => {
+    setIsPlaying(true)
+  }
+
+  const onPause = () => {
+    setIsPlaying(false)
+  }
   
+  const onRateChange = (e) => {
+    setFrameSpeed(e.target.playbackRate)
+  }
+  
+  const onVolumeChange = (e) => {
+    setVolume(e.target.volume * (e.target.muted ? 0 : 1));
+  }
+  
+  const onSeeking = (e) => {
+    // console.log("onSeeking");
+    // if(!mediaRef.current?.duration) setCurrentTimePercent(0)
+    // else setCurrentTimePercent(e.target.currentTime / mediaRef.current?.duration * 100);
+    // onChangeTSlider(e.target.currentTime)
+  }
+  
+  const onSeeked = (e) => {
+    // console.log("onSeeked");
+    // if(!mediaRef.current?.duration) setCurrentTimePercent(0)
+    // else setCurrentTimePercent(e.target.currentTime / mediaRef.current?.duration * 100);
+    // onChangeTSlider(e.target.currentTime)
+  }
+
+  useEffect(() => {
+    if (mediaRef.current) {
+      mediaRef.current.addEventListener('play', onPlay);
+      mediaRef.current.addEventListener('pause', onPause);
+      mediaRef.current.addEventListener('ratechange', onRateChange);
+      mediaRef.current.addEventListener('volumechange', onVolumeChange);
+      mediaRef.current.addEventListener('seeking', onSeeking);
+      mediaRef.current.addEventListener('seeked', onSeeked);  
+    }
+    return () => {
+      if (mediaRef.current) {
+        mediaRef.current.removeEventListener('play', onPlay)
+        mediaRef.current.removeEventListener('pause', onPause)
+        mediaRef.current.removeEventListener('ratechange', onRateChange)
+        mediaRef.current.removeEventListener('volumechange', onVolumeChange)
+        mediaRef.current.removeEventListener('seeking', onSeeking)
+        mediaRef.current.removeEventListener('seeked', onSeeked)
+      }
+    }
+  }, [])
+
   const onClickMinusPlaybackRate = () => {
-    if (playbackRate <= 0.4) return;
-    setPlaybackRate(playbackRate - 0.2);
+    if (frameSpeed <= 0.4) return;
+    mediaRef.current.playbackRate = frameSpeed - 0.2;
   }
 
   const onClickPlusPlaybackRate = () => {
-    if (playbackRate >= 4) return;
-    setPlaybackRate(playbackRate + 0.2);
+    if (frameSpeed >= 4) return;
+    mediaRef.current.playbackRate = frameSpeed + 0.2;
   }
 
   const onChangeCurrentTimePercent = (e, val) => {
-    setCurrentTimePercent(val);
-    onChangeTSlider(val / 100 * mediaDur)
+    if(!mediaRef.current?.duration) setCurrentTimePercent(0)
+    else setCurrentTimePercent(val);
+    onChangeTSlider(val / 100 * mediaRef.current?.duration)
   }
  
   useEffect(() => {
-    if (isEmpty(mediaDur) || isEmpty(currentTime)) return;
-    setCurrentTimePercent(currentTime / mediaDur * 100);
-  }, [currentTime, mediaDur]);
+    if(!mediaRef.current?.duration) setCurrentTimePercent(0)
+    else setCurrentTimePercent(currentTime / mediaRef.current?.duration * 100);
+  }, [currentTime]);
 
   return (
     <div className={className}>
@@ -78,8 +125,6 @@ const DVMediaController = (props) => {
         style={{ position: 'absolute', padding: '0'}}
         value={currentTimePercent}
         onChange={onChangeCurrentTimePercent}
-        onMouseDown={onSeekMouseDown}
-        onMouseUp={onSeekMouseUp}
         getAriaValueText={() => secToTimeFormat(currentTime, true)}
         valueLabelFormat={() => secToTimeFormat(currentTime, true)}
       />
@@ -91,26 +136,28 @@ const DVMediaController = (props) => {
         </div>
         <div className="flex gap-10 ">
           <div className="flex items-center gap-1.5 w-48">
-            <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => setVolume(0)}/>
+            <BiSolidVolume className="text-custom-medium-gray text-lg cursor-pointer"  onClick={() => mediaRef.current.volume = 0}/>
             <PrettoSlider
               valueLabelDisplay="auto"
               value={Math.ceil(volume * 100)}
-              onChange={(e, val) => setVolume(val / 100)}
+              onChange={(e, val) => mediaRef.current.volume = val / 100}
             />
-            <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => setVolume(1)}/>
+            <BiSolidVolumeFull className="text-custom-medium-gray text-lg cursor-pointer" onClick={() => mediaRef.current.volume = 1}/>
           </div>
           <div className="flex items-center gap-6">
             <AiFillBackward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickPrevMedia} />
-            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { setIsPlaying(true); }} />}
+            {isPlaying ?
+              <BsPauseCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { mediaRef.current.pause() }} />
+              : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { mediaRef.current.play() }} />}
             <AiFillForward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-[13px] self-center">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaDur, true) }</p>
+          <p className="text-custom-black text-[13px] self-center">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaRef.current?.duration, true) }</p>
         </div>
         <div className="flex gap-2 items-center justify-end">
           <p className=" text-sm">Frames Speed</p>
           <div className="flex items-center border-[1px] rounded border-custom-light-gray select-none">
             <p onClick={onClickMinusPlaybackRate} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">-</p>
-            <p className="w-8 items-center justify-center flex text-sm">{ setMinimumFractionFormat(playbackRate) }</p>
+            <p className="w-8 items-center justify-center flex text-sm">{ setMinimumFractionFormat(frameSpeed) }</p>
             <p onClick={onClickPlusPlaybackRate} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[34px] h-[34px] rounded flex items-center justify-center">+</p>
           </div>
         </div>
@@ -126,7 +173,7 @@ const DVMediaController = (props) => {
             <p className=" text-xs md:text-sm">Frames Speed</p>
             <div className="flex items-center border-[1px] rounded border-custom-light-gray select-none">
               <p onClick={onClickMinusPlaybackRate} className="border-r-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">-</p>
-              <p className="w-8 items-center justify-center flex text-xs md:text-sm">{ setMinimumFractionFormat(playbackRate) }</p>
+              <p className="w-8 items-center justify-center flex text-xs md:text-sm">{ setMinimumFractionFormat(frameSpeed) }</p>
               <p onClick={onClickPlusPlaybackRate} className="border-l-[1px] border-custom-light-gray cursor-pointer bg-custom-white w-[25px] h-[25px] md:w-[34px] md:h-[34px] rounded flex items-center justify-center">+</p>
             </div>
           </div>
@@ -143,10 +190,12 @@ const DVMediaController = (props) => {
           </div>
           <div className="flex items-center gap-6">
             <AiFillBackward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickPrevMedia} />
-            {isPlaying ? <BsPauseCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(false); }} /> : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { setIsPlaying(true); }} />}
+            {isPlaying ?
+              <BsPauseCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { mediaRef.current.pause() }} />
+              : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { mediaRef.current.play() }} />}
             <AiFillForward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-xs self-center md:text-sm">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaDur, true) }</p>
+          <p className="text-custom-black text-xs self-center md:text-sm">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaRef.current?.duration, true) }</p>
         </div>
       </div>
     </div>

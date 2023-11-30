@@ -25,7 +25,7 @@ import { EventBus, getIndexFromArr, getItemFromArr } from "@/utils/Functions";
 
 // services
 import MediaService from "@/services/media";
-import ReactPlayer from "react-player";
+import ReactHlsPlayer  from "react-hls-player";
 import { progress } from "@material-tailwind/react";
 
 const TBEditor = () => {
@@ -205,42 +205,58 @@ const TBEditor = () => {
   const handleResize = () => {
     let isFlex = (window.innerWidth - rSdebarWidth - lSdebarWidth - 80 - (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? mediaRef.current.offsetWidth : 0)) > mainMin;
     setIsFlex(isFlex);
-    // console.log("minW>>>>>>", mainMin, rSdebarWidth, lSdebarWidth, (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? isFlex ? mediaRef.current.offsetWidth : 0 : 0));
     setWindowMinWidth(mainMin + rSdebarWidth + lSdebarWidth + 200 + (medias[selMediaIndex]?.mediaType === MEDIA_TYPE_VIDEO && showMedia ? isFlex ? mediaRef.current.offsetWidth : 0 : 0));
     setEditorResized(new Date().getTime());
   }
 
-  function seekTime(data) {
-    mediaRef.current.seekTo(data.time);
+  const onTimeUpdate = () => {
+    if (!isUpdatedFromOutside) {
+      let time = mediaRef.current.currentTime
+      if (time == mediaRef.current.duration) {
+        dispatch(setCurrentTime(0))
+        dispatch(setIsPlaying(false));
+        return;
+      }
+      dispatch(setCurrentTime(time));
+    } else {
+      isUpdatedFromOutside = false;
+    }
   }
 
   // handle event
   useEffect(() => {
     handleResize();
     if (selMediaIndex === -1) return;
-    console.log("object>>>", medias[selMediaIndex], mediaRef);
-    
-    dispatch(setIsPlaying(autoPlay));
-    dispatch(setCurrentTime(0));
+
+    if (autoPlay) mediaRef.current.play()
+    else mediaRef.current.pause();
+    mediaRef.current.currentTime = 0;
+    mediaRef.current.volume = 1;
+    mediaRef.current.playbackRate = 1;
 
     window.addEventListener(RESIZED_WINDOW, handleResize);
-    EventBus.on(TIME_UPDATE_OUTSIDE, seekTime);
+    
+    function onTimeUpdateOutside(data) {
+      if (selMediaIndex === -1) return;
+      let { time } = data;
+      if (!mediaRef.current) return;
+      isUpdatedFromOutside = true;
+      mediaRef.current.currentTime = time;
+      dispatch(setCurrentTime(time));
+      if (time == mediaRef?.current.duration) dispatch(setIsPlaying(false));
+    }
+    EventBus.on(TIME_UPDATE_OUTSIDE, onTimeUpdateOutside);
     
     // Remove the event listeners when the component unmounts
     return () => {
       window.removeEventListener(RESIZED_WINDOW, handleResize);
-      EventBus.remove(TIME_UPDATE_OUTSIDE, seekTime);
+      EventBus.remove(TIME_UPDATE_OUTSIDE, onTimeUpdateOutside);
     };
   }, [selMediaIndex]);
 
   useEffect(() => {
     handleResize();
   }, [showMedia, rSdebarWidth, lSdebarWidth]);
-
-  useEffect(() => {
-    if (selMediaIndex == -1) return;
-    // isPlaying ? medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.play() : audioRef.current.play() : medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO ? videoRef.current.pause() : audioRef.current.pause();
-  }, [isPlaying]);
 
   const onClickPrevMedia = () => {
     if (selMediaIndex < 1) return;
@@ -252,30 +268,9 @@ const TBEditor = () => {
     navigate('/' + medias[selMediaIndex + 1].fileId);
   }
 
-  const [playbackRate, setPlaybackRate] = useState();
-  const [volume, setVolume] = useState(1);
-  const [seeking, setSeeking] = useState(false);
-
-  const onSeekMouseDown = e => {
-    setSeeking(true)
-  }
-
   const onChangeTSlider = (time) => {
-    // dispatch(setCurrentTime(time));
-    seekTime({time});
+    EventBus.dispatch(TIME_UPDATE_OUTSIDE, {time});
     EventBus.dispatch(TIME_SLIDE_DRAG);
-  }
-
-  const onSeekMouseUp = e => {
-    setSeeking(false);
-  }
-
-  const handleProgress = state => {
-    console.log('onProgress', state)
-    // We only want to update time slider if we are not currently seeking
-    if (!seeking) {
-      dispatch(setCurrentTime(state.playedSeconds));
-    }
   }
 
   return (
@@ -310,22 +305,12 @@ const TBEditor = () => {
             className={`sticky top-[82px] self-start bg-white ${isFlex ? "" : "flex justify-center"}  pt-8 pb-4`}
             style={{position: '-webkit-sticky'}}
           >
-            <ReactPlayer
-              ref={mediaRef}
-              className={`react-player min-w-[380px] min-h-[180px] max-w-[380px] max-h-[180px]`}
-              width='100%'
-              height='100%'
-              url='https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
-              // url={medias[selMediaIndex]?.previewURL}
-              playing={isPlaying}
-              onPlay={() => dispatch(setIsPlaying(true))}
-              onPause={() => dispatch(setIsPlaying(false))}
-              playbackRate={playbackRate}
-              onPlaybackRateChange={(rate) => setPlaybackRate(rate)}
-              volume={volume}
-              onProgress={handleProgress}
-              onReady={() => DEBUG_MODE && console.log('onReady')}
-              onError={e => DEBUG_MODE && console.log('onError', e)}
+            <ReactHlsPlayer
+              playerRef={mediaRef}
+              src="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+              controls={true}
+              onTimeUpdate={onTimeUpdate}
+              className={`min-w-[380px] min-h-[180px] max-w-[380px] max-h-[180px] ${medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? isFlex ? mediaSide ? "pl-10 " : " pr-10" : "" : "hidden"}`}
             />
           </div>
           <TEditor
@@ -345,22 +330,15 @@ const TBEditor = () => {
       </DVResizeablePanel>
 
       <DVMediaController
-        mediaName={medias[selMediaIndex]?.fileName}
-        mediaRef={mediaRef}
-        mediaDur={medias[selMediaIndex]?.duration}
         togglePlaylist={togglePlaylist}
-        onClickPrevMedia={onClickPrevMedia}
-        onClickNextMedia={onClickNextMedia}
-        onChangeTSlider={onChangeTSlider}
+        mediaRef={mediaRef}
+        mediaName={medias[selMediaIndex]?.fileName}
         currentTime={currentTime}
         isPlaying={isPlaying}
         setIsPlaying={(status) => dispatch(setIsPlaying(status))}
-        playbackRate={playbackRate}
-        setPlaybackRate={setPlaybackRate}
-        volume={volume}
-        setVolume={setVolume}
-        onSeekMouseDown={onSeekMouseDown}
-        onSeekMouseUp={onSeekMouseUp}
+        onClickPrevMedia={onClickPrevMedia}
+        onClickNextMedia={onClickNextMedia}
+        onChangeTSlider={onChangeTSlider}
         className="h-[90px] w-[100%] fixed bottom-0 z-50 bg-custom-white select-none"
       />
     </>
