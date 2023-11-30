@@ -31,7 +31,7 @@ var newSpkerTagId = '';
 
 var pendingUploading;
 
-const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime, setEditorResized, clickedInsSection}) => {
+const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, undo, redo, setEnableUndo, setEnableRedo, setSavingStatus, setLastSavedTime, clickedInsSection}) => {
     const { fileId } = useParams();
 
     const lastSelectedWordRange = useRef();
@@ -243,8 +243,6 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
         }
 
         setNewSpkTgId(newSpkerTagId);
-
-        setEditorResized(new Date().getTime());
     }, [transcription])
 
     useEffect(() => {

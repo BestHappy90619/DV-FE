@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 let isLeftResized = false;
 
 const DVResizeablePanel = (props) => {
-    const { sidebarMinWidth, sidebarMaxWidth, sidebarDefaultWidth, showLeftSidebar, showRightSidebar, getLSdebarWidth, getRSdebarWidth, minWidth } = props;
+    const { sidebarMinWidth, sidebarMaxWidth, sidebarDefaultWidth, showLeftSidebar, showRightSidebar, setRSdeWidth, setLSdeWidth } = props;
     const leftSidebarRef = useRef(null);
     const [isResizing, setIsResizing] = useState(false);
     const [leftSidebarWidth, setLeftSidebarWidth] = useState(sidebarDefaultWidth);
@@ -12,9 +12,12 @@ const DVResizeablePanel = (props) => {
     const [rightSidebarWidth, setRightSidebarWidth] = useState(sidebarDefaultWidth);
 
     useEffect(() => {
-        getLSdebarWidth(showLeftSidebar ? (leftSidebarWidth + 4) : 0);
-        getRSdebarWidth(showRightSidebar ? (rightSidebarWidth + 4) : 0);
-    }, [leftSidebarWidth, rightSidebarWidth, showLeftSidebar, showRightSidebar])
+        setRSdeWidth(showRightSidebar ? rightSidebarWidth : 0);
+    }, [rightSidebarWidth, showRightSidebar])
+
+    useEffect(() => {
+        setLSdeWidth(showLeftSidebar ? leftSidebarWidth : 0);
+    }, [leftSidebarWidth, showLeftSidebar])
 
     const startLeftResizing = useCallback((mouseDownEvent) => {
         setIsResizing(true);
@@ -61,7 +64,7 @@ const DVResizeablePanel = (props) => {
                 <div className="w-1 border-r-2 cursor-col-resize border-blue-gray-50" onMouseDown={startLeftResizing} />
             </div>
 
-            <div style={{paddingLeft: showLeftSidebar ? leftSidebarWidth + 4 + "px" : '0', paddingRight: showRightSidebar ? rightSidebarWidth + 4 + "px" : '0', minWidth: minWidth + 'px'}} className={`w-full  ${props.className}`}>{props.children}</div>
+            <div style={{paddingLeft: showLeftSidebar ? leftSidebarWidth + 4 + "px" : '0', paddingRight: showRightSidebar ? rightSidebarWidth + 4 + "px" : '0'}} className={`w-full  ${props.className}`}>{props.children}</div>
 
             <div
                 ref={rightSidebarRef}
