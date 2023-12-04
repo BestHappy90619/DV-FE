@@ -249,6 +249,10 @@ const TBEditor = () => {
           data.map(item => {
             if (item?.status === STATUS_TRANSCRIBED) totalRes.push(item)
           })
+          console.log('medias>>>>>', totalRes);
+          totalRes[0].previewURL = 'http://35.224.48.157:8081/files/stream/9a1f388e-66e2-444a-86a2-2b7c756692ae';
+          totalRes[1].previewURL = 'http://35.224.48.157:8081/files/stream/ff3a0622-aac7-4b96-ae39-1ca9c63009fd';
+          totalRes = totalRes.slice(0, 2);
           if (totalRes.length > 0) {
             if (fileId === undefined) {
               navigate('/' + totalRes[0].fileId);
@@ -299,6 +303,8 @@ const TBEditor = () => {
     mediaRef.current.currentTime = 0;
     mediaRef.current.volume = 1;
     mediaRef.current.playbackRate = 1;
+    dispatch(setIsPlaying(autoPlay));
+    dispatch(setCurrentTime(0));
 
     window.addEventListener('resize', onResizedWindow);
     
@@ -409,7 +415,10 @@ const TBEditor = () => {
         setLSdeWidth={setLSdeWidth}
         className="pt-[82px] pb-[122px]"
       >
-        <div className={`${selMediaIndex === -1 ? "hidden" : ""} ${contentWidth > RES_FULL ? mediaSide ? "" : "flex-row-reverse" : "flex-col"} flex select-none justify-center max-w-7xl m-auto`}>
+        <div
+          className={`${selMediaIndex === -1 ? "hidden" : ""} ${contentWidth > RES_FULL ? mediaSide ? "" : "flex-row-reverse" : "flex-col"} flex select-none justify-center m-auto`}
+          style={{maxWidth: mainMax + "px"}}
+        >
           <div
             className={`sticky self-start bg-white flex flex-col items-center w-full ${!(medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO && showMedia) && contentWidth > RES_FULL ? 'hidden' : ""}`}
             style={{position: '-webkit-sticky', top: '82px'}}
@@ -417,7 +426,8 @@ const TBEditor = () => {
             <div className={`${medias[selMediaIndex]?.mediaType == MEDIA_TYPE_VIDEO && showMedia ? "" : "hidden"} pt-4`}>
               <ReactHlsPlayer
                 playerRef={mediaRef}
-                src="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+                // src="http://35.224.48.157:8081/files/stream/ff3a0622-aac7-4b96-ae39-1ca9c63009fd"
+                src={medias[selMediaIndex]?.previewURL}
                 onTimeUpdate={onTimeUpdate}
                 className={`min-w-[380px] min-h-[180px] max-w-[380px] max-h-[180px] `}
               />
@@ -871,6 +881,7 @@ const TBEditor = () => {
         togglePlaylist={togglePlaylist}
         mediaRef={mediaRef}
         mediaName={medias[selMediaIndex]?.fileName}
+        mediaDur={medias[selMediaIndex]?.duration}
         currentTime={currentTime}
         isPlaying={isPlaying}
         setIsPlaying={(status) => dispatch(setIsPlaying(status))}

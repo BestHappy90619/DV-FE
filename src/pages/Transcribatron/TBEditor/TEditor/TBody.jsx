@@ -24,7 +24,7 @@ var trackIndex;
 
 var lastSavedTime;
 var typingTimer;
-const SAVING_DUR = 3000;
+const SAVING_DUR = 10000;
 const UNTYPING_DUR = 1000;
 
 var newSpkerTagId = '';
@@ -973,25 +973,13 @@ const TBody = ({actionStyle, changeStyle, changedFontClr, changedHighlightClr, u
             instSave = true;
         } else if (e.keyCode === 13 && modifier === '') {
             // enter
-            // if (modifier === KEY_SHIFT) {
-            //     // shift + enter
-            //     e.preventDefault();
-            //     if(DEBUG_MODE) console.log('create paragraph: shift + enter');
-            //     let updatedTranscription = { ...transcription };
-            //     await insertTextToEditor(updatedTranscription, '\n', selection);
-            //     setTranscription(updatedTranscription);
-            //     instSave = true;
-            // } else if (modifier === '') {
-                // only enter
-                e.preventDefault();
-                if (newSpkTgId.length !== 0) return true;
-                if(DEBUG_MODE) console.log('create speaker: enter');
-                let updatedTranscription = { ...transcription };
-                // await splitTag(updatedTranscription, selection);
-                await insertTextToEditor(updatedTranscription, '\n', selection);
-                setTranscription(updatedTranscription);
-                instSave = true;
-            // }
+            e.preventDefault();
+            if (newSpkTgId.length !== 0) return true;
+            if(DEBUG_MODE) console.log('create speaker: enter');
+            let updatedTranscription = { ...transcription };
+            await insertTextToEditor(updatedTranscription, '\n', selection);
+            setTranscription(updatedTranscription);
+            instSave = true;
         } else if (e.keycode === 27 || e.keyCode === 9) {
             // Esc || Tab
             e.preventDefault();

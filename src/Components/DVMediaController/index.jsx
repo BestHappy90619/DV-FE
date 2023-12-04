@@ -33,6 +33,7 @@ const DVMediaController = (props) => {
     togglePlaylist,
     mediaRef,
     mediaName,
+    mediaDur,
     currentTime,
     isPlaying,
     setIsPlaying,
@@ -108,14 +109,14 @@ const DVMediaController = (props) => {
   }
 
   const onChangeCurrentTimePercent = (e, val) => {
-    if(!mediaRef.current?.duration) setCurrentTimePercent(0)
+    if(!mediaDur) setCurrentTimePercent(0)
     else setCurrentTimePercent(val);
-    onChangeTSlider(val / 100 * mediaRef.current?.duration)
+    onChangeTSlider(val / 100 * mediaDur)
   }
  
   useEffect(() => {
-    if(!mediaRef.current?.duration) setCurrentTimePercent(0)
-    else setCurrentTimePercent(currentTime / mediaRef.current?.duration * 100);
+    if(!mediaDur) setCurrentTimePercent(0)
+    else setCurrentTimePercent(currentTime / mediaDur * 100);
   }, [currentTime]);
 
   return (
@@ -151,7 +152,7 @@ const DVMediaController = (props) => {
               : <BsPlayCircleFill className="text-custom-sky text-5xl cursor-pointer" onClick={() => { mediaRef.current.play() }} />}
             <AiFillForward className="text-custom-medium-gray text-2xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-[13px] self-center">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaRef.current?.duration, true) }</p>
+          <p className="text-custom-black text-[13px] self-center">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaDur || 0, true) }</p>
         </div>
         <div className="flex gap-2 items-center justify-end">
           <p className=" text-sm">Frames Speed</p>
@@ -195,7 +196,7 @@ const DVMediaController = (props) => {
               : <BsPlayCircleFill className="text-custom-sky text-4xl cursor-pointer" onClick={() => { mediaRef.current.play() }} />}
             <AiFillForward className="text-custom-medium-gray text-xl cursor-pointer" onClick={onClickNextMedia}/>
           </div>
-          <p className="text-custom-black text-xs self-center md:text-sm">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaRef.current?.duration, true) }</p>
+          <p className="text-custom-black text-xs self-center md:text-sm">{secToTimeFormat(currentTime, true)}/{ secToTimeFormat(mediaDur || 0, true) }</p>
         </div>
       </div>
     </div>
